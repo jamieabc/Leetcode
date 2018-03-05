@@ -47,20 +47,14 @@ def min_mutation(start, dest, bank)
   arr = []
   calculate_distance(arr, bank)
 
-  # p arr
-
   bfs(bank, dest, arr, [0])
   $min
 end
 
 def bfs(bank, dest, arr, path)
 
-  # search all distance to 1
-  # iterate all possible routes
   # terminate if destination is arrived
-
   if bank[path.last] == dest
-    # p path
     if $min == -1
       $min = path.size - 1
     else
@@ -69,6 +63,7 @@ def bfs(bank, dest, arr, path)
     return
   end
 
+  # search all distance to 1 (possible mutation)
   current_idx = path.last
   possible = []
   arr[current_idx].each_index do |idx|
@@ -76,7 +71,7 @@ def bfs(bank, dest, arr, path)
   end
   return -1 if possible.empty?
 
-  # p "path #{path}, possible #{possible}"
+  # iterate all possible routes
   possible.each do |i|
     new_arr = path.dup
     bfs(bank, dest, arr, new_arr.push(i))
@@ -108,7 +103,3 @@ def calculate_distance(arr, bank)
     arr.push(result)
   end
 end
-
-p min_mutation("AACCGGTT",
-"AAACGGTA",
-["AACCGGTA","AACCGCTA","AAACGGTA"])
