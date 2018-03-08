@@ -43,7 +43,7 @@ def single_number(nums)
     b &= ~c                     # b = 0 if c == 1, otherwise, b = b
   end
 
-  a | b
+  b
 end
 
 p single_number([1])
