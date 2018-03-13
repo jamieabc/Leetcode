@@ -11,7 +11,7 @@ def rob(nums)
   # use dynamic programming to solve the problem:
   # variable current means sum that doesn't include this integer,
   # variable previous means sum that includes this integer
-  # only 2 situations can appear, choose this integer or not to choose this integer
+  # only 2 situations can appear, choose this integer or not
 
   return 0 if nums.empty?
 
