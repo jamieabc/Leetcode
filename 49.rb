@@ -20,7 +20,7 @@ def group_anagrams1(strs)
   hashed_arr.each_with_index do |hsh, idx|
     grouped = false
     anagrams.each do |group|
-n      if hashed_arr[group.first] == hsh
+      if hashed_arr[group.first] == hsh
         group << idx
         grouped = true
       end
