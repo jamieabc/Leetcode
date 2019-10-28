@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="" />
+    <list default="true" id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1.go" beforeDir="false" afterPath="$PROJECT_DIR$/1.go" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +53,12 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add idea settings" />
+    <MESSAGE value="update idea settings" />
+    <MESSAGE value="add problem 1" />
+    <option name="LAST_COMMIT_MESSAGE" value="add problem 1" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
