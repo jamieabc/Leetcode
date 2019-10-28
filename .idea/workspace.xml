@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/28.go" beforeDir="false" afterPath="$PROJECT_DIR$/28.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -59,9 +59,11 @@
     <MESSAGE value="add idea settings" />
     <MESSAGE value="add problem 1" />
     <MESSAGE value="add another problem 1" />
-    <MESSAGE value="update idea settings" />
     <MESSAGE value="add problem 125" />
-    <option name="LAST_COMMIT_MESSAGE" value="add problem 125" />
+    <MESSAGE value="update idea settings" />
+    <MESSAGE value="update go mod files" />
+    <MESSAGE value="add problem 28" />
+    <option name="LAST_COMMIT_MESSAGE" value="add problem 28" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
