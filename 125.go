@@ -54,6 +54,43 @@ func trimNonChar(source string) string {
 	return strings.ToLower(string(bytes))
 }
 
+func isPalindrome2(s string) bool {
+	if 0 == len(s) {
+		return true
+	}
+
+	i, j := 0, len(s)-1
+	r := []rune(s)
+
+	for i < j {
+		if !isAlphaNumerical(r[i]) {
+			i++
+			continue
+		}
+
+		if !isAlphaNumerical(r[j]) {
+			j--
+			continue
+		}
+
+		if unicode.ToLower(r[i]) == unicode.ToLower(r[j]) {
+			i++
+			j--
+		} else {
+			return false
+		}
+	}
+
+	return true
+}
+
+func isAlphaNumerical(r rune) bool {
+	if unicode.IsLetter(r) || unicode.IsDigit(r) {
+		return true
+	}
+	return false
+}
+
 func main() {
 	s := "A man, a plan, a canal: Panama"
 
