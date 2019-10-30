@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="add problem 28">
+    <list default="true" id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/8.go" beforeDir="false" afterPath="$PROJECT_DIR$/8.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,7 +16,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="8" />
+        <entry key="$PROJECT_DIR$" value="65" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -45,7 +46,23 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go Test.TestIsNumber in github.com/jamieabc/leetcode/65">
+    <configuration name="go build 65.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="leetcode" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/65/65.go" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build 65.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="leetcode" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/65.go" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build 8.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="leetcode" />
       <working_directory value="$PROJECT_DIR$" />
@@ -54,8 +71,32 @@
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
+    <configuration name="65_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="leetcode" />
+      <working_directory value="$PROJECT_DIR$/65" />
+      <framework value="gotest" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/65/65_test.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestIsNumber in github.com/jamieabc/leetcode/65" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="leetcode" />
+      <working_directory value="$PROJECT_DIR$/65" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="github.com/jamieabc/leetcode/65" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <pattern value="^TestIsNumber$" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestIsNumber in github.com/jamieabc/leetcode/65" />
+        <item itemvalue="Go Test.65_test.go" />
+        <item itemvalue="Go Build.go build 65.go (1)" />
+        <item itemvalue="Go Build.go build 65.go" />
         <item itemvalue="Go Build.go build 8.go" />
       </list>
     </recent_temporary>
@@ -85,7 +126,9 @@
     <MESSAGE value="update go mod files" />
     <MESSAGE value="add problem 28" />
     <MESSAGE value="add problem 8" />
-    <option name="LAST_COMMIT_MESSAGE" value="add problem 8" />
+    <MESSAGE value="refactor, convert string to rune at first to reduce cpu computation" />
+    <MESSAGE value="Squashed commit of 8:&#10;&#10;commit 32114910d2bdb836e0ce55b2b9c24bc2ebb4f30d&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Wed Oct 30 19:02:54 2019 +0800&#10;&#10;    refactor, convert string to rune at first to reduce cpu computation&#10;&#10;commit 7ca667456b8858be4a25289a08578f91574f5fd1&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Wed Oct 30 18:52:18 2019 +0800&#10;&#10;    add problem 8" />
+    <option name="LAST_COMMIT_MESSAGE" value="Squashed commit of 8:&#10;&#10;commit 32114910d2bdb836e0ce55b2b9c24bc2ebb4f30d&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Wed Oct 30 19:02:54 2019 +0800&#10;&#10;    refactor, convert string to rune at first to reduce cpu computation&#10;&#10;commit 7ca667456b8858be4a25289a08578f91574f5fd1&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Wed Oct 30 18:52:18 2019 +0800&#10;&#10;    add problem 8" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
