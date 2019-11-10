@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="">
+    <list default="true" id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="Squashed commit of 21:&#10;&#10;commit eb4e00f9f968eba8325472606be496fdcd2d1016&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 15:04:23 2019 +0800&#10;&#10;    add problem 21">
+      <change afterPath="$PROJECT_DIR$/2.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,11 +11,14 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="GOROOT" path="/usr/local/go" />
+  <component name="FavoritesManager">
+    <favorites_list name="leetcode" />
+  </component>
+  <component name="GOROOT" path="/usr/local/opt/go/libexec" />
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="65" />
+        <entry key="$PROJECT_DIR$" value="2" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -32,7 +34,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="go.sdk" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -128,7 +130,16 @@
     <MESSAGE value="add problem 8" />
     <MESSAGE value="refactor, convert string to rune at first to reduce cpu computation" />
     <MESSAGE value="Squashed commit of 8:&#10;&#10;commit 32114910d2bdb836e0ce55b2b9c24bc2ebb4f30d&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Wed Oct 30 19:02:54 2019 +0800&#10;&#10;    refactor, convert string to rune at first to reduce cpu computation&#10;&#10;commit 7ca667456b8858be4a25289a08578f91574f5fd1&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Wed Oct 30 18:52:18 2019 +0800&#10;&#10;    add problem 8" />
-    <option name="LAST_COMMIT_MESSAGE" value="Squashed commit of 8:&#10;&#10;commit 32114910d2bdb836e0ce55b2b9c24bc2ebb4f30d&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Wed Oct 30 19:02:54 2019 +0800&#10;&#10;    refactor, convert string to rune at first to reduce cpu computation&#10;&#10;commit 7ca667456b8858be4a25289a08578f91574f5fd1&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Wed Oct 30 18:52:18 2019 +0800&#10;&#10;    add problem 8" />
+    <MESSAGE value="add program 7" />
+    <MESSAGE value="add problem 66" />
+    <MESSAGE value="Squashed commit of the following:&#10;&#10;commit 7ed9a4a91724255eb1cafd1d1374f30b2199451c&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 13:36:23 2019 +0800&#10;&#10;    add problem 66" />
+    <MESSAGE value="Squashed commit of 66:&#10;&#10;commit 7ed9a4a91724255eb1cafd1d1374f30b2199451c&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 13:36:23 2019 +0800&#10;&#10;    add problem 66" />
+    <MESSAGE value="Squashed commit of 7:&#10;&#10;commit 33cf1b9254e380f05b6eae055165ae342b360bba&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 12:52:40 2019 +0800&#10;&#10;    add program 7" />
+    <MESSAGE value="add problem 9" />
+    <MESSAGE value="Squashed commit of 9:&#10;&#10;commit 4414c3a59b341271029b4ef944c20fc1857667b0&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 14:36:55 2019 +0800&#10;&#10;    add problem 9" />
+    <MESSAGE value="add problem 21" />
+    <MESSAGE value="Squashed commit of 21:&#10;&#10;commit eb4e00f9f968eba8325472606be496fdcd2d1016&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 15:04:23 2019 +0800&#10;&#10;    add problem 21" />
+    <option name="LAST_COMMIT_MESSAGE" value="Squashed commit of 21:&#10;&#10;commit eb4e00f9f968eba8325472606be496fdcd2d1016&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 15:04:23 2019 +0800&#10;&#10;    add problem 21" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
