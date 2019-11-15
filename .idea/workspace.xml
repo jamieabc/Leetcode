@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="Squashed commit of 21:&#10;&#10;commit eb4e00f9f968eba8325472606be496fdcd2d1016&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 15:04:23 2019 +0800&#10;&#10;    add problem 21">
-      <change afterPath="$PROJECT_DIR$/2.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/aaron.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/98.go" beforeDir="false" afterPath="$PROJECT_DIR$/98.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,11 +15,11 @@
   <component name="FavoritesManager">
     <favorites_list name="leetcode" />
   </component>
-  <component name="GOROOT" path="/usr/local/opt/go/libexec" />
+  <component name="GOROOT" path="/usr/local/go" />
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="2" />
+        <entry key="$PROJECT_DIR$" value="98" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -33,6 +34,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
@@ -48,7 +50,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Test.TestIsNumber in github.com/jamieabc/leetcode/65">
+  <component name="RunManager" selected="Go Build.go build 98.go">
     <configuration name="go build 65.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="leetcode" />
       <working_directory value="$PROJECT_DIR$" />
@@ -65,11 +67,12 @@
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
-    <configuration name="go build 8.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build 98.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="leetcode" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/8.go" />
+      <filePath value="$PROJECT_DIR$/98.go" />
+      <package value="github.com/jamieabc/leetcode" />
       <directory value="$PROJECT_DIR$/" />
       <method v="2" />
     </configuration>
@@ -95,11 +98,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Build.go build 98.go" />
         <item itemvalue="Go Test.TestIsNumber in github.com/jamieabc/leetcode/65" />
         <item itemvalue="Go Test.65_test.go" />
         <item itemvalue="Go Build.go build 65.go (1)" />
         <item itemvalue="Go Build.go build 65.go" />
-        <item itemvalue="Go Build.go build 8.go" />
       </list>
     </recent_temporary>
   </component>
@@ -139,7 +142,8 @@
     <MESSAGE value="Squashed commit of 9:&#10;&#10;commit 4414c3a59b341271029b4ef944c20fc1857667b0&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 14:36:55 2019 +0800&#10;&#10;    add problem 9" />
     <MESSAGE value="add problem 21" />
     <MESSAGE value="Squashed commit of 21:&#10;&#10;commit eb4e00f9f968eba8325472606be496fdcd2d1016&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 15:04:23 2019 +0800&#10;&#10;    add problem 21" />
-    <option name="LAST_COMMIT_MESSAGE" value="Squashed commit of 21:&#10;&#10;commit eb4e00f9f968eba8325472606be496fdcd2d1016&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 15:04:23 2019 +0800&#10;&#10;    add problem 21" />
+    <MESSAGE value="add problem 98" />
+    <option name="LAST_COMMIT_MESSAGE" value="add problem 98" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
