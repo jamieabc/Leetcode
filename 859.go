@@ -45,12 +45,12 @@ func buddyStrings(A string, B string) bool {
 		}
 	}
 
-	// more than 2 chars different
+	// more than 2 chars same
 	if len(differences) > 2 {
 		return false
 	}
 
-	// 2 chars different
+	// 2 chars same
 	if len(differences) == 2 {
 		return A[differences[0]] == B[differences[1]] && A[differences[1]] == B[differences[0]]
 	}
