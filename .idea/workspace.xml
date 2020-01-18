@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="Squashed commit of 21:&#10;&#10;commit eb4e00f9f968eba8325472606be496fdcd2d1016&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 15:04:23 2019 +0800&#10;&#10;    add problem 21">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/aaron.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/98.go" beforeDir="false" afterPath="$PROJECT_DIR$/98.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/53.go" beforeDir="false" afterPath="$PROJECT_DIR$/53.go" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,11 +13,11 @@
   <component name="FavoritesManager">
     <favorites_list name="leetcode" />
   </component>
-  <component name="GOROOT" path="/usr/local/go" />
+  <component name="GOROOT" path="/usr/lib/go" />
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="98" />
+        <entry key="$PROJECT_DIR$" value="53" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -28,27 +26,24 @@
     <option name="directoryName" value="OYKusGRS" />
   </component>
   <component name="ProjectId" id="1SpV6i1rrUx0YEk2Q6L4tioC6KE" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="GO_FMT" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
+    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
+    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RunManager" selected="Go Build.go build 98.go">
     <configuration name="go build 65.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -106,6 +101,28 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="Squashed commit of 21:&#10;&#10;commit eb4e00f9f968eba8325472606be496fdcd2d1016&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 15:04:23 2019 +0800&#10;&#10;    add problem 21" />
+      <created>1579259297132</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1579259297132</updated>
+    </task>
+    <servers />
+  </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
@@ -148,5 +165,31 @@
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
     <proxy>direct</proxy>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="555" y="214" width="800" height="677" key="#Notifications" timestamp="1579260139390">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="555" y="214" width="800" height="677" key="#Notifications/0.27.1920.1053@0.27.1920.1053" timestamp="1579260139390" />
+    <state x="493" y="67" width="924" height="970" key="CommitChangelistDialog2" timestamp="1579322036182">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="493" y="67" width="924" height="970" key="CommitChangelistDialog2/0.27.1920.1053@0.27.1920.1053" timestamp="1579322036182" />
+    <state x="742" y="310" width="424" height="484" key="FileChooserDialogImpl" timestamp="1579259949187">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="742" y="310" width="424" height="484" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1579259949187" />
+    <state x="441" y="187" key="SettingsEditor" timestamp="1579265336495">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="441" y="187" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1579265336495" />
+    <state x="614" y="380" key="com.intellij.ide.util.TipDialog" timestamp="1579315627186">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="614" y="380" key="com.intellij.ide.util.TipDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1579315627186" />
+    <state x="597" y="254" width="672" height="678" key="search.everywhere.popup" timestamp="1579263239002">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="597" y="254" width="672" height="678" key="search.everywhere.popup/0.27.1920.1053@0.27.1920.1053" timestamp="1579263239002" />
   </component>
 </project>
