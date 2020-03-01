@@ -1,195 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="Squashed commit of 21:&#10;&#10;commit eb4e00f9f968eba8325472606be496fdcd2d1016&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 15:04:23 2019 +0800&#10;&#10;    add problem 21">
+    <list default="true" id="ba50f7d4-4d20-4f8d-9476-926542d1ce8c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/53.go" beforeDir="false" afterPath="$PROJECT_DIR$/53.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FavoritesManager">
-    <favorites_list name="leetcode" />
-  </component>
-  <component name="GOROOT" path="/usr/lib/go" />
+  <component name="GOROOT" path="/usr/local/opt/go/libexec" />
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="53" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="MacroExpansionManager">
-    <option name="directoryName" value="OYKusGRS" />
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="false" />
   </component>
-  <component name="ProjectId" id="1SpV6i1rrUx0YEk2Q6L4tioC6KE" />
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="FyWwERnf" />
+  </component>
+  <component name="ProjectId" id="1YU0JTskXVGOwSTBMiCJxfVP0Nl" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="GO_FMT" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
-    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
-    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
-    <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
-  </component>
-  <component name="RunManager" selected="Go Build.go build 98.go">
-    <configuration name="go build 65.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="leetcode" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/65/65.go" />
-      <directory value="$PROJECT_DIR$/" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build 65.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="leetcode" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/65.go" />
-      <directory value="$PROJECT_DIR$/" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build 98.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="leetcode" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/98.go" />
-      <package value="github.com/jamieabc/leetcode" />
-      <directory value="$PROJECT_DIR$/" />
-      <method v="2" />
-    </configuration>
-    <configuration name="65_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="leetcode" />
-      <working_directory value="$PROJECT_DIR$/65" />
-      <framework value="gotest" />
-      <kind value="FILE" />
-      <directory value="$PROJECT_DIR$/" />
-      <filePath value="$PROJECT_DIR$/65/65_test.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestIsNumber in github.com/jamieabc/leetcode/65" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="leetcode" />
-      <working_directory value="$PROJECT_DIR$/65" />
-      <framework value="gotest" />
-      <kind value="PACKAGE" />
-      <package value="github.com/jamieabc/leetcode/65" />
-      <directory value="$PROJECT_DIR$/" />
-      <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestIsNumber$" />
-      <method v="2" />
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Go Build.go build 98.go" />
-        <item itemvalue="Go Test.TestIsNumber in github.com/jamieabc/leetcode/65" />
-        <item itemvalue="Go Test.65_test.go" />
-        <item itemvalue="Go Build.go build 65.go (1)" />
-        <item itemvalue="Go Build.go build 65.go" />
-      </list>
-    </recent_temporary>
-  </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
+    <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
+    <property name="last_opened_file_path" value="$USER_HOME$" />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="b77e3031-5381-4268-be45-afde15a2ccfb" name="Default Changelist" comment="Squashed commit of 21:&#10;&#10;commit eb4e00f9f968eba8325472606be496fdcd2d1016&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 15:04:23 2019 +0800&#10;&#10;    add problem 21" />
-      <created>1579259297132</created>
+      <changelist id="ba50f7d4-4d20-4f8d-9476-926542d1ce8c" name="Default Changelist" comment="" />
+      <created>1582981793550</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1579259297132</updated>
+      <updated>1582981793550</updated>
     </task>
+    <task id="LOCAL-00001" summary="attemp 1">
+      <created>1582981848369</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1582981848369</updated>
+    </task>
+    <task id="LOCAL-00002" summary="attempt 2">
+      <created>1583042044328</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1583042044328</updated>
+    </task>
+    <task id="LOCAL-00003" summary="attempt 3">
+      <created>1583049238923</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1583049238923</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add idea settings" />
-    <MESSAGE value="add problem 1" />
-    <MESSAGE value="add another problem 1" />
-    <MESSAGE value="add problem 125" />
-    <MESSAGE value="update idea settings" />
-    <MESSAGE value="update go mod files" />
-    <MESSAGE value="add problem 28" />
-    <MESSAGE value="add problem 8" />
-    <MESSAGE value="refactor, convert string to rune at first to reduce cpu computation" />
-    <MESSAGE value="Squashed commit of 8:&#10;&#10;commit 32114910d2bdb836e0ce55b2b9c24bc2ebb4f30d&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Wed Oct 30 19:02:54 2019 +0800&#10;&#10;    refactor, convert string to rune at first to reduce cpu computation&#10;&#10;commit 7ca667456b8858be4a25289a08578f91574f5fd1&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Wed Oct 30 18:52:18 2019 +0800&#10;&#10;    add problem 8" />
-    <MESSAGE value="add program 7" />
-    <MESSAGE value="add problem 66" />
-    <MESSAGE value="Squashed commit of the following:&#10;&#10;commit 7ed9a4a91724255eb1cafd1d1374f30b2199451c&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 13:36:23 2019 +0800&#10;&#10;    add problem 66" />
-    <MESSAGE value="Squashed commit of 66:&#10;&#10;commit 7ed9a4a91724255eb1cafd1d1374f30b2199451c&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 13:36:23 2019 +0800&#10;&#10;    add problem 66" />
-    <MESSAGE value="Squashed commit of 7:&#10;&#10;commit 33cf1b9254e380f05b6eae055165ae342b360bba&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 12:52:40 2019 +0800&#10;&#10;    add program 7" />
-    <MESSAGE value="add problem 9" />
-    <MESSAGE value="Squashed commit of 9:&#10;&#10;commit 4414c3a59b341271029b4ef944c20fc1857667b0&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 14:36:55 2019 +0800&#10;&#10;    add problem 9" />
-    <MESSAGE value="add problem 21" />
-    <MESSAGE value="Squashed commit of 21:&#10;&#10;commit eb4e00f9f968eba8325472606be496fdcd2d1016&#10;Author: Aaron Chang &lt;xesuschang@gmail.com&gt;&#10;Date:   Sun Nov 10 15:04:23 2019 +0800&#10;&#10;    add problem 21" />
-    <MESSAGE value="add problem 98" />
-    <option name="LAST_COMMIT_MESSAGE" value="add problem 98" />
+    <MESSAGE value="attemp 1" />
+    <MESSAGE value="attempt 2" />
+    <MESSAGE value="attempt 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="attempt 3" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
     <proxy>direct</proxy>
   </component>
   <component name="WindowStateProjectService">
-    <state x="555" y="214" width="800" height="677" key="#Notifications" timestamp="1579260139390">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state x="1040" y="205" key="#GOROOT" timestamp="1582981815796">
+      <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="555" y="214" width="800" height="677" key="#Notifications/0.27.1920.1053@0.27.1920.1053" timestamp="1579260139390" />
-    <state x="493" y="67" width="924" height="970" key="CommitChangelistDialog2" timestamp="1579322036182">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state x="1040" y="205" key="#GOROOT/0.0.1920.1080/-1440.0.1440.900@0.0.1920.1080" timestamp="1582981815796" />
+    <state x="877" y="116" key="CommitChangelistDialog2" timestamp="1583049238798">
+      <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="493" y="67" width="924" height="970" key="CommitChangelistDialog2/0.27.1920.1053@0.27.1920.1053" timestamp="1579322036182" />
-    <state x="742" y="310" width="424" height="484" key="FileChooserDialogImpl" timestamp="1579259949187">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state x="877" y="116" key="CommitChangelistDialog2/0.0.1920.1080/-1440.0.1440.900@0.0.1920.1080" timestamp="1583049238798" />
+    <state x="1078" y="372" key="com.intellij.ide.util.TipDialog" timestamp="1582981797591">
+      <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="742" y="310" width="424" height="484" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1579259949187" />
-    <state x="441" y="187" key="SettingsEditor" timestamp="1579265336495">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state x="1078" y="372" key="com.intellij.ide.util.TipDialog/0.0.1920.1080/-1440.0.1440.900@0.0.1920.1080" timestamp="1582981797590" />
+    <state x="1115" y="338" key="git4idea.merge.GitMergeDialog" timestamp="1583049730958">
+      <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="441" y="187" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1579265336495" />
-    <state x="614" y="380" key="com.intellij.ide.util.TipDialog" timestamp="1579315627186">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state x="1115" y="338" key="git4idea.merge.GitMergeDialog/0.0.1920.1080/-1440.0.1440.900@0.0.1920.1080" timestamp="1583049730958" />
+    <state x="1103" y="239" width="672" height="678" key="search.everywhere.popup" timestamp="1583049725273">
+      <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="614" y="380" key="com.intellij.ide.util.TipDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1579315627186" />
-    <state x="597" y="254" width="672" height="678" key="search.everywhere.popup" timestamp="1579263239002">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="597" y="254" width="672" height="678" key="search.everywhere.popup/0.27.1920.1053@0.27.1920.1053" timestamp="1579263239002" />
+    <state x="1103" y="239" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080/-1440.0.1440.900@0.0.1920.1080" timestamp="1583049725273" />
   </component>
 </project>
