@@ -18,44 +18,30 @@ package main
 
 // https://www.youtube.com/watch?v=QjEyO1137cM
 func countBits(num int) []int {
-	if num == 0 {
-		return []int{0}
+	dp := make([]int, num+1)
+
+	if num >= 1 {
+		dp[1] = 1
 	}
 
-	result := make([]int, num+1)
-	power := 1
+	if num >= 2 {
+		dp[2] = 1
+	}
 
-	for power <= num {
-		i := 0
-		for i+power <= num && i < power {
-			result[i+power] = result[i] + 1
-			i++
+	if num >= 3 {
+		for i, j := 2, 1; i+j <= num; {
+			if j == i {
+				dp[i*2] = 1
+				j = 1
+				i *= 2
+			} else {
+				dp[i+j] = dp[j] + 1
+				j++
+			}
 		}
-		power = power << 1
-	}
-	return result
-}
-
-func countBits1(num int) []int {
-	if num == 0 {
-		return []int{0}
 	}
 
-	result := make([]int, num+1)
-	result[0] = 0
-	for i := 1; i <= num; i++ {
-		result[i] = countOne(i)
-	}
-	return result
+	return dp
 }
 
-func countOne(num int) int {
-	i := 0
-	for num != 0 {
-		if num&1 == 1 {
-			i++
-		}
-		num = num >> 1
-	}
-	return i
-}
+//	1. 	optimization, use dp to reduce duplicated operation
