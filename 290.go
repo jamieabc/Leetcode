@@ -30,29 +30,35 @@ import "strings"
 //You may assume pattern contains only lowercase letters, and str contains lowercase letters that may be separated by a single space.
 
 func wordPattern(pattern string, str string) bool {
-	mapping1 := make(map[string]string)
-	mapping2 := make(map[string]string)
+	mapping1 := make(map[byte]string)
+	mapping2 := make(map[string]byte)
+
 	length := len(pattern)
-
 	strs := strings.Split(str, " ")
-
 	if length != len(strs) {
 		return false
 	}
 
-	for i, p := range pattern {
-		char := string(p)
-		if _, ok := mapping1[char]; !ok {
-			if _, ok := mapping2[strs[i]]; ok {
+	for i := 0; i < length; i++ {
+		if mapped, ok := mapping1[pattern[i]]; !ok {
+			mapping1[pattern[i]] = strs[i]
+		} else {
+			if mapped != strs[i] {
 				return false
 			}
-			mapping1[char] = strs[i]
-			mapping2[strs[i]] = char
+		}
+
+		if mapped, ok := mapping2[strs[i]]; !ok {
+			mapping2[strs[i]] = pattern[i]
 		} else {
-			if mapping1[char] != strs[i] || mapping2[strs[i]] != char {
+			if mapped != pattern[i] {
 				return false
 			}
 		}
 	}
+
 	return true
 }
+
+// problems
+//	1.	map is one way, so it can find duplicates when a -> b but not b -> a
