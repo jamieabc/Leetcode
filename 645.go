@@ -15,34 +15,46 @@ package main
 //    The given array's numbers won't have any order.
 
 func findErrorNums(nums []int) []int {
-	// sort array
-	// iterate all elements, find out duplicate and the one that is not continuous
-	// edge cases: first & last element missing
-	// too slow, n log n
-
-	// sum of all is n(n+1)/2, subtract from existing elements, the find delta of original to duplicate
-
-	// use array to store occurrence of number
 	length := len(nums)
-	arr := make([]int, length)
+	var duplicate, missing, xor int
 
-	// duplicate will be 2, missing will be 0
-	for _, n := range nums {
-		arr[n-1]++
+	for i := 0; i < length; i++ {
+		if nums[abs(nums[i])-1] < 0 {
+			duplicate = abs(nums[i])
+		} else {
+			nums[abs(nums[i])-1] *= -1
+		}
+		xor = xor ^ (i + 1) ^ abs(nums[i])
 	}
 
-	var duplicate, missing int
-	for i, n := range arr {
-		if n == 2 {
-			duplicate = i + 1
-		}
-		if n == 0 {
-			missing = i + 1
-		}
-	}
+	missing = xor ^ duplicate
 
 	return []int{duplicate, missing}
 }
 
+func abs(i int) int {
+	if i < 0 {
+		return -i
+	}
+	return i
+}
+
 // problems
-// 1. too slow, sort of n log n, try use sum & subtract, it will occupy some memory (map)
+// 	1. 	too slow, sort of n log n, try use sum & subtract, it will occupy
+//		some memory (map)
+//	2.	use additional array index to denote if a number already exists, and
+//		not updated one is the missing one
+//	3.	optimization, additional array is used, just to store if a number
+//		exist/missing. If there's another way to denote this information,
+// 		then additional memory can be saved.
+//
+//		This is really smart, use index to denote if a number exist as
+//		previous way, but by negate existing array. If a number is already
+//		negative, then that index is the duplicate one.
+//		And, for the number that is positive, that index is missing one.
+//		So clever.......
+//	4.	using XOR, same number XOR will become 0 (no effect)
+//		a ^ b ^ b = a
+//		(1 ^ 2 ^ 3 ^ ... ^ n) ^ (1 ^ 2 ^ 3 ^ ... ^ n) = 0
+//   	if some number b is change to c, after XOR, final result = b ^ c
+//		if I can find duplicates, missing is result ^ duplicate
