@@ -18,43 +18,23 @@ package main
 //    The string will only contain lowercase characters a-z. The maximum length of the string is 50000.
 
 func validPalindrome(s string) bool {
-	length := len(s)
-	if length <= 2 {
-		return true
-	}
-
-	i := 0
-	j := length - 1
-	deleted := false
-	dual := false
-	var tmpI, tmpJ int
-	for i < j {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
 		if s[i] != s[j] {
-			if deleted {
-				if dual {
-					i = tmpI
-					j = tmpJ - 1
-					dual = false
-					continue
-				}
-				return false
-			}
-
-			deleted = true
-			if s[i+1] == s[j] && s[i] == s[j-1] {
-				dual = true
-				tmpI = i
-				tmpJ = j
-				i++
-			} else if s[i+1] == s[j] {
-				i++
-			} else {
-				j--
-			}
-		} else {
-			i++
-			j--
+			return check(s, i+1, j) || check(s, i, j-1)
 		}
 	}
 	return true
 }
+
+func check(s string, left, right int) bool {
+	for ; left < right; left, right = left+1, right-1 {
+		if s[left] != s[right] {
+			return false
+		}
+	}
+	return true
+}
+
+//	problems
+//	1.	optimize, reduce memory usage
+//	2.	optimize, simplify code
