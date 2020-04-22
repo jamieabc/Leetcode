@@ -91,3 +91,5 @@ func abs(i int) int {
 
 //		But new radius cannot be lower than previous radius to make sure
 //		previous houses are included.
+
+//	referece: https://leetcode.com/problems/heaters/discuss/562372/python-greater99.7-explained-in-details-with-tips.
