@@ -29,114 +29,65 @@ import "sort"
 //Output: 1
 //Explanation: The two heater was placed in the position 1 and 4. We need to use radius 1 standard, then all the houses can be warmed.
 
-// [1, 2, 3], [2]
-// [1, 2, 3, 4], [2, 3]
-// [1, 2, 3, 4], [1, 4]
-// [1, 4, 7, 10, 16, 22, 30], [2, 15, 30]
-// [282475249,622650073,984943658,144108930,470211272,101027544,457850878,458777923]
-//[823564440,115438165,784484492,74243042,114807987,137522503,441282327,16531729,823378840,143542612]
 func findRadius(houses []int, heaters []int) int {
-	lenHouses := len(houses)
-	lenHeaters := len(heaters)
-
 	sort.Ints(houses)
 	sort.Ints(heaters)
 
-	if lenHouses == 0 {
-		return 0
-	}
+	var radius, idx int
+	length := len(heaters)
 
-	radius := -1
-	var i, diff int
+	for _, h := range houses {
+		// already covered
+		if h >= heaters[idx]-radius && h <= heaters[idx]+radius {
+			continue
+		}
 
-	if lenHouses == 1 {
-		radius = 25001
-		for i = 0; i < lenHeaters; i++ {
-			diff = abs(houses[0] - heaters[i])
-			if diff < radius {
-				radius = diff
-			}
+		// check if next heater exist and covers house
+		if idx+1 < length && h >= heaters[idx+1]-radius && h <= heaters[idx+1]+radius {
+			idx++
+			continue
 		}
-		return radius
-	}
 
-	if lenHeaters == 1 {
-		for i = 0; i < lenHouses; i++ {
-			diff = abs(houses[i] - heaters[0])
-			if diff > radius {
-				radius = diff
-			}
-		}
-		return radius
-	}
-
-	var leftHouseIndex, rightHouseIndex int
-
-	for i = 0; i < lenHouses; i++ {
-		if houses[i] > heaters[0] {
-			break
-		}
-		// not necessary, only need to consider index 0
-		diff = abs(houses[i] - heaters[0])
-		if diff > radius {
-			radius = diff
-		}
-	}
-
-	// find left side radius and range
-	if houses[0] < heaters[0] {
-		diff := abs(houses[0] - heaters[0])
-		if diff > radius {
-			diff = radius
-		}
-	}
-	for leftHouseIndex = 0; leftHouseIndex < lenHouses; leftHouseIndex++ {
-		if houses[leftHouseIndex] > heaters[0] {
-			break
-		}
-	}
-
-	// find right side radius and range
-	if houses[lenHouses-1] > heaters[lenHeaters-1] {
-		diff := abs(houses[lenHouses-1] - heaters[lenHeaters-1])
-		if diff > radius {
-			radius = diff
-		}
-	}
-	for rightHouseIndex = lenHouses - 1; rightHouseIndex >= 0; rightHouseIndex-- {
-		if houses[rightHouseIndex] < heaters[lenHeaters-1] {
-			break
-		}
-	}
-
-	i = leftHouseIndex
-	for j := 0; j < lenHeaters-1; j++ {
-		// find houses within heaters j & j+1
-		for ; i <= rightHouseIndex; i++ {
-			if houses[i] > heaters[j+1] {
+		// house is not covered, increase radius
+		// in this case, house is fixed, find closest heater, but new radius cannot below existing radius
+		// the tricky part is that if house at 1000, and heaters at 100, 101, 102, ..., 999,
+		// need to find closest heater to house, but radius might not update
+		var r int
+		for r = abs(heaters[idx] - h); idx+1 < length; idx++ {
+			tmp := abs(heaters[idx+1] - h)
+			if tmp <= r {
+				r = tmp
+			} else {
 				break
 			}
-			toLeft := abs(houses[i] - heaters[j])
-			toRight := abs(houses[i] - heaters[j+1])
-
-			if toLeft < toRight && toLeft > radius {
-				radius = toLeft
-			} else if toRight < toLeft && toRight > radius {
-				radius = toRight
-			}
 		}
-	}
 
-	if radius == -1 {
-		return 0
+		if r > radius {
+			radius = r
+		}
 	}
 
 	return radius
 }
 
 func abs(i int) int {
-	if i < 0 {
-		return -i
+	if i >= 0 {
+		return i
 	}
-	return i
+	return -i
 }
+
+// 	problems
+//	1.	Too complicate, re-do the problem with simpler way.
+//		first sort houses & heaters, then if a house if included by current
+//		heater +- radius, continue to next house.
+//		If a house is not included in current heater, try to check if next
+//		heater +- radius include this house. Since house & heater are mono
+//		increasing, so next heater is guaranteed no less than current heater.
+
+//		This method needs to take care of one thing: if a house at 1000, and
+//		heaters are 500, 501, 502, ... 999, then in this round of checking
+//		need to find minimum radius to include the house, which is 1 (999-1000).
+
+//		But new radius cannot be lower than previous radius to make sure
+//		previous houses are included.
