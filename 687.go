@@ -59,41 +59,28 @@ func longestUnivaluePath(root *TreeNode) int {
 		return 0
 	}
 
-	closed := 0
-	_ = recursive(root, &closed)
-	return closed
+	var longest int
+	_ = recursive(root, root.Val, &longest)
+
+	// longest is # of elements, edges are deducted by 1
+	return longest - 1
 }
 
-func recursive(node *TreeNode, closed *int) int {
+func recursive(node *TreeNode, target int, longest *int) int {
 	if node == nil {
 		return 0
 	}
 
-	left := recursive(node.Left, closed)
-	// left same
-	if node.Left != nil && node.Val == node.Left.Val {
-		left++
+	left := recursive(node.Left, node.Val, longest)
+	right := recursive(node.Right, node.Val, longest)
+
+	*longest = max(*longest, left+right+1)
+
+	if node.Val != target {
+		return 0
 	}
 
-	// left different, start new path
-	if node.Left != nil && node.Val != node.Left.Val {
-		left = 0
-	}
-
-	right := recursive(node.Right, closed)
-	// right same
-	if node.Right != nil && node.Val == node.Right.Val {
-		right++
-	}
-
-	// right different, start new path
-	if node.Right != nil && node.Val != node.Right.Val {
-		right = 0
-	}
-
-	*closed = max(*closed, left+right)
-
-	return max(left, right)
+	return max(left, right) + 1
 }
 
 func max(i, j int) int {
@@ -103,36 +90,15 @@ func max(i, j int) int {
 	return j
 }
 
-func main() {
-	ll2 := &TreeNode{
-		Val:   4,
-		Left:  nil,
-		Right: nil,
-	}
-	lr2 := &TreeNode{
-		Val:   4,
-		Left:  nil,
-		Right: nil,
-	}
-	ll1 := &TreeNode{
-		Val:   4,
-		Left:  ll2,
-		Right: lr2,
-	}
-	rl2 := &TreeNode{
-		Val:   5,
-		Left:  nil,
-		Right: nil,
-	}
-	rr1 := &TreeNode{
-		Val:   5,
-		Left:  rl2,
-		Right: nil,
-	}
-	root := &TreeNode{
-		Val:   1,
-		Left:  ll1,
-		Right: rr1,
-	}
-	fmt.Printf("max: %d\n", longestUnivaluePath(root))
-}
+//	programs
+//	1.	rewrite, I think it's more easier to understand
+//	2.	refactor, use max instead of checking
+//	3.	optimize, I didn't think it thoroughly.
+//		I use stack to store next node to check. The complexity is O(n), and
+//		with memory overhead.
+
+//		The trick is to use post-order, L-R-N, with left & right traversed,
+//		a node N can decide it's longest path. The return value is longest
+//		left / right path. So it needs to pass N's value to left & right, so
+//		that when traversing, a node can know how to return value.
+//	4.	need to check if value should update, then return 0 if value not match
