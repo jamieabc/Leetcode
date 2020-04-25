@@ -1,112 +1,75 @@
 package main
 
-//Design a hit counter which counts the number of hits received in the past 5 minutes.
+// Design a hit counter which counts the number of hits received in the past 5 minutes.
 //
-//Each function accepts a timestamp parameter (in seconds granularity) and you may assume that calls are being made to the system in chronological order (ie, the timestamp is monotonically increasing). You may assume that the earliest timestamp starts at 1.
+// Each function accepts a timestamp parameter (in seconds granularity) and you may assume that calls are being made to the system in chronological order (ie, the timestamp is monotonically increasing). You may assume that the earliest timestamp starts at 1.
 //
-//It is possible that several hits arrive roughly at the same time.
+// It is possible that several hits arrive roughly at the same time.
 //
-//Example:
+// Example:
 //
-//HitCounter counter = new HitCounter();
+// HitCounter counter = new HitCounter();
 //
-//// hit at timestamp 1.
-//counter.hit(1);
+// hit at timestamp 1.
+// counter.hit(1);
 //
-//// hit at timestamp 2.
-//counter.hit(2);
+// hit at timestamp 2.
+// counter.hit(2);
 //
-//// hit at timestamp 3.
-//counter.hit(3);
+// hit at timestamp 3.
+// counter.hit(3);
 //
-//// get hits at timestamp 4, should return 3.
-//counter.getHits(4);
+// get hits at timestamp 4, should return 3.
+// counter.getHits(4);
 //
-//// hit at timestamp 300.
-//counter.hit(300);
+// hit at timestamp 300.
+// counter.hit(300);
 //
-//// get hits at timestamp 300, should return 4.
-//counter.getHits(300);
+// get hits at timestamp 300, should return 4.
+// counter.getHits(300);
 //
-//// get hits at timestamp 301, should return 3.
-//counter.getHits(301);
+// get hits at timestamp 301, should return 3.
+// counter.getHits(301);
 //
-//Follow up:
-//What if the number of hits per second could be very large? Does your design scale?
-
-type Counter struct {
-	start, end int
-}
+// Follow up:
+// What if the number of hits per second could be very large? Does your design scale?
 
 type HitCounter struct {
-	data        map[int]*Counter
-	index, prev int
+	hits  []int
+	times []int
 }
 
 /** Initialize your data structure here. */
 func Constructor() HitCounter {
 	return HitCounter{
-		data: make(map[int]*Counter),
+		hits:  make([]int, 300),
+		times: make([]int, 300),
 	}
 }
 
 /** Record a hit.
   @param timestamp - The current timestamp (in seconds granularity). */
 func (this *HitCounter) Hit(timestamp int) {
-	// not exist in hash, create one
-	if _, ok := this.data[timestamp]; !ok {
-		this.data[timestamp] = &Counter{
-			start: this.index,
-			end:   this.index,
-		}
-
-		if this.prev != 0 {
-			this.data[this.prev].end = this.index - 1
-		}
-		this.prev = timestamp
+	idx := timestamp % 300
+	if this.times[idx] != timestamp {
+		this.hits[idx] = 1
+		this.times[idx] = timestamp
 	} else {
-		this.data[timestamp].end = this.index
+		this.hits[idx]++
 	}
-	this.index++
 }
 
 /** Return the number of hits in the past 5 minutes.
   @param timestamp - The current timestamp (in seconds granularity). */
 func (this *HitCounter) GetHits(timestamp int) int {
-	// past 5 minutes, should be 1 ~ 300, 2 ~ 301, etc.
-	start := timestamp - 300 + 1
-	if start < 1 {
-		start = 1
-	}
-
-	var startIdx, endIdx int
-	for start <= timestamp {
-		if tmp, ok := this.data[start]; !ok {
-			start++
-		} else {
-			startIdx = tmp.start
-			break
+	var sum int
+	for i := range this.hits {
+		if timestamp-this.times[i] < 300 {
+			sum += this.hits[i]
 		}
 	}
 
-	if start > timestamp {
-		return 0
-	}
-
-	for timestamp > start {
-		if tmp, ok := this.data[timestamp]; !ok {
-			timestamp--
-		} else {
-			endIdx = tmp.end
-			break
-		}
-	}
-
-	if start == timestamp {
-		return this.data[timestamp].end - this.data[timestamp].start + 1
-	}
-
-	return endIdx - startIdx + 1
+	return sum
 }
 
 /**
@@ -141,3 +104,17 @@ func (this *HitCounter) GetHits(timestamp int) int {
 //		This problem doesn't care about mid status, which means no need to
 //		store every data, just count. So I would use a mono increasing
 //		number as index, and hash value stores a number's start & end index.
+
+//	8.	optimize, since time is always mono-increasing, there's actually only
+//		needs to store 300 seconds of data. And if data exceeds current limit,
+//		cleanup old ones
+
+//	9.	too slow, because array clean up should only happens when necessary,
+//		e.g. if timestamp is 100, 200, 100000, 100001, then cleanup of 100001
+//		is not necessary
+
+//	10.	reference uses another array to store each hits corresponds time, since
+//		time is mono-increasing, it's unique, so another array is used to denotes
+//		if time has elapsed more than 300 seconds.
+
+//		reference: https://leetcode.com/problems/design-hit-counter/discuss/83483/Super-easy-design-O(1)-hit()-O(s)-getHits()-no-fancy-data-structure-is-needed!
