@@ -37,21 +37,25 @@ func topKFrequent(nums []int, k int) []int {
 	}
 
 	result := make([]int, 0)
-	count := 0
-	for count < k {
-		for i := len(mapping) - 1; i >= 0; i-- {
-			if len(mapping[i]) == 0 {
-				continue
-			}
-			selectedCount := k - count
-			if selectedCount >= len(mapping[i]) {
-				result = append(result, mapping[i]...)
-				count += len(mapping[i])
+
+	for i := len(mapping) - 1; k > 0; i-- {
+		length := len(mapping[i])
+		if length > 0 {
+			if length > k {
+				result = append(result, mapping[i][:k]...)
 			} else {
-				result = append(result, mapping[i][:selectedCount]...)
-				count += selectedCount
+				result = append(result, mapping[i]...)
 			}
+			k -= length
 		}
 	}
+
 	return result
 }
+
+//	problems
+//	1.	should use k to search backward, it's more straight forward
+
+//	2.	reference from https://leetcode.com/problems/top-k-frequent-elements/discuss/81635/3-Java-Solution-using-Array-MaxHeap-TreeMap
+
+//		there are 3 ways to solve this, bucket, heap, treemap
