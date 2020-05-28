@@ -19,28 +19,45 @@ package main
 // [3, 4, 2, 3] false
 // [2, 3, 3, 2, 4] true
 func checkPossibility(nums []int) bool {
-	converted := false
-	for i := 1; i < len(nums); i++ {
-		if nums[i] < nums[i-1] {
-			if converted {
+	length := len(nums)
+	if length == 1 {
+		return true
+	}
+
+	var changes bool
+
+	for i := 0; i < length-1; i++ {
+		if nums[i] > nums[i+1] {
+			if changes {
 				return false
 			}
-			converted = true
 
-			// check left
-			if i == 1 || nums[i-2] <= nums[i] {
-				continue
+			if i > 0 {
+				if nums[i-1] > nums[i+1] {
+					nums[i+1] = nums[i]
+				} else {
+					nums[i] = nums[i+1]
+				}
+			} else {
+				nums[i] = nums[i+1]
 			}
-
-			// check right
-			if i == len(nums)-1 {
-				continue
-			}
-
-			if nums[i-1] > nums[i+1] {
-				return false
-			}
+			changes = true
 		}
 	}
 	return true
 }
+
+//	problems
+//	1.	inspired from https://leetcode.com/problems/non-decreasing-array/discuss/106826/JavaC%2B%2B-Simple-greedy-like-solution-with-explanation
+
+//		the thinking is pretty good, the order relates to 3 numbers:
+//		i-1, i, i+1
+
+//		the best strategy is to modify num[i] cause the higher nums[i+1]
+//		makes more risk to fail. but when nums[i-1] > nums[i+1] then it's
+//		a must to change nums[i+1]
+
+//	2.	add reference https://leetcode.com/problems/non-decreasing-array/discuss/106842/The-easiest-python-solution....
+
+//		the other way is to check if there exist another descending for next
+//		number
