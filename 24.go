@@ -15,7 +15,45 @@ type ListNode struct {
 	Next *ListNode
 }
 
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+
 func swapPairs(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+
+	cur := head
+	var next, next2 *ListNode
+	head = cur.Next
+	prev := &ListNode{}
+
+	for cur != nil {
+		next = cur.Next
+		if next == nil {
+			break
+		}
+		next2 = next.Next
+
+		// swap
+		cur.Next = next2
+		next.Next = cur
+		prev.Next = next
+
+		// loop
+		prev = cur
+		cur = next2
+	}
+
+	return head
+}
+
+func swapPairs1(head *ListNode) *ListNode {
 	if nil == head || nil == head.Next {
 		return head
 	}
@@ -73,3 +111,7 @@ func printList(head *ListNode) {
 		current = current.Next
 	}
 }
+
+//	problems
+//	1.	takes me roughly 30 minutes to come up a solution, and forget to
+//		update prev
