@@ -118,3 +118,13 @@ func (this *HitCounter) GetHits(timestamp int) int {
 //		if time has elapsed more than 300 seconds.
 
 //		reference: https://leetcode.com/problems/design-hit-counter/discuss/83483/Super-easy-design-O(1)-hit()-O(s)-getHits()-no-fancy-data-structure-is-needed!
+
+//		this method is thread safe only if every incoming calls are time
+//		monotonically increasing.
+
+//		the other thing to concern is that in real world, hit is usually
+//		higher frequency than getHit, so when designing api, cannot put
+//		cleanup in get function because it might called after a long
+//		period of time
+
+//		to make sure it's thread safe, use atomic.AddInt32
