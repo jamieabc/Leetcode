@@ -30,7 +30,36 @@ package main
 // a pointer to popped item list, if this popped item is same as top of stack
 // pop it and go to next popped item, otherwise push next pushed item
 // operation is invalid when find stack is not empty
+
 func validateStackSequences(pushed []int, popped []int) bool {
+	i, j := 0, 0
+	for _, n := range pushed {
+		pushed[i] = n
+		i++
+		for i >= 0 && j < len(popped) && pushed[i-1] == popped[j] {
+			i--
+			j++
+		}
+	}
+
+	return i == 0
+}
+
+func validateStackSequences3(pushed []int, popped []int) bool {
+	stack := make([]int, 0)
+
+	for i, j := 0, 0; i < len(pushed); i++ {
+		stack = append(stack, pushed[i])
+		for len(stack) > 0 && stack[len(stack)-1] == popped[j] {
+			j++
+			stack = stack[:len(stack)-1]
+		}
+	}
+
+	return len(stack) == 0
+}
+
+func validateStackSequences2(pushed []int, popped []int) bool {
 	if len(pushed) != len(popped) {
 		return false
 	}
@@ -89,3 +118,11 @@ func validateStackSequences1(pushed []int, popped []int) bool {
 	}
 	return true
 }
+
+//	problems
+//	1.	inspired from https://leetcode.com/problems/validate-stack-sequences/discuss/197685/C%2B%2BJavaPython-Simulation-O(1)-Space
+
+//		an elegant code
+
+//		for O(1) space, uses pushed as stack, the point is to rewrite
+//		stack so that no additional space is needed
