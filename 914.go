@@ -46,10 +46,6 @@ package main
 //    0 <= deck[i] < 10000
 
 func hasGroupsSizeX(deck []int) bool {
-	if len(deck) < 2 {
-		return false
-	}
-
 	mapping := make(map[int]int)
 
 	// count all cards occur times
@@ -61,38 +57,26 @@ func hasGroupsSizeX(deck []int) bool {
 		}
 	}
 
-	// find out min
-	count := make([]int, 0)
-	min := 10000
-	for _, v := range mapping {
-		count = append(count, v)
-		if v < min {
-			min = v
-		}
-	}
+	divisor := mapping[deck[0]]
 
 	// find common divisor
-	divisor := make([]int, min+1)
-	length := len(count)
-	var j int
-	for i := 2; i <= min; i++ {
-		if divisor[i] == 0 {
-			// mark all multiply
-			for j = i; j <= min; j += i {
-				divisor[j] = 1
-			}
-
-			// find out if any divisor that separate groups
-			for j = 0; j < length; j++ {
-				if count[j]%i != 0 {
-					break
-				}
-			}
-
-			if j == length {
-				return true
-			}
-		}
+	for _, v := range mapping {
+		divisor = gcd(divisor, v)
 	}
-	return false
+
+	return divisor > 1
 }
+
+func gcd(i, j int) int {
+	if j == 0 {
+		return i
+	}
+
+	return gcd(j, i%j)
+}
+
+//	problems
+//	1.	inspired from https://leetcode.com/problems/x-of-a-kind-in-a-deck-of-cards/discuss/469539/Go-GCD-with-explanation
+
+//		gcd can be found by iteratively repeat until b == 0:
+//		tmp = a % b, a = b, b = tmp
