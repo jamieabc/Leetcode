@@ -1,5 +1,7 @@
 package main
 
+import "sort"
+
 //Given a list of words, each word consists of English lowercase letters.
 //
 //Let's say word1 is a predecessor of word2 if and only if we can add exactly one letter anywhere in word1 to make it equal to word2.  For example, "abc" is a predecessor of "abac".
@@ -25,6 +27,31 @@ package main
 //    words[i] only consists of English lowercase letters.
 
 func longestStrChain(words []string) int {
+	length := len(words)
+	dp := make([]int, length)
+
+	sort.Slice(words, func(i, j int) bool {
+		return len(words[i]) < len(words[j])
+	})
+
+	var m int
+	for i := range dp {
+		for j := i - 1; j >= 0; j-- {
+			if len(words[j]) < len(words[i])-1 {
+				break
+			}
+
+			if chainable(words[i], words[j]) {
+				dp[i] = max(dp[i], dp[j]+1)
+				m = max(m, dp[i])
+			}
+		}
+	}
+
+	return m + 1
+}
+
+func longestStrChain1(words []string) int {
 	length := len(words)
 	if length <= 1 {
 		return 0
@@ -83,32 +110,46 @@ func longestStrChain(words []string) int {
 }
 
 func chainable(dst, src string) bool {
-	len1 := len(dst)
-	len2 := len(src)
-
-	if len1 != len2+1 {
-		return false
-	}
-
 	var i, j int
-	missing := false
-	for i, j = 0, 0; i < len1 && j < len2; i++ {
-		if dst[i] != src[j] {
-			if !missing {
-				missing = true
-			} else {
-				return false
-			}
-		} else {
+	var added bool
+	for i, j = 0, 0; i < len(dst) && j < len(src); i++ {
+		if dst[i] == src[j] {
 			j++
+		} else {
+			if added {
+				return false
+			} else {
+				added = true
+			}
 		}
 	}
 
-	if j == len2 {
-		return true
+	// first condition is that all src are same w/ one different char
+	// second condition is last char different
+	return (added && j == len(src)) || (!added && i == len(dst)-1)
+}
+
+func chainable2(dst, src string) bool {
+	length := len(dst)
+	if length-1 != len(src) {
+		return false
 	}
 
-	return missing == false
+	for i := 0; i < length; i++ {
+		bytes := []byte(dst)
+		tmp := append(bytes[:i], bytes[i+1:]...)
+		if string(tmp) == src {
+			return true
+		}
+	}
+	return false
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
 }
 
 // problems
@@ -126,3 +167,16 @@ func chainable(dst, src string) bool {
 // 7. use same name of variable, I accidently replace the other one
 // 8. seems like I don't need to sort strings
 // 9. optimize, the result can be stored when traversing dp
+
+//	10.	inspired from sample code, use map to store length n words, reduce
+//		time by space
+
+//	11.	inspired from https://leetcode.com/problems/longest-string-chain/discuss/294890/C%2B%2BJavaPython-DP-Solution
+
+//		chainable is to loop all possible previous word with 1 letter
+//		missing
+
+//		also, can use map to store all words with same length (in index)
+
+//		I think tc: O(n log n) + O(n * 2L * k), n: input length, L: average
+//		word length, k: # of words w/ same length
