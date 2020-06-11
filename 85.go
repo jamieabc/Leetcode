@@ -14,60 +14,92 @@ package main
 //Output: 6
 
 func maximalRectangle(matrix [][]byte) int {
-	yLength := len(matrix)
-	if yLength == 0 {
+	if len(matrix) == 0 {
 		return 0
 	}
-	xLength := len(matrix[0])
+	dp := make([]int, len(matrix[0]))
+	stack := []int{0}
 
-	height := make([]int, xLength)
-	left := make([]int, xLength)
-	right := make([]int, xLength)
+	var rect int
+	for i := range matrix {
+		for j := range matrix[0] {
+			if matrix[i][j] == '0' {
+				dp[j] = 0
+			} else {
+				dp[j] += 1
+			}
 
-	// right slice is initialized with length
-	for i := range right {
-		right[i] = xLength
+			// calculate maximum rectangle area till now
+			for len(stack) > 1 && dp[stack[len(stack)-1]] >= dp[j] {
+				top := stack[len(stack)-1]
+				stack = stack[:len(stack)-1]
+				end := stack[len(stack)-1]
+
+				if dp[end] < dp[top] {
+					end++
+				}
+				rect = max(rect, dp[top]*(j-end))
+			}
+			stack = append(stack, j)
+		}
+
+		// calculate remaining area
+		for start, j := stack[len(stack)-1], len(stack)-1; j >= 1; j-- {
+			end := stack[j-1]
+			if dp[end] < dp[stack[j]] {
+				end++
+			}
+
+			rect = max(rect, dp[stack[j]]*(start-end+1))
+		}
+		stack = stack[:1]
 	}
 
-	maxArea := 0
-	for j := range matrix {
-		curLeft := 0
-		curRight := xLength
-		for i := range matrix[0] {
-			// update height
-			if matrix[j][i] == '0' {
-				height[i] = 0
-			} else {
-				if j == 0 {
-					height[i] = 1
-				} else {
-					height[i]++
-				}
-			}
+	return rect
+}
 
-			// update left
-			if matrix[j][i] == '0' {
-				curLeft = i + 1
-				left[i] = 0
-			} else {
-				left[i] = max(left[i], curLeft)
-			}
+func maximalRectangle(matrix [][]byte) int {
+	if len(matrix) == 0 {
+		return 0
+	}
+	length := len(matrix[0])
+	h, l, r := make([]int, length), make([]int, length), make([]int, length)
+	for i := range r {
+		r[i] = length
+	}
 
-			// update right
-			if matrix[j][xLength-1-i] == '0' {
-				right[xLength-1-i] = xLength
-				curRight = xLength - 1 - i
+	var maxArea int
+	for i := range matrix {
+		cl, cr := 0, length
+
+		for j := range h {
+			if matrix[i][j] == '1' {
+				h[j]++
 			} else {
-				right[xLength-1-i] = min(right[xLength-1-i], curRight)
+				h[j] = 0
 			}
 		}
 
-		// udpate max area
-		for i := range height {
-			area := height[i] * (right[i] - left[i])
-			if area > maxArea {
-				maxArea = area
+		for j := range l {
+			if matrix[i][j] == '1' {
+				l[j] = max(l[j], cl)
+			} else {
+				l[j] = 0
+				cl = j + 1
 			}
+		}
+
+		for j := length - 1; j >= 0; j-- {
+			if matrix[i][j] == '1' {
+				r[j] = min(r[j], cr)
+			} else {
+				r[j] = length
+				cr = j
+			}
+		}
+
+		for j := range h {
+			maxArea = max(maxArea, h[j]*(r[j]-l[j]))
 		}
 	}
 
@@ -124,3 +156,10 @@ func min(i, j int) int {
 //	  right[j] = min(right[j], current_right)
 //	  current_right starts from length and is updated whenever
 //	  encounter 0
+
+//	10.	this problem relates to lc 84, calculate maximum rectangle
+//		tc: O(mn), because worst case in stack-based traverse is (2n), so for
+//		each line it's still n
+
+//	11.	solution for finding h, l, r is to use smart way to store iterated
+//		data
