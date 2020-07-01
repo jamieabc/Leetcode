@@ -31,6 +31,51 @@ package main
 //     sum(piles) is odd.
 
 func stoneGame(piles []int) bool {
+	size := len(piles)
+	// memo[i][j] means max stones could get if remaining stones from i to j
+	memo := make([][]int, size)
+	for i := range memo {
+		memo[i] = make([]int, size)
+		memo[i][i] = piles[i]
+	}
+	dfs(piles, 0, size-1, memo)
+
+	// alex always have full choices, bob has either 1~size-1 or 0~size-2
+	return memo[0][size-1] > max(memo[1][size-1], memo[0][size-2])
+}
+
+func dfs(stones []int, start, end int, memo [][]int) int {
+	// terminate
+	if start > end {
+		return 0
+	}
+
+	// already visited
+	if memo[start][end] > 0 {
+		return memo[start][end]
+	}
+
+	// either choose start or end
+	var chooseStart, chooseEnd int
+	if memo[start+1][end] > 0 {
+		chooseStart = memo[start+1][end]
+	} else {
+		chooseStart = dfs(stones, start+1, end, memo)
+		memo[start+1][end] = chooseStart
+	}
+
+	if memo[start][end-1] > 0 {
+		chooseEnd = memo[start][end-1]
+	} else {
+		chooseEnd = dfs(stones, start, end-1, memo)
+		memo[start][end-1] = chooseEnd
+	}
+
+	memo[start][end] = max(stones[start]+chooseStart, stones[end]+chooseEnd)
+	return memo[start][end]
+}
+
+func stoneGame3(piles []int) bool {
 	length := len(piles)
 	dp := make([]int, length)
 	for i := range dp {
@@ -129,3 +174,14 @@ func play(piles []int, alex, lee, turn, start, end int) bool {
 //	4.	add another reference https://leetcode.com/problems/stone-game/discuss/154660/Java-This-is-minimax-%2B-dp-(fully-detailed-explanation-%2B-generalization-%2B-easy-understand-code)
 
 //		author explains how dp come out, and the time complexity
+
+//	5.	inspired from https://leetcode.com/problems/stone-game/discuss/261718/Step-by-Step-Recursive-TopDown-BottomUp-and-BottomUp-using-O(n)-space-in-Java
+
+//		start from recursive w/ memo
+
+//	6.	inspired from https://leetcode.com/problems/stone-game/discuss/154660/Java-This-is-minimax-%2B-dp-(fully-detailed-explanation-%2B-generalization-%2B-easy-understand-code)
+
+//		I didn't aware this is a minimax problem.
+
+//		score can be defined as score(alex) - score(lee), then alex wants to maximize score, and lee
+//		wants to minimize score.
