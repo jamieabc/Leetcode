@@ -20,41 +20,29 @@ package main
 // Output: 10
 
 func largestRectangleArea(heights []int) int {
-	if len(heights) == 0 {
+	// for each number, find left & right boundary such that in this boundary,
+	// all numbers are greater or equal to self
+	size := len(heights)
+	if size == 0 {
 		return 0
 	}
 
-	left, right := make([]int, len(heights)), make([]int, len(heights))
-	left[0] = -1
-	right[len(right)-1] = len(right)
+	left, right := make([]int, size), make([]int, size)
 
-	var j int
-	for i := 1; i < len(heights); i++ {
-		for j = i - 1; j >= 0; {
-			if heights[j] <= heights[i] {
-				left[i] = j
-				break
-			}
+	for i := range heights {
+		j := i - 1
+		for j >= 0 && heights[j] >= heights[i] {
 			j = left[j]
 		}
-
-		if j < 0 {
-			left[i] = -1
-		}
+		left[i] = j
 	}
 
-	for i := len(heights) - 2; i >= 0; i-- {
-		for j = i + 1; j < len(heights); {
-			if heights[j] < heights[i] {
-				right[i] = j
-				break
-			}
+	for i := size - 1; i >= 0; i-- {
+		j := i + 1
+		for j < size && heights[j] >= heights[i] {
 			j = right[j]
 		}
-
-		if j == len(heights) {
-			right[i] = j
-		}
+		right[i] = j
 	}
 
 	var maxArea int
@@ -67,43 +55,34 @@ func largestRectangleArea(heights []int) int {
 }
 
 func largestRectangleArea2(heights []int) int {
-	if len(heights) == 0 {
-		return 0
-	}
-
-	// left boundary
-	stack := []int{0}
+	size := len(heights)
+	stack := make([]int, 0)
 
 	var maxArea int
 	for i := range heights {
-		maxArea = max(maxArea, heights[i])
-
-		// keep stack in height increasing order
-		for len(stack) > 1 && heights[stack[len(stack)-1]] >= heights[i] {
-			top := stack[len(stack)-1]
+		// keep stack in increasing order
+		for len(stack) > 0 && heights[stack[len(stack)-1]] >= heights[i] {
+			popped := stack[len(stack)-1]
 			stack = stack[:len(stack)-1]
 
-			end := stack[len(stack)-1]
-			// every range is from left to right, right is the index when loop start
-			// end depends on height of left item, if left item height == current height, width should
-			// include it, otherwise, width should not include it
-			if heights[end] < heights[top] {
-				end++
+			start := 0
+			if len(stack) > 0 {
+				start = stack[len(stack)-1] + 1
 			}
 
-			maxArea = max(maxArea, heights[top]*(i-end))
-
+			maxArea = max(maxArea, heights[popped]*(i-start))
 		}
 
 		stack = append(stack, i)
 	}
 
-	for start, i := stack[len(stack)-1], len(stack)-1; i >= 1; i-- {
-		end := stack[i-1]
-		if heights[end] < heights[stack[i]] {
-			end++
-		}
-		maxArea = max(maxArea, heights[stack[i]]*(start-end+1))
+	// process remaining bars
+	if len(stack) > 0 {
+		maxArea = max(maxArea, heights[stack[0]]*size)
+	}
+
+	for i := 1; i < len(stack); i++ {
+		maxArea = max(maxArea, heights[stack[i]]*(size-stack[i-1]-1))
 	}
 
 	return maxArea
