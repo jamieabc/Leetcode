@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 // Given two binary search trees, return True if and only if there is a node in the first tree and a node in the second tree whose values sum up to a given integer target.
 //
 //
@@ -33,6 +31,50 @@ import "fmt"
  * }
  */
 func twoSumBSTs(root1 *TreeNode, root2 *TreeNode, target int) bool {
+	if root1 == nil || root2 == nil {
+		return false
+	}
+
+	// traverse like sorted array, start from smallest + largest
+	n1, n2 := root1, root2
+	stack1, stack2 := make([]*TreeNode, 0), make([]*TreeNode, 0)
+
+	for (len(stack1) != 0 || n1 != nil) && (len(stack2) != 0 || n2 != nil) {
+		for n1 != nil {
+			stack1 = append(stack1, n1)
+			n1 = n1.Left
+		}
+
+		n1 = stack1[len(stack1)-1]
+		stack1 = stack1[:len(stack1)-1]
+
+		for n2 != nil {
+			stack2 = append(stack2, n2)
+			n2 = n2.Right
+		}
+
+		n2 = stack2[len(stack2)-1]
+		stack2 = stack2[:len(stack2)-1]
+
+		sum := n1.Val + n2.Val
+
+		if sum == target {
+			return true
+		} else if sum > target {
+			stack1 = append(stack1, n1)
+			n1 = nil
+			n2 = n2.Left
+		} else {
+			stack2 = append(stack2, n2)
+			n2 = nil
+			n1 = n1.Right
+		}
+	}
+
+	return false
+}
+
+func twoSumBSTs2(root1 *TreeNode, root2 *TreeNode, target int) bool {
 	if root1 == nil || root2 == nil {
 		return false
 	}
