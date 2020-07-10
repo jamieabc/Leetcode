@@ -20,6 +20,33 @@ package main
 //     0 <= A[i] <= 10^6
 
 func maxSumAfterPartitioning(A []int, K int) int {
+	memo := make([]int, len(A))
+	return dfs(A, K, 0, memo)
+}
+
+func dfs(nums []int, K, start int, memo []int) int {
+	size := len(nums)
+	if start >= size {
+		return 0
+	}
+
+	if memo[start] != 0 {
+		return memo[start]
+	}
+
+	var maxNumSoFar, maxSum int
+
+	for i := start; i < min(size, start+K); i++ {
+		maxNumSoFar = max(maxNumSoFar, nums[i])
+		maxSum = max(maxSum, maxNumSoFar*(i-start+1)+dfs(nums, K, i+1, memo))
+	}
+
+	memo[start] = maxSum
+
+	return maxSum
+}
+
+func maxSumAfterPartitioning2(A []int, K int) int {
 	length := len(A)
 	dp := make([]int, length)
 
@@ -123,3 +150,22 @@ func max(i, j int) int {
 //	3.	add reference https://leetcode.com/problems/partition-array-for-maximum-sum/discuss/299443/Java-O(NK).-Faster-than-99.82.-Less-memory-than-100.-With-Explanation.
 
 //		author uses recursive to find solution
+
+//	4.	a month later, cannot solve this problem...
+
+//	5.	inspired from https://leetcode.com/problems/partition-array-for-maximum-sum/discuss/370807/dfs-solution-using-memoization-super-easy-to-understand
+
+//		why dfs work? because maximum sum at index is not changed
+//		e.g. [1, 15, 7, 9, 2, 5, 10, 3]
+//		start from right most number 3, maximum sum is 3
+//		then start from second last number 10, there are two conditions:
+//		- [10], [3]
+//		- [10, 3]
+
+//		start form third last number 5, there are 3 conditions:
+//		- [5], [10], [3]
+//		- [5], [10, 3]
+//		- [5, 10, 3]
+
+//		sub-problem pattern is revealed, because both [10], [3] & [10, 3] is
+//		already considered at second last number
