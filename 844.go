@@ -1,6 +1,41 @@
 package main
 
 func backspaceCompare(S string, T string) bool {
+	var p1, p2 int
+
+	for p1, p2 = len(S)-1, len(T)-1; p1 >= 0 || p2 >= 0; {
+		p1 = nextChar(S, p1)
+		p2 = nextChar(T, p2)
+
+		if (p1 < 0 && p2 >= 0) || (p1 >= 0 && p2 < 0) || (p1 >= 0 && p2 >= 0 && S[p1] != T[p2]) {
+			break
+		}
+
+		p1--
+		p2--
+	}
+
+	return p1 < 0 && p2 < 0
+}
+
+func nextChar(str string, idx int) int {
+	var delCount int
+	for idx >= 0 {
+		if str[idx] == '#' {
+			idx--
+			delCount++
+		} else if delCount > 0 {
+			idx--
+			delCount--
+		} else {
+			return idx
+		}
+	}
+
+	return idx
+}
+
+func backspaceCompare3(S string, T string) bool {
 	backS, backT := 0, 0
 
 	// traverse backward, since backspace can only affect char before that position
@@ -119,3 +154,10 @@ func (s *stack) empty() bool {
 // 4. typo
 // 5. wrong situation if all characters are deleted, e.g. i will be 0 & j will be 0 which is not true
 // 6. if i & j both < 0, break loop
+
+//	7.	inspired from https://leetcode.com/problems/backspace-string-compare/discuss/145786/Python-tm
+
+//		use function to get next char
+
+//	8.	the point of this problem is to identify performing delete process,
+//		still need to check if next char is another delete
