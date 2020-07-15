@@ -15,7 +15,101 @@ package main
 //Follow up:
 //Could you do it in O(n) time and O(1) space?
 
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
 func isPalindrome(head *ListNode) bool {
+	if head == nil || head.Next == nil {
+		return true
+	}
+
+	// find half of linked list
+	slow, fast := head, head
+	for fast.Next != nil && fast.Next.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+
+	var mid *ListNode
+	if fast.Next == nil {
+		mid = slow
+	} else {
+		mid = slow.Next
+	}
+
+	// reverse second half of the linked list
+	// 1 2 3 3 2 1
+	// 1 2 3 2 1
+	prev := slow
+	slow = slow.Next
+	for slow != nil {
+		tmp := slow.Next
+		slow.Next = prev
+		slow, prev = tmp, slow
+	}
+	slow = prev
+
+	// compare again from head
+	for ptr := head; ptr != mid; ptr, slow = ptr.Next, slow.Next {
+		if ptr.Val != slow.Val {
+			return false
+		}
+	}
+
+	return true
+}
+
+func isPalindrome2(head *ListNode) bool {
+	if head == nil || head.Next == nil {
+		return true
+	}
+
+	_, ok := traverse(head, head)
+
+	return ok
+}
+
+// 1 2 1
+// 1 2 2 1
+// 1 2 3 3 2 1
+func traverse(fast, slow *ListNode) (*ListNode, bool) {
+	// odd length
+	if fast.Next == nil {
+		return slow.Next, true
+	}
+
+	// even length
+	if fast.Next.Next == nil {
+		return slow.Next.Next, slow.Val == slow.Next.Val
+	}
+
+	var going *ListNode
+	var ok bool
+
+	if fast.Next != nil && fast.Next.Next != nil {
+		going, ok = traverse(fast.Next.Next, slow.Next)
+	}
+
+	if !ok {
+		return nil, false
+	}
+
+	return going.Next, slow.Val == going.Val
+}
+
+func isPalindrome1(head *ListNode) bool {
 	if head == nil || head.Next == nil {
 		return true
 	}
@@ -65,3 +159,6 @@ func isPalindrome(head *ListNode) bool {
 	}
 	return true
 }
+
+//	problems
+//	1.	when using single pass, be careful about terminate condition
