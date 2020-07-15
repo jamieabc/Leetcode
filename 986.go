@@ -26,6 +26,54 @@ package main
 
 func intervalIntersection(A [][]int, B [][]int) [][]int {
 	result := make([][]int, 0)
+	for i, j := 0, 0; i < len(A) && j < len(B); {
+		if overlap(A[i], B[j]) {
+			result = append(result, intersection(A[i], B[j]))
+		}
+
+		// for the earlier interval, jump to next one
+		if A[i][1] < B[j][1] {
+			i++
+		} else if A[i][1] > B[j][1] {
+			j++
+		} else {
+			i++
+			j++
+		}
+	}
+
+	return result
+}
+
+func overlap(i1, i2 []int) bool {
+	if i1[1] < i2[0] || i2[1] < i1[0] {
+		return false
+	}
+
+	return true
+}
+
+func intersection(i1, i2 []int) []int {
+	// if overlap, return max(start) ~ min(end)
+	return []int{max(i1[0], i2[0]), min(i1[1], i2[1])}
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
+}
+
+func min(i, j int) int {
+	if i <= j {
+		return i
+	}
+	return j
+}
+
+func intervalIntersection1(A [][]int, B [][]int) [][]int {
+	result := make([][]int, 0)
 
 	if len(A) == 0 || len(B) == 0 {
 		return result
