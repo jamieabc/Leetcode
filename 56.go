@@ -18,6 +18,40 @@ import "sort"
 //
 //NOTE: input types have been changed on April 15, 2019. Please reset to default code definition to get new method signature.
 
+func merge(intervals [][]int) [][]int {
+	size := len(intervals)
+	if size <= 1 {
+		return intervals
+	}
+
+	sort.Slice(intervals, func(i, j int) bool {
+		return intervals[i][0] < intervals[j][0]
+	})
+
+	result := make([][]int, 0)
+	start, end := intervals[0][0], intervals[0][1]
+
+	for i := 1; i < size; i++ {
+		if intervals[i][0] <= end {
+			end = max(end, intervals[i][1]) // in case interval inside previous
+		} else {
+			result = append(result, []int{start, end})
+			start, end = intervals[i][0], intervals[i][1]
+		}
+	}
+
+	result = append(result, []int{start, end})
+
+	return result
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
+}
+
 type nums struct {
 	data [][]int
 }
@@ -36,7 +70,7 @@ func (n nums) Less(i, j int) bool {
 	return false
 }
 
-func merge(intervals [][]int) [][]int {
+func merge1(intervals [][]int) [][]int {
 	ints := make([][]int, len(intervals))
 	for i, n := range intervals {
 		ints[i] = []int{n[0], n[1]}
@@ -77,3 +111,16 @@ func combine(data [][]int) [][]int {
 // 1. 2 situations of overlap:
 //    1-3, 2-4 => 1-4
 //    1-4, 2-3 => 1-4
+
+//	2.	array might not be sorted
+
+//	3.	no need to update original intervals, just create another one to compare
+
+//	4.	since array is sorted that each interval start <= next interval start,
+//		compare only next start <= previous end, order matters
+
+//			|----|
+// 			   |-----|
+
+//	5.	even faster comparison, only compares the end of all previous intervals
+//		this is a really clever way, use characteristics of sorted array
