@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 //Given a non-empty array of integers, return the k most frequent elements.
 //
 //Example 1:
@@ -19,7 +21,107 @@ package main
 // create an array size of nums, to store frequency based on index
 // e.g. index 0 means 0 times, index 5 means 5 times, if there exist
 // multiple numbers with same frequency, store it in an array
+
+type num struct {
+	val, count int
+}
+
 func topKFrequent(nums []int, k int) []int {
+	counter := make(map[int]int)
+	for _, n := range nums {
+		counter[n]++
+	}
+
+	counts := make([]num, 0)
+	for n, count := range counter {
+		counts = append(counts, num{n, count})
+	}
+
+	quickSelect(counts, k, 0, len(counts)-1)
+
+	result := make([]int, 0)
+	for i := 0; i < k; i++ {
+		result = append(result, counts[i].val)
+	}
+
+	return result
+}
+
+func quickSelect(nums []num, target, start, end int) {
+	if start >= end {
+		return
+	}
+
+	idx := partition(nums, target, start, end)
+	if idx == target {
+		return
+	} else if idx < target {
+		quickSelect(nums, target, idx+1, end)
+	} else {
+		quickSelect(nums, target, start, idx)
+	}
+}
+
+func partition(nums []num, target, start, end int) int {
+	if start >= end {
+		return start
+	}
+
+	pivot := nums[start]
+	nums[end], nums[start] = nums[start], nums[end]
+
+	// valid items are all before store
+	store := start
+	for i := start; i <= end; i++ {
+		if nums[i].count > pivot.count {
+			nums[i], nums[store] = nums[store], nums[i]
+			store++
+		}
+	}
+
+	nums[store], nums[end] = nums[end], nums[store]
+	return store
+}
+
+type nums []num
+
+func (this nums) Len() int           { return len(this) }
+func (this nums) Less(i, j int) bool { return this[i].count > this[j].count }
+func (this nums) Swap(i, j int)      { this[i], this[j] = this[j], this[i] }
+
+func (this *nums) Push(x interface{}) {
+	*this = append(*this, x.(num))
+}
+
+func (this *nums) Pop() interface{} {
+	old := *this
+	n := len(old)
+	x := old[n-1]
+	*this = old[:n-1]
+	return x
+}
+
+func topKFrequent2(numbers []int, k int) []int {
+	counter := make(map[int]int)
+	for _, n := range numbers {
+		counter[n]++
+	}
+
+	n := &nums{}
+	heap.Init(n)
+	for key, value := range counter {
+		heap.Push(n, num{key, value})
+	}
+
+	result := make([]int, 0)
+	for i := 0; i < k; i++ {
+		result = append(result, heap.Pop(n).(num).val)
+	}
+
+	return result
+}
+
+func topKFrequent1(nums []int, k int) []int {
 	frequency := make(map[int]int)
 
 	// map for frequency
