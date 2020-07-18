@@ -34,7 +34,27 @@ package main
  *     Right *TreeNode
  * }
  */
-func pathSum(root *TreeNode, sum int) int {
+func pathSum(root *TreeNode, target int) int {
+	if root == nil {
+		return 0
+	}
+
+	return pathSumFrom(root, target) + pathSum(root.Left, target) + pathSum(root.Right, target)
+}
+
+func pathSumFrom(node *TreeNode, sum int) int {
+	if node == nil {
+		return 0
+	}
+
+	if node.Val == sum {
+		return 1 + pathSumFrom(node.Left, sum-node.Val) + pathSumFrom(node.Right, sum-node.Val)
+	}
+
+	return pathSumFrom(node.Left, sum-node.Val) + pathSumFrom(node.Right, sum-node.Val)
+}
+
+func pathSum1(root *TreeNode, sum int) int {
 	count := 0
 	cache := make(map[int]int)
 	cache[0] = 1
@@ -87,3 +107,27 @@ func traverse(node *TreeNode, cache map[int]int, sum, sumToCurrent int, count *i
 // 22. wrong key of cache, it should be sumToCurrent - sum
 // 23. when exactly match, the cache needs an entry of 0
 // 24. if list is empty, result is 0 because there's not such path
+
+//	25.	dont' forget to check only self
+
+//	26.	the reason to return map is for faster search, but what about just do
+//		tree search?
+
+//		to find a path sum to target, the problem is any node coult be start.
+//		so just setup a start, and search all possible combinations afterwards,
+//		then this problem is as a given target, find root-to-leaf path sum to
+//		target
+
+//	27.	inspired from https://leetcode.com/problems/path-sum-iii/discuss/91889/Simple-Java-DFS
+
+//		a really brilliant solution, all combinations comes from 3 parts:
+//		- self is included
+//		- self is not included, left child is included
+//		- self is not included, right child is included
+
+//	28.	inspired from https://leetcode.com/problems/path-sum-iii/discuss/141424/Python-step-by-step-walk-through.-Easy-to-understand.-Two-solutions-comparison.-%3A-)
+
+//		author has a more clear explanation of dfs, actually there are 2 dfs
+//		methods:
+//		- traverse every node
+//		- for a give node, traverse its sub children to find match path count
