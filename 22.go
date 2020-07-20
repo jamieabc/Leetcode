@@ -16,6 +16,34 @@ import "strings"
 
 func generateParenthesis(n int) []string {
 	result := make([]string, 0)
+
+	recursive(n, 0, 0, "", &result)
+
+	return result
+}
+
+//	tc: O(n * 2^n), every position has 2 choices, there are n chars
+func recursive(n, left, right int, str string, result *[]string) {
+	if left == n && right == n {
+		*result = append(*result, str)
+		return
+	}
+
+	if left == 0 {
+		recursive(n, 1, right, "(", result)
+	} else {
+		if left < n {
+			recursive(n, left+1, right, str+"(", result)
+		}
+
+		if left > right {
+			recursive(n, left, right+1, str+")", result)
+		}
+	}
+}
+
+func generateParenthesis1(n int) []string {
+	result := make([]string, 0)
 	brute([]byte{}, 0, 0, n, &result)
 	return result
 }
