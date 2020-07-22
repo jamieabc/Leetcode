@@ -173,3 +173,9 @@ func reorganizeString1(S string) string {
 
 //		every time write result, write most frequent char then second frequent
 //		char
+
+//	5.	one month later, use max heap to write out the problem. But I still has
+//		no intuition of failure case: max duplicates count > length / 2.
+
+//		because if failure case is avoided, it's more possible to think of
+//		interleaving way
