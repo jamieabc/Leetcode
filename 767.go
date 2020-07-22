@@ -20,6 +20,71 @@ import (
 // Note:
 //
 // S will consist of lowercase letters and have length in range [1, 500].
+type MaxCount struct {
+	Count int
+	Char  byte
+}
+
+type MaxCounts []MaxCount
+
+func (h MaxCounts) Len() int           { return len(h) }
+func (h MaxCounts) Less(i, j int) bool { return h[i].Count > h[j].Count }
+func (h MaxCounts) Peek() MaxCount     { return h[0] }
+
+func (h MaxCounts) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
+
+func (h *MaxCounts) Push(x interface{}) {
+	*h = append(*h, x.(MaxCount))
+}
+
+func (h *MaxCounts) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[:n-1]
+	return x
+}
+
+func reorganizeString(S string) string {
+	// each char occurrence count
+	counter := make([]int, 26)
+	for i := range S {
+		counter[S[i]-'a']++
+	}
+
+	// put into min heap
+	h := &MaxCounts{}
+	heap.Init(h)
+	for i, count := range counter {
+		if count > 0 {
+			heap.Push(h, MaxCount{
+				Count: count,
+				Char:  byte('a' + i),
+			})
+		}
+	}
+
+	// rearrange string by it next occurrence
+	str := make([]byte, len(S))
+
+	var prev MaxCount
+	var idx int
+	for idx = 0; h.Len() > 0; idx++ {
+		cur := heap.Pop(h).(MaxCount)
+		if prev != (MaxCount{}) && prev.Count > 0 {
+			heap.Push(h, prev)
+		}
+		str[idx] = cur.Char
+		cur.Count--
+		prev = cur
+	}
+
+	if idx < len(S) {
+		return ""
+	}
+
+	return string(str)
+}
 
 type stat struct {
 	b     byte
@@ -51,7 +116,7 @@ func (s *stats) Pop() interface{} {
 	return popped
 }
 
-func reorganizeString(S string) string {
+func reorganizeString2(S string) string {
 	counts := make([]int, 26)
 	for i := range S {
 		counts[int(S[i]-'a')]++
@@ -179,3 +244,8 @@ func reorganizeString1(S string) string {
 
 //		because if failure case is avoided, it's more possible to think of
 //		interleaving way
+
+//	6. 	when writing string, a brilliant way is to always write different
+//		char, use prev as previous inserted character and not putting back to
+//		heap, always write next different char, if there's no next different
+//		char (heap length == 0), then it's not possible to find an answer
