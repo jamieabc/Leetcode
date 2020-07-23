@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"container/heap"
+	"fmt"
+)
 
 //You are given two integer arrays nums1 and nums2 sorted in ascending order and an integer k.
 //
@@ -25,6 +28,60 @@ import "fmt"
 //Input: nums1 = [1,2], nums2 = [3], k = 3
 //Output: [1,3],[2,3]
 //Explanation: All possible pairs are returned from the sequence: [1,3],[2,3]
+type Sum struct {
+	val1, val2 int
+}
+
+type MaxHeap []Sum
+
+func (h MaxHeap) Len() int { return len(h) }
+func (h MaxHeap) Less(i, j int) bool {
+	return h[i].val1+h[i].val2 > h[j].val1+h[j].val2
+}
+func (h MaxHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
+func (h MaxHeap) Peek() Sum     { return h[0] }
+
+func (h *MaxHeap) Push(x interface{}) {
+	*h = append(*h, x.(Sum))
+}
+
+func (h *MaxHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+func kSmallestPairs(nums1 []int, nums2 []int, k int) [][]int {
+	h := &MaxHeap{}
+	heap.Init(h)
+
+	for i := 0; i < k && i < len(nums1); i++ {
+		for j := 0; j < k && j < len(nums2); j++ {
+			sum := nums1[i] + nums2[j]
+
+			if h.Len() < k {
+				heap.Push(h, Sum{
+					nums1[i], nums2[j],
+				})
+			} else if sum < h.Peek().val1+h.Peek().val2 {
+				heap.Pop(h)
+				heap.Push(h, Sum{
+					nums1[i], nums2[j],
+				})
+			}
+		}
+	}
+
+	result := make([][]int, 0)
+	for h.Len() > 0 {
+		popped := heap.Pop(h).(Sum)
+		result = append(result, []int{popped.val1, popped.val2})
+	}
+
+	return result
+}
 
 const (
 	indexNotFound = -1
@@ -148,7 +205,7 @@ func newPriorityQueue(limit int) *priorityQueue {
 	return &priorityQueue{queue: make([]node, 0), limit: limit}
 }
 
-func kSmallestPairs(nums1 []int, nums2 []int, k int) [][]int {
+func kSmallestPairs1(nums1 []int, nums2 []int, k int) [][]int {
 	if len(nums1) == 0 || len(nums2) == 0 || k == 0 {
 		return [][]int{}
 	}
