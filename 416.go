@@ -26,6 +26,7 @@ package main
 // Output: false
 //
 // Explanation: The array cannot be partitioned into equal sum subsets.
+
 func canPartition(nums []int) bool {
 	var sum int
 	for _, n := range nums {
@@ -54,6 +55,58 @@ func canPartition(nums []int) bool {
 	}
 
 	return dp[len(dp)-1][sum/2]
+}
+
+func canPartition3(nums []int) bool {
+	var sum int
+	for _, n := range nums {
+		sum += n
+	}
+
+	if sum&1 == 1 {
+		return false
+	}
+
+	// memo[i][j] means start from index i, sum to j is possible or not
+	memo := make([][]int, len(nums))
+	for i := range memo {
+		memo[i] = make([]int, sum/2+1)
+		memo[i][0] = 1
+
+		for j := 1; j < len(memo[0]); j++ {
+			memo[i][j] = -1
+		}
+	}
+
+	return dfs(nums, sum/2, 0, memo)
+}
+
+func dfs(nums []int, sum, idx int, memo [][]int) bool {
+	if sum == 0 {
+		return true
+	}
+
+	if idx >= len(nums) {
+		return false
+	}
+
+	if memo[idx][sum] > -1 {
+		return memo[idx][sum] == 1
+	}
+
+	var include, exclude bool
+	if nums[idx] <= sum {
+		include = dfs(nums, sum-nums[idx], idx+1, memo)
+	}
+	exclude = dfs(nums, sum, idx+1, memo)
+
+	if exclude || include {
+		memo[idx][sum] = 1
+	} else {
+		memo[idx][sum] = 0
+	}
+
+	return memo[idx][sum] == 1
 }
 
 func canPartition2(nums []int) bool {
@@ -88,15 +141,47 @@ func comb(nums []int, candidates map[int]bool) {
 }
 
 func canPartition1(nums []int) bool {
-	return dfs(nums, 0, 0, 0)
-}
-
-func dfs(nums []int, sum1, sum2, idx int) bool {
-	if idx < len(nums) {
-		return dfs(nums, sum1+nums[idx], sum2, idx+1) || dfs(nums, sum1, sum2+nums[idx], idx+1)
+	var sum int
+	for _, n := range nums {
+		sum += n
 	}
 
-	return sum1 == sum2
+	if sum&1 == 1 {
+		return false
+	}
+
+	// memo[i][j] == 1 means firsts i numbers can sum to j
+	memo := make([][]bool, len(nums))
+	for i := range memo {
+		memo[i] = make([]bool, sum/2+1)
+		memo[i][0] = true
+	}
+
+	if nums[0] < sum/2 {
+		memo[0][nums[0]] = true
+	}
+
+	bfs(nums, sum/2, 1, memo)
+
+	return memo[len(memo)-1][sum/2]
+}
+
+func bfs(nums []int, target, idx int, memo [][]bool) {
+	if idx >= len(nums) {
+		return
+	}
+
+	for i := 0; i < len(memo[0]); i++ {
+		if memo[idx-1][i] {
+			memo[idx][i] = true
+
+			if nums[idx]+i <= target {
+				memo[idx][nums[idx]+i] = true
+			}
+		}
+	}
+
+	bfs(nums, target, idx+1, memo)
 }
 
 //	problems
@@ -112,3 +197,5 @@ func dfs(nums []int, sum1, sum2, idx int) bool {
 //	3.	inspired from https://leetcode.com/problems/partition-equal-subset-sum/discuss/462699/Whiteboard-Editorial.-All-Approaches-explained.
 
 //		very important summary
+
+//	4.	for dfs, the goal is to find all possible values of subarray sum
