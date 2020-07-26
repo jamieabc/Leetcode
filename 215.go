@@ -14,8 +14,44 @@ package main
 //
 // Note:
 // You may assume k is always valid, 1 ≤ k ≤ array's length.
-
 func findKthLargest(nums []int, k int) int {
+	quickSelect(nums, 0, len(nums)-1, k)
+
+	return nums[k-1]
+}
+
+func quickSelect(nums []int, start, end, target int) {
+	if start >= end {
+		return
+	}
+
+	pivot := partition(nums, start, end)
+	if pivot == target-1 {
+		return
+	} else if pivot < target {
+		quickSelect(nums, pivot+1, end, target)
+	} else {
+		quickSelect(nums, start, pivot-1, target)
+	}
+}
+
+func partition(nums []int, start, end int) int {
+	nums[start], nums[end] = nums[end], nums[start]
+	storeAt := start
+
+	for i := start; i < end; i++ {
+		if nums[i] >= nums[end] {
+			nums[i], nums[storeAt] = nums[storeAt], nums[i]
+			storeAt++
+		}
+	}
+
+	nums[storeAt], nums[end] = nums[end], nums[storeAt]
+
+	return storeAt
+}
+
+func findKthLargest1(nums []int, k int) int {
 	length := len(nums)
 	start, end, idx := 0, length-1, length-k
 	for start < end {
