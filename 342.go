@@ -18,6 +18,21 @@ package main
 // power of 4 means count is even (2, 4, 6, 8, etc.)
 
 func isPowerOfFour(num int) bool {
+	return num > 0 && num&(num-1) == 0 && num&0xaaaaaaaa == 0
+}
+
+func isPowerOfFour2(num int) bool {
+	// create table
+	table := make(map[int]bool)
+
+	for i := 0; i <= 32; i += 2 {
+		table[1<<i] = true
+	}
+
+	return table[num]
+}
+
+func isPowerOfFour1(num int) bool {
 	if num <= 0 {
 		return false
 	}
@@ -56,3 +71,8 @@ func isPowerOfFour(num int) bool {
 // 1. didn't understand problem clearly, it's power of 4, not able to be divided by 4
 // 2. wrong consideration, power of 4 not only needs to have double zeros, but also only 1 in binary
 // 3. forget that when second wrong of checking 0, numb is mutated (num >>= 1)
+
+//	4.	4^0 = 1
+
+//	5.	inspired from solution, use num & (num-1) to check if it's power of 2,
+//		use num * 0xaaaaaaaa to check power of 4
