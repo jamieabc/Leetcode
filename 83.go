@@ -12,14 +12,40 @@ package main
 //Input: 1->1->2->3->3
 //Output: 1->2->3
 
-/**
- * Definition for singly-linked list.
- * type ListNode struct {
- *     Val int
- *     Next *ListNode
- * }
- */
 func deleteDuplicates(head *ListNode) *ListNode {
+	node := head
+
+	for node != nil && node.Next != nil {
+		if node.Val == node.Next.Val {
+			node.Next = node.Next.Next
+		} else {
+			node = node.Next
+		}
+	}
+
+	return head
+}
+
+func deleteDuplicates2(head *ListNode) *ListNode {
+	if head == nil {
+		return head
+	}
+
+	node, prev := head.Next, head
+
+	for node != nil {
+		if node.Val == prev.Val {
+			prev.Next = node.Next
+			node = node.Next
+		} else {
+			prev, node = node, node.Next
+		}
+	}
+
+	return head
+}
+
+func deleteDuplicates1(head *ListNode) *ListNode {
 	if head == nil || head.Next == nil {
 		return head
 	}
@@ -44,3 +70,5 @@ func deleteDuplicates(head *ListNode) *ListNode {
 
 // problems
 // 1. forget to check for consecutive same vallue nodes
+
+//	2.	inspired from solutino, only one variable is needed
