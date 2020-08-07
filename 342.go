@@ -18,7 +18,8 @@ package main
 // power of 4 means count is even (2, 4, 6, 8, etc.)
 
 func isPowerOfFour(num int) bool {
-	return num > 0 && num&(num-1) == 0 && num&0xaaaaaaaa == 0
+	return num > 0 && num&(num-1) == 0 && num&0x55555555 > 0
+	//return num > 0 && num&(num-1) == 0 && num&0xaaaaaaaa == 0
 }
 
 func isPowerOfFour2(num int) bool {
@@ -76,3 +77,6 @@ func isPowerOfFour1(num int) bool {
 
 //	5.	inspired from solution, use num & (num-1) to check if it's power of 2,
 //		use num * 0xaaaaaaaa to check power of 4
+
+//	6.	power of 4 has 2 conditions in 4 bits: 0100 & 0001
+//		so condition can use &0x5 to check
