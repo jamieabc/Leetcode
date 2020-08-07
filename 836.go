@@ -19,11 +19,24 @@ package main
 //Both rectangles rec1 and rec2 are lists of 4 integers.
 //All coordinates in rectangles will be between -10^9 and 10^9.
 
+func isRectangleOverlap(rec1 []int, rec2 []int) bool {
+	return intersect(rec1[0], rec1[2], rec2[0], rec2[2]) && intersect(rec1[1], rec1[3], rec2[1], rec2[3])
+}
+
+func intersect(s1, e1, s2, e2 int) bool {
+	if s1 == s2 {
+		return true
+	} else if s1 < s2 {
+		return !(s2 >= e1)
+	}
+	return !(s1 >= e2)
+}
+
 type point struct {
 	x, y int
 }
 
-func isRectangleOverlap(rec1 []int, rec2 []int) bool {
+func isRectangleOverlap1(rec1 []int, rec2 []int) bool {
 	p1, p2 := rectangle(rec1)
 	p3, p4 := rectangle(rec2)
 	o1 := overlap(p1, p2, p3, p4)
@@ -58,3 +71,6 @@ func overlap(p1, p2, p3, p4 point) bool {
 	}
 	return false
 }
+
+//	problems
+//	1.	overlap is easier to check for non-overlap
