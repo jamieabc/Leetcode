@@ -37,11 +37,78 @@ package main
 //    1 <= grid[0].length <= 10
 //    grid[i][j] is only 0, 1, or 2.
 
+var dirs = [][]int{
+	{-1, 0}, // up
+	{1, 0},  // down
+	{0, 1},  // right
+	{0, -1}, // left
+}
+
+func orangesRotting(grid [][]int) int {
+	// find rotten oranges
+	rotten := make([][]int, 0)
+	for i := range grid {
+		for j := range grid[i] {
+			if grid[i][j] == 2 {
+				rotten = append(rotten, []int{i, j})
+			}
+		}
+	}
+
+	// no rotten
+	if len(rotten) == 0 {
+		if anyFresh(grid) {
+			return -1
+		}
+		return 0
+	}
+
+	// each iteration, update fresh to rotten if it's adjacent to rotten
+	var minute int
+
+	// rotten process
+	for len(rotten) > 0 {
+		minute++
+		size := len(rotten)
+
+		for i := 0; i < size; i++ {
+			for _, d := range dirs {
+				newY, newX := rotten[i][0]+d[0], rotten[i][1]+d[1]
+				if newX >= 0 && newX < len(grid[0]) && newY >= 0 && newY < len(grid) && grid[newY][newX] == 1 {
+					grid[newY][newX] = 2
+					rotten = append(rotten, []int{newY, newX})
+				}
+			}
+		}
+
+		rotten = rotten[size:]
+	}
+
+	// check if any fresh still exist
+	if anyFresh(grid) {
+		return -1
+	}
+
+	return minute - 1
+}
+
+func anyFresh(grid [][]int) bool {
+	for i := range grid {
+		for j := range grid[i] {
+			if grid[i][j] == 1 {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 type point struct {
 	x, y int
 }
 
-func orangesRotting(grid [][]int) int {
+func orangesRotting1(grid [][]int) int {
 	rowL := len(grid)
 	if rowL == 0 {
 		return -1
