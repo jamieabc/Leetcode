@@ -34,6 +34,66 @@ import "strings"
 // 123-456 K = 4
 // 12-34-56 K = 4
 // 1234-5678 K = 4
+
+func licenseKeyFormatting(S string, K int) string {
+	// count chars in S
+	var charCount int
+	for i := range S {
+		if isChar(S[i]) {
+			charCount++
+		}
+	}
+
+	// allocate enough space for new string
+	remain := charCount % K
+	var newStr []byte
+	if remain == 0 && charCount > 0 {
+		newStr = make([]byte, (charCount/K)*(K+1)-1)
+	} else {
+		newStr = make([]byte, (charCount/K)*(K+1)+remain)
+	}
+
+	// put first remain chars
+	var i, j int
+	for ; i < remain; i++ {
+		for ; !isChar(S[j]); j++ {
+		}
+
+		newStr[i] = capitalize(S[j])
+		j++
+	}
+
+	if remain > 0 && i < len(newStr) {
+		newStr[i] = '-'
+		i++
+	}
+
+	for count := 1; i < len(newStr); i, j, count = i+1, j+1, count+1 {
+		for !isChar(S[j]) {
+			j++
+		}
+
+		newStr[i] = capitalize(S[j])
+		if count%K == 0 && i < len(newStr)-1 {
+			i++
+			newStr[i] = '-'
+		}
+	}
+
+	return string(newStr)
+}
+
+func capitalize(b byte) byte {
+	if b >= 'a' && b <= 'z' {
+		return 'A' + b - 'a'
+	}
+	return b
+}
+
+func isChar(b byte) bool {
+	return b != '-'
+}
+
 func licenseKeyFormatting(S string, K int) string {
 	length := len(S)
 
@@ -70,3 +130,16 @@ func licenseKeyFormatting(S string, K int) string {
 func capitalize(char string) string {
 	return strings.ToUpper(char)
 }
+
+//	Notes
+//	1.	be careful about string boundaries
+
+//	2.	inspired from https://leetcode.com/problems/license-key-formatting/discuss/96506/Concise-C%2B%2B-solution-(scan-string-backward)
+
+//		every K+1 from tail must be '-', and since I already calculated
+//		remain, this one could be used, which reduce a variable space
+
+//		as it's clear, start from beginning requires many checking for
+//		boundary conditions (empty string, space calcualtion, etc.). If
+//		interviewer allows additional space for reversed string, it would
+//		be better to write from back
