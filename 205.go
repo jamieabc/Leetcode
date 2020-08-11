@@ -23,8 +23,46 @@ package main
 //
 //Note:
 //You may assume both s and t have the same length.
-
 func isIsomorphic(s string, t string) bool {
+	// make sure every mapping from s -> t is unique
+	mapping := make([]int, 256)
+	for i := range mapping {
+		mapping[i] = -1
+	}
+
+	var idx1, idx2 int
+	for i := range s {
+		idx1, idx2 = int(s[i]), int(t[i])
+
+		if mapping[idx1] > -1 && mapping[idx1] != idx2 {
+			return false
+		}
+
+		mapping[idx1] = idx2
+	}
+
+	// make sure every mapping occurs only once
+	for i := 0; i < len(mapping); i++ {
+		if mapping[i] == -1 {
+			continue
+		}
+
+		if i != mapping[i] && mapping[i] != mapping[mapping[i]] {
+			mapping[i], mapping[mapping[i]] = mapping[mapping[i]], mapping[i]
+			i--
+		}
+	}
+
+	for i := range mapping {
+		if mapping[i] > -1 && i != mapping[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
+func isIsomorphic1(s string, t string) bool {
 	mapping1 := make(map[rune]rune)
 
 	for i, c := range s {
@@ -51,3 +89,6 @@ func isIsomorphic(s string, t string) bool {
 
 	return true
 }
+
+//	problems
+//	1.	characters mapping, not only alphabet
