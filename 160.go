@@ -47,7 +47,83 @@ package main
  *     Next *ListNode
  * }
  */
+
 func getIntersectionNode(headA, headB *ListNode) *ListNode {
+	if headA == nil || headB == nil {
+		return nil
+	}
+
+	ptr1, ptr2 := headA, headB
+
+	for ptr1 != ptr2 {
+		if ptr1 == nil {
+			ptr1 = headB
+		} else {
+			ptr1 = ptr1.Next
+		}
+
+		if ptr2 == nil {
+			ptr2 = headA
+		} else {
+			ptr2 = ptr2.Next
+		}
+	}
+
+	return ptr1
+}
+
+func getIntersectionNode2(headA, headB *ListNode) *ListNode {
+	if headA == nil {
+		return nil
+	}
+
+	// only one node for headA
+	if headA.Next == nil {
+		// check if any B visited
+		ptr := headB
+		for ptr != nil {
+			if ptr == headA {
+				return ptr
+			}
+			ptr = ptr.Next
+		}
+		return nil
+	}
+
+	// go to end of linked list
+	end := headA
+	for end.Next != nil {
+		end = end.Next
+	}
+
+	// create cycle
+	end.Next = headB
+
+	// find cycle start
+	slow, fast := headA.Next, headA.Next.Next
+	for slow != nil && fast != nil && fast.Next != nil && slow != fast {
+		slow = slow.Next
+		fast = fast.Next.Next
+	}
+
+	// if any pointer go to nil, there's no cycle
+	if slow == nil || fast == nil || fast.Next == nil {
+		end.Next = nil
+		return nil
+	}
+
+	fast = headA
+	for slow != fast {
+		slow = slow.Next
+		fast = fast.Next
+	}
+
+	// remove cycle
+	end.Next = nil
+	return slow
+}
+
+func getIntersectionNode1(headA, headB *ListNode) *ListNode {
 	if headA == nil && headB == nil {
 		return nil
 	}
@@ -94,3 +170,18 @@ func listLength(head *ListNode) int {
 	}
 	return length
 }
+
+//	Notes
+//	1.	inspired from https://leetcode.com/problems/intersection-of-two-linked-lists/discuss/49785/Java-solution-without-knowing-the-difference-in-len!
+
+//		the problem is about different length of linked list. If two
+//		linked list with same length, then start from two heads, compare
+//		each node one by one to find start of intersection.
+
+//		author provides a brilliant way, say two linked list with size
+//		a & b, a+b = b+a, which means start from headA and to headB, will
+//		intersect to another one start from headB and to headA.
+
+//		another small trick is that when traversing node, check null
+//		at next iteration, which helps to determine non-intersection
+//		condition
