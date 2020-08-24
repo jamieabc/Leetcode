@@ -16,8 +16,31 @@ package main
 //Space complexity should be O(n).
 //Can you do it like a boss? Do it without using any builtin function like __builtin_popcount in c++ or in any other language.
 
-// https://www.youtube.com/watch?v=QjEyO1137cM
 func countBits(num int) []int {
+	if num == 0 {
+		return []int{0}
+	}
+
+	result := make([]int, num+1)
+	result[1] = 1
+
+	for base, increment := 1, 1; base+increment <= num; {
+		if base == increment {
+			// number is power of 2
+			base *= 2
+			increment = 0
+			result[base] = 1
+		} else {
+			result[base+increment] = result[base] + result[increment]
+			increment++
+		}
+	}
+
+	return result
+}
+
+// https://www.youtube.com/watch?v=QjEyO1137cM
+func countBits1(num int) []int {
 	dp := make([]int, num+1)
 
 	if num >= 1 {
@@ -44,4 +67,7 @@ func countBits(num int) []int {
 	return dp
 }
 
+//	Notes
 //	1. 	optimization, use dp to reduce duplicated operation
+
+//	2.	be ware of the boundary condition, e.g. num = 0
