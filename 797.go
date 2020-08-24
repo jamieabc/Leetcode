@@ -80,7 +80,7 @@ func bfs(graph [][]int, tracing *[][]int) {
 	}
 }
 
-// problems
+// 	Notes
 //	1.	no need another 2D array, original array is able to trace routes
 // 	2.	use new array to store existing paths, avoid changes by content
 //	3.	when using slice, be ware of slice is a descriptor to array, so if
@@ -90,3 +90,25 @@ func bfs(graph [][]int, tracing *[][]int) {
 //	4.	use dfs to search
 //	5.	optimize, currently needs to traverse twice, first round down to
 //		end, then up, the second round can be reduced
+
+//	6.	inspired from solution, backtracking (dfs) tc: O(N * 2^N), what I
+//		understand, in the worst case scenario, every node is connected to
+//		other nodes, total paths from a node is 2^N, because other nodes
+//		could be selected or not, and there are N nodes to go
+
+//	7.	inspired from https://leetcode.com/problems/all-paths-from-source-to-target/discuss/118713/Java-DFS-Solution
+
+//		could use memoization to reduce repeated traversal
+
+//	8.	inspired from https://leetcode.com/problems/all-paths-from-source-to-target/discuss/118691/C%2B%2BPython-Backtracking
+
+//		is only count is asked, could use dp/memo to save time
+
+//	9.	inspired from https://leetcode.com/problems/all-paths-from-source-to-target/discuss/752481/Python-Simple-dfs-backtracking-explained
+
+//		number limit from 2 - 15 could give a hint of some kind of brute
+//		force method
+
+//	10.	inspired from https://leetcode.com/problems/all-paths-from-source-to-target/discuss/752625/C%2B%2B-DFS-based-Simple-Solution-Explained-100-Time-~80-Space
+
+//		it's already DAG, no need to store seen nodes
