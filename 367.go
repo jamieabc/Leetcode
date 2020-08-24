@@ -13,8 +13,30 @@ package main
 //
 //Input: 14
 //Output: false
-
 func isPerfectSquare(num int) bool {
+	if num == 1 {
+		return true
+	}
+
+	low, high := 1, num/2
+
+	for low <= high {
+		mid := low + (high-low)/2
+		double := mid * mid
+
+		if double == num {
+			return true
+		} else if double < num {
+			low = mid + 1
+		} else {
+			high = mid - 1
+		}
+	}
+
+	return false
+}
+
+func isPerfectSquare1(num int) bool {
 	if num < 0 {
 		return false
 	}
