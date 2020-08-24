@@ -46,7 +46,30 @@ package main
  *     Right *TreeNode
  * }
  */
+
 func isSubtree(s *TreeNode, t *TreeNode) bool {
+	if s == nil {
+		return false
+	}
+
+	return equals(s, t) || isSubtree(s.Left, t) || isSubtree(s.Right, t)
+}
+
+func equals(original, sub *TreeNode) bool {
+	if original == nil && sub == nil {
+		return true
+	} else if original == nil || sub == nil {
+		return false
+	}
+
+	if original.Val != sub.Val {
+		return false
+	}
+
+	return equals(original.Left, sub.Left) && equals(original.Right, sub.Right)
+}
+
+func isSubtree1(s *TreeNode, t *TreeNode) bool {
 	if s == nil && t == nil {
 		return true
 	}
@@ -100,6 +123,19 @@ func compare(src, dst *TreeNode) bool {
 	return src.Val == dst.Val && left && right
 }
 
-// problems
-// 1. event if value same, traversing still needs to go on
-// 2. only check left, forget to check right
+//	Notes
+//	1. event if value same, traversing still needs to go on
+//	2. only check left, forget to check right
+
+//	3.	inspired from solution, traverse tree in some order (pre-oder,
+//		in-order, post-order), convert tree into string and check if
+//		t-string is in s-string
+
+//	4.	inspired from https://leetcode.com/problems/subtree-of-another-tree/discuss/102724/Java-Solution-tree-traversal
+
+//		author simplifies condition check, first check both nil, then
+//		check one nil (||), then check value same
+
+//	5.	inspired from https://leetcode.com/problems/subtree-of-another-tree/discuss/102741/Python-Straightforward-with-Explanation-(O(ST)-and-O(S%2BT)-approaches)
+
+//		interesting thinking to hash nodes' children
