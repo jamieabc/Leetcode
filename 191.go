@@ -35,6 +35,17 @@ func hammingWeight(num uint32) int {
 	var count int
 
 	for num > 0 {
+		count++
+		num = num & (num - 1)
+	}
+
+	return count
+}
+
+func hammingWeight2(num uint32) int {
+	var count int
+
+	for num > 0 {
 		num &= num - 1
 		count++
 	}
@@ -56,3 +67,5 @@ func hammingWeight1(num uint32) int {
 
 //	problems
 //	1.	inspired from solution, to count 1's, one way is to count least one
+
+//	2.	inspired from wu-juan, num & (num-1) removes a bit
