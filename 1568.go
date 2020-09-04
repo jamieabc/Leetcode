@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 //Given a 2D grid consisting of 1s (land) and 0s (water).  An island is a maximal 4-directionally (horizontal or vertical) connected group of 1s.
 //
 //The grid is said to be connected if we have exactly one island, otherwise is said disconnected.
@@ -51,6 +53,10 @@ package main
 //    1 <= grid.length, grid[i].length <= 30
 //    grid[i][j] is 0 or 1.
 
+func main() {
+	fmt.Println(minDays([][]int{{1, 1, 1, 0}}))
+}
+
 func minDays(grid [][]int) int {
 	island := countIsland(grid)
 
@@ -62,7 +68,7 @@ func minDays(grid [][]int) int {
 	// become 0 or > 1
 
 	for i := range grid {
-		for j := range grid {
+		for j := range grid[0] {
 			if grid[i][j] == 1 {
 				grid[i][j] = 0
 
