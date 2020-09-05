@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 //Given a 2D grid consisting of 1s (land) and 0s (water).  An island is a maximal 4-directionally (horizontal or vertical) connected group of 1s.
 //
@@ -54,7 +57,27 @@ import "fmt"
 //    grid[i][j] is 0 or 1.
 
 func main() {
-	fmt.Println(minDays([][]int{{1, 1, 1, 0}}))
+	start := time.Now()
+	fmt.Println(minDays([][]int{
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1},
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1},
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1},
+		{0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+		{1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1},
+		{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1},
+	}))
+
+	elapsed := time.Now().Sub(start)
+	fmt.Println("elapsed: ", elapsed)
 }
 
 func minDays(grid [][]int) int {
@@ -153,3 +176,16 @@ func isLand(grid [][]int, visited [][]bool, point []int) bool {
 //		could be better next time!!
 
 //		Always focusing on any clues that might reduce computation!!
+
+//	2.	inspired from https://leetcode.com/problems/minimum-number-of-days-to-disconnect-island/discuss/819277/Python-Golang-There-are-only-3-possible-answers!
+
+//		union-find is also another way to find island count
+
+//	3.	inspired from https://leetcode.com/problems/minimum-number-of-days-to-disconnect-island/discuss/821143/Java-O(MN)-2ms-articulation-pointbridge-approach
+
+//		algorithm Tarjan provides solution in tc: O(mn), m & n is width & height of array
+
+//		this article https://emre.me/algorithms/tarjans-algorithm/#what-is-low-link explains pretty well
+//		also, some videos explains pretty clear:
+//		- https://www.youtube.com/watch?v=wUgWX0nc4NY is clear
+//		- https://www.youtube.com/watch?v=RYaakWv5m6o
