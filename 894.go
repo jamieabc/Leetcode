@@ -30,7 +30,43 @@ package main
  *     Right *TreeNode
  * }
  */
+
 func allPossibleFBT(N int) []*TreeNode {
+	// even node count cannot be full binary tree
+	if N&1 == 0 {
+		return []*TreeNode{}
+	}
+
+	trees := make([][]*TreeNode, N+1)
+	trees[1] = []*TreeNode{&TreeNode{}}
+
+	// full binary tree as composition of previous full binary tree
+	// 7 = Root + Left + Right
+	//   =  1   +  1   +   5
+	//   =  1   +  3   +   3
+	//   =  1   +  5   +   1
+	for i := 3; i <= N; i += 2 {
+		for j := 1; j <= i-2; j += 2 {
+			remain := i - 1 - j
+
+			// combine from existing
+			for _, t1 := range trees[j] {
+				for _, t2 := range trees[remain] {
+					node := &TreeNode{
+						Left:  t1,
+						Right: t2,
+					}
+
+					trees[i] = append(trees[i], node)
+				}
+			}
+		}
+	}
+
+	return trees[N]
+}
+
+func allPossibleFBT1(N int) []*TreeNode {
 	if N == 0 || N%2 == 0 {
 		return []*TreeNode{}
 	}
