@@ -26,7 +26,57 @@ package main
  *     Right *TreeNode
  * }
  */
-func bstFromPreorder(preorder []int) *TreeNode {
+
+func bstFromPreorder(nums []int) *TreeNode {
+	root, _ := recursive(nums, 0, -1)
+	return root
+}
+
+// tc: O(n)
+func recursive(nums []int, idx, prevIdx int) (*TreeNode, int) {
+	if len(nums) == 0 || idx >= len(nums) || (prevIdx != -1 && nums[idx] > nums[prevIdx]) {
+		return nil, idx
+	}
+
+	node := &TreeNode{
+		Val: nums[idx],
+	}
+
+	var right, next int
+	node.Left, right = recursive(nums, idx+1, idx)
+	node.Right, next = recursive(nums, right, prevIdx)
+
+	return node, next
+}
+
+// tc: average is O(n log n), worst is O(n^2)
+func bstFromPreorder2(nums []int) *TreeNode {
+	if len(nums) == 0 {
+		return nil
+	}
+
+	node := &TreeNode{
+		Val: nums[0],
+	}
+
+	if len(nums) == 1 {
+		return node
+	}
+
+	left := 1
+	for ; left < len(nums); left++ {
+		if nums[left] > nums[0] {
+			break
+		}
+	}
+
+	node.Left = bstFromPreorder(nums[1:left])
+	node.Right = bstFromPreorder(nums[left:])
+
+	return node
+}
+
+func bstFromPreorder1(preorder []int) *TreeNode {
 	return construct(preorder)
 }
 
@@ -68,3 +118,13 @@ func construct(preorder []int) *TreeNode {
 
 	return node
 }
+
+//	Notes
+//	1.	inspired from https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/discuss/252232/JavaC%2B%2BPython-O(N)-Solution
+
+//		there exists O(n) solution
+
+//	2.	inspired from https://leetcode.com/problems/construct-binary-search-tree-from-preorder-traversal/discuss/252722/Python-stack-solution-beats-100-on-runtime-and-memory
+
+//		it reminds me that checking value greater than parent is like
+//		stack operation
