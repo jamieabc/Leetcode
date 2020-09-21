@@ -19,51 +19,43 @@ package main
 //     1 <= mat[i][j] <= 100
 
 func diagonalSort(mat [][]int) [][]int {
-	y := len(mat)
-	if y == 0 {
-		return [][]int{}
-	}
-	x := len(mat[0])
+	var nums [101]int // max number is 100, bucket sort
 
-	var nums [101]int
-
-	for i := y; i >= 0; i-- {
-		diagonal(mat, 0, i, &nums)
+	for i := len(mat) - 1; i >= 0; i-- {
+		sortDiagonal(mat, 0, i, &nums)
 		replaceDiagonal(mat, 0, i, &nums)
 	}
 
-	for i := 1; i < x; i++ {
-		diagonal(mat, i, 0, &nums)
+	for i := 1; i < len(mat[0]); i++ {
+		sortDiagonal(mat, i, 0, &nums)
 		replaceDiagonal(mat, i, 0, &nums)
 	}
 
 	return mat
 }
 
-func diagonal(mat [][]int, x, y int, nums *[101]int) {
-	for count := 0; y+count < len(mat) && x+count < len(mat[0]); count++ {
-		nums[mat[y+count][x+count]]++
+func sortDiagonal(mat [][]int, x, y int, nums *[101]int) {
+	for ; y < len(mat) && x < len(mat[0]); x, y = x+1, y+1 {
+		nums[mat[y][x]]++
 	}
 }
 
 func replaceDiagonal(mat [][]int, x, y int, nums *[101]int) {
-	var count int
 	for i := range nums {
-		for nums[i] > 0 {
-			mat[y+count][x+count] = i
-			count++
+		for ; nums[i] > 0; x, y = x+1, y+1 {
+			mat[y][x] = i
 			nums[i]--
 		}
 	}
 }
 
-//	problems
+//	Notes
 //	1.	Optimize, there's some additional operation for "sort", so I found a clever
 //		way of doing sorting.
 
-//		Because each element inside matrix is limit <= 100, so there's a way of
-//		sorting: create an array of size 101, and index of the array means specific
-//		number is in diagonal
+//		(bucket sort) Because each element inside matrix is limit <= 100, so
+//		there's a way of sorting: create an array of size 101, and index of the
+//		array means specific number is in diagonal
 
 //		e.g. 9
 //				3
@@ -73,4 +65,5 @@ func replaceDiagonal(mat [][]int, x, y int, nums *[101]int) {
 //				    0	  1		 1   	1 ...
 
 //		in this way, sorting might be faster
+
 //	2.	replace number is determined by index, not by count (nums[i])
