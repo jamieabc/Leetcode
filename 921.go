@@ -40,6 +40,29 @@ package main
 //     S only consists of '(' and ')' characters.
 
 func minAddToMakeValid(S string) int {
+	var balance, count int
+
+	for i := range S {
+		if S[i] == '(' {
+			// waiting for )
+			balance++
+		} else {
+			if balance > 0 {
+				// pair (
+				balance--
+			} else {
+				count++
+
+				// invalid ) blocks previous valid (
+				balance = 0
+			}
+		}
+	}
+
+	return balance + count
+}
+
+func minAddToMakeValid1(S string) int {
 	stack := make([]rune, 0)
 	var add int
 
@@ -57,3 +80,7 @@ func minAddToMakeValid(S string) int {
 
 	return add + len(stack)
 }
+
+//	Notes
+//	1.	() is a pair, which means ( is awaiting for ), and ) alone is not
+//		allowed. Due to this reason, two variables are needed to show status
