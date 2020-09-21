@@ -18,14 +18,16 @@ func findDuplicates(nums []int) []int {
 	result := make([]int, 0)
 
 	for _, n := range nums {
-		// index start from 0, but number starts from 1, so decrease by 1 for indirect accessing
+		// index start from 0, but number starts from 1, so decrease 1 for
+		// indirect accessing
 		if n < 0 {
 			n = -n - 1
 		} else {
 			n -= 1
 		}
 
-		// if the number appears twice, the other number referenced by the number becomes negative
+		// if the number appears twice, the other number referenced by the
+		// number becomes negative
 		if nums[n] < 0 {
 			result = append(result, n+1)
 		} else {
@@ -36,5 +38,8 @@ func findDuplicates(nums []int) []int {
 	return result
 }
 
-//	problems
+//	Notes
 //	1.	I store wrong number, it should be n not nums[n]
+
+//	2.	inspired from solution, the wording is very precise, mark visited number
+//		in input array itself, very elegant!!
