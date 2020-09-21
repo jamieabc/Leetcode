@@ -53,6 +53,7 @@ import (
 //	However, I think of another method, use subtraction to do. Start from full
 //	string, then subtract one each time, and permute. Or further more, once string
 //	is decided, use math equation to calculate
+
 func numTilePossibilities(tiles string) int {
 	length := len(tiles)
 	if length <= 1 {
@@ -63,40 +64,44 @@ func numTilePossibilities(tiles string) int {
 	sort.Slice(bs, func(i, j int) bool { return bs[i] <= bs[j] })
 	tiles = string(bs)
 
-	var total int
-	track := make([]bool, length)
-	permutation(tiles, track, &total)
-	return total
+	flags := make([]bool, length)
+	return permutation(tiles, flags)
 }
 
-func permutation(str string, track []bool, total *int) {
+func permutation(str string, flags []bool) int {
+	var count int
+
 	for i := 0; i < len(str); {
 		// this char is already used in this round
-		if track[i] {
+		if flags[i] {
 			i++
 			continue
 		}
 
-		track[i] = true
-		*total++
-		permutation(str, track, total)
-		track[i] = false
+		flags[i] = true
+		count += 1 + permutation(str, flags)
+		flags[i] = false
 
 		// find next different character
-		for i += 1; i < len(str); i++ {
+		for i++; i < len(str); i++ {
 			if str[i] != str[i-1] {
 				break
 			}
 		}
 	}
+
+	return count
 }
 
-//	problems
+//	Notes
 //	1.	duplicates happens in this algorithm, e.g.
 //		AAABBC => AABBC ... AAABB ... => AABB ... AABB ...
+
 //	2.	wrong logic, string is calculated should be checked before calculate
 //		combination
+
 //	3.	permutation needs 2 variables: what are used in whole loop, what are used
 //		in this loop
+
 //	4.	when skipping repeated chars, make sure to consider when char is same
 //		to end
