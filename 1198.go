@@ -19,7 +19,56 @@ package main
 //     1 <= mat[i][j] <= 10^4
 //     mat[i] is sorted in increasing order.
 
+// tc: O(mn), every element is visited once
 func smallestCommonElement(mat [][]int) int {
+	current := mat[0][0]
+	pos := make([]int, len(mat))
+	var changed bool
+	var low, high int
+
+	for true {
+		changed = false
+
+		for i := range mat {
+			if mat[i][pos[i]] == current {
+				continue
+			}
+
+			// binary search
+			for low, high = pos[i], len(mat[0])-1; low <= high; {
+				mid := low + (high-low)/2
+
+				if mat[i][mid] == current {
+					low = mid // later update pos[i] = low
+					break
+				} else if mat[i][mid] < current {
+					low = mid + 1
+				} else {
+					high = mid - 1
+				}
+			}
+
+			if low == len(mat[0]) {
+				return -1
+			}
+
+			pos[i] = low
+
+			if mat[i][pos[i]] > current {
+				current = mat[i][pos[i]]
+				changed = true
+			}
+		}
+
+		if !changed {
+			return current
+		}
+	}
+
+	return -1
+}
+
+func smallestCommonElement1(mat [][]int) int {
 	yLength := len(mat)
 	if yLength == 0 {
 		return -1
@@ -63,5 +112,7 @@ func binarySearch(nums []int, target, start, end int) bool {
 	return binarySearch(nums, target, mid+1, end)
 }
 
-//	problems
+//	Notes
 //	1.	each row is already sorted, so binary search can help to help candidates
+
+//	2.	since array is already sorted, can compare each items one by one
