@@ -44,7 +44,26 @@ package main
 //     s.length == t.length
 //     s and t contain lower-case English letters only.
 
+// tc: O(m+n)
 func minSteps(s string, t string) int {
+	counter := make([]int, 26)
+
+	for i := range s {
+		counter[s[i]-'a']++
+	}
+
+	count := len(s)
+	for i := range t {
+		if counter[t[i]-'a'] > 0 {
+			counter[t[i]-'a']--
+			count--
+		}
+	}
+
+	return count
+}
+
+func minSteps1(s string, t string) int {
 	arr := make([]int, 26)
 
 	for i := range s {
