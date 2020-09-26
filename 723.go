@@ -33,6 +33,109 @@ package main
 //     Each board[i][j] will initially start as an integer in the range [1, 2000].
 
 func candyCrush(board [][]int) [][]int {
+	for anyConsecutive(board) {
+		refresh(board)
+	}
+	return board
+}
+
+func anyConsecutive(board [][]int) bool {
+	var updated bool
+	var count, j int
+	col := make([]int, len(board[0]))
+
+	for i := range board {
+		for j = 0; j < len(board[0]); j++ {
+			// mark consecutive row numbers to -1
+			if j == 0 {
+				count = 1
+			} else {
+				if abs(board[i][j]) == abs(board[i][j-1]) && board[i][j] != 0 {
+					count++
+				} else {
+					if count >= 3 {
+						updated = true
+						for k := j - count; k < j; k++ {
+							if board[i][k] > 0 {
+								board[i][k] *= -1
+							}
+						}
+					}
+					count = 1
+				}
+			}
+
+			// mark consecutive column numbers to -1
+			if i == 0 || board[i][j] == 0 {
+				col[j] = 1
+			} else {
+				if abs(board[i-1][j]) == abs(board[i][j]) {
+					col[j]++
+				} else {
+					if col[j] >= 3 {
+						updated = true
+						for k := i - col[j]; k < i; k++ {
+							if board[k][j] > 0 {
+								board[k][j] *= -1
+							}
+						}
+					}
+					col[j] = 1
+				}
+			}
+		}
+
+		if count >= 3 {
+			updated = true
+			for k := j - count; k < j; k++ {
+				if board[i][k] > 0 {
+					board[i][k] *= -1
+				}
+			}
+		}
+	}
+
+	// mark remain col to -1
+	for j = range col {
+		if col[j] >= 3 {
+			updated = true
+			for k := len(board) - col[j]; k < len(board); k++ {
+				if board[k][j] > 0 {
+					board[k][j] *= -1
+				}
+			}
+		}
+	}
+
+	return updated
+}
+
+func abs(i int) int {
+	if i >= 0 {
+		return i
+	}
+	return -i
+}
+
+func refresh(board [][]int) {
+	var i, idx int
+	for j := range board[0] {
+		for i, idx = len(board)-1, len(board)-1; i >= 0; i-- {
+			if board[i][j] < 0 {
+				continue
+			} else {
+				board[idx][j] = board[i][j]
+				idx--
+			}
+		}
+
+		for ; idx >= 0; idx-- {
+			board[idx][j] = 0
+		}
+	}
+}
+
+func candyCrush1(board [][]int) [][]int {
 	y := len(board)
 	if y == 0 {
 		return [][]int{}
@@ -147,8 +250,17 @@ func abs(i int) int {
 	return -i
 }
 
-//	problems
-//	1.	based from discussion, it can be done by no extra memory space. The
-//		trick is to mark numbers that are removed next time as negative.
+//	Notes
+//	1.	based from discussion, it can be done by no extra memory space.
+//		The trick is to mark numbers that are removed next time as
+//		negative.
 
 //		reference: https://leetcode.com/problems/candy-crush/discuss/113914/15-ms-Short-Java-Solution-Mark-crush-with-negative-value
+
+//	2.	to run in single pass, cannot mark consecutive numbers as -1
+//		when found, because column cannot use -1 to check
+
+//		also, when I found know that need another way to store
+//		consecutive information, I was thinking about adding another
+//		array, but more brilliant way is to reuse current array and
+//		use negative number to mark
