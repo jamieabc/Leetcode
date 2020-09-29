@@ -22,187 +22,202 @@ import "fmt"
 // The input is always valid. You may assume that evaluating the queries will result in no division by zero and there is no contradiction.
 
 func calcEquation(equations [][]string, values []float64, queries [][]string) []float64 {
-	parents := make(map[string]string)
-	factors := make(map[string]float64)
-
-	for i, eq := range equations {
-		// find
-		r1 := find(parents, factors, eq[0])
-		r2 := find(parents, factors, eq[1])
-
-		// union
-		// make latest divisor to be parent of dividend
-		parents[r1] = r2
-		// update factor, since factor[r2] = 1, factor[r1] is no longer 1
-		// factor[r1] is get from relative relationships
-		factors[r1] = values[i] * factors[eq[1]] / factors[eq[0]]
-	}
-
-	results := make([]float64, len(queries))
-	for i := range results {
-		results[i] = -1
-	}
-
-	for i, query := range queries {
-		dividend, divisor := query[0], query[1]
-		if _, ok := parents[dividend]; !ok {
-			continue
-		}
-
-		if _, ok := parents[divisor]; !ok {
-			continue
-		}
-
-		r1 := find(parents, factors, dividend)
-		r2 := find(parents, factors, divisor)
-
-		if r1 != r2 {
-			continue
-		}
-
-		results[i] = factors[dividend] / factors[divisor]
-	}
-
-	return results
-}
-
-func find(parents map[string]string, factors map[string]float64, str string) string {
-	if _, ok := parents[str]; !ok {
-		parents[str] = str
-		factors[str] = float64(1)
-		return str
-	}
-
-	parent := parents[str]
-	if parent == str {
-		return str
-	}
-
-	root := find(parents, factors, parent)
-	parents[str] = root
-
-	// update factor according parent, recursive process
-	factors[str] *= factors[parent]
-
-	return parents[str]
-}
-
-type query struct {
-	dividend string
-	divisor  string
-}
-
-func calcEquation1(equations [][]string, values []float64, queries [][]string) []float64 {
-	// create a hashmap to store possible equations, map[string]map[string]int
-	eqs := make(map[string]map[string]float64)
-	for i, eq := range equations {
-		addPath(eq[0], eq[1], values[i], eqs)
-	}
-
-	// for any query, make sure both string exist
-	// check if dividend string == divisor string
-	// merge [a,b] & [b,c] = [a,c]
-	// bfs with visited map
+	parents, factors := buildRelation(equations, values)
 
 	result := make([]float64, len(queries))
-	for i := range result {
-		result[i] = -1
-	}
-	for i, q := range queries {
-		dividend, divisor := q[0], q[1]
-		if _, ok := eqs[dividend]; !ok {
+	for i, query := range queries {
+		if _, ok := parents[query[0]]; !ok {
 			result[i] = float64(-1)
 			continue
 		}
 
-		if _, ok := eqs[divisor]; !ok {
+		if _, ok := parents[query[1]]; !ok {
 			result[i] = float64(-1)
 			continue
 		}
 
-		if dividend == divisor {
-			result[i] = float64(1)
-			continue
-		}
+		r1 := find(parents, factors, query[0])
+		r2 := find(parents, factors, query[1])
 
-		visited := make(map[string]map[string]bool)
-		queue := make([]query, 0)
-
-		// start from dividend
-		for d := range eqs[dividend] {
-			addVisited(dividend, d, visited)
-
-			queue = append(queue, query{
-				dividend: dividend,
-				divisor:  d,
-			})
-		}
-
-		for len(queue) > 0 {
-			end := len(queue)
-
-			for j := 0; j < end; j++ {
-				popped := queue[j]
-
-				for d, value := range eqs[popped.divisor] {
-					if popped.dividend == dividend && d == divisor {
-						result[i] = eqs[popped.dividend][popped.divisor] * value
-						j = end
-						break
-					}
-
-					if visited[popped.dividend][d] {
-						continue
-					}
-
-					addVisited(dividend, d, visited)
-					addPath(popped.dividend, d, eqs[popped.dividend][popped.divisor]*value, eqs)
-
-					queue = append(queue, query{
-						dividend: popped.dividend,
-						divisor:  d,
-					})
-				}
-			}
-
-			queue = queue[end:]
+		if r1 != r2 {
+			result[i] = float64(-1)
+		} else {
+			result[i] = factors[query[0]] / factors[query[1]]
 		}
 	}
 
 	return result
 }
 
-func addPath(dividend, divisor string, result float64, eqs map[string]map[string]float64) {
-	if _, ok := eqs[dividend]; !ok {
-		eqs[dividend] = make(map[string]float64)
+func buildRelation(equations [][]string, values []float64) (map[string]string, map[string]float64) {
+	parents, factors := make(map[string]string), make(map[string]float64)
+
+	for i, eq := range equations {
+		r1 := find(parents, factors, eq[0])
+		r2 := find(parents, factors, eq[1])
+
+		// a = k*r1, b = j*r2, a = m*b
+		// k*r1 = m*j*r2, r1/r2 = m*j/k
+
+		// a/b = 2, a = 2*b, so b is a's parent
+		parents[r1] = r2
+		factors[r1] = values[i] * factors[eq[1]] / factors[eq[0]]
 	}
 
-	if _, ok := eqs[dividend][divisor]; !ok {
-		eqs[dividend][divisor] = result
-	} else {
-		return
-	}
-
-	if _, ok := eqs[divisor]; !ok {
-		eqs[divisor] = make(map[string]float64)
-	}
-
-	if _, ok := eqs[divisor][dividend]; !ok {
-		eqs[divisor][dividend] = 1 / result
-	}
+	return parents, factors
 }
 
-func addVisited(dividend, divisor string, visited map[string]map[string]bool) {
-	if _, ok := visited[dividend]; !ok {
-		visited[dividend] = make(map[string]bool)
+func find(parents map[string]string, factors map[string]float64, target string) string {
+	if _, ok := parents[target]; !ok {
+		parents[target] = target
+		factors[target] = float64(1)
+		return target
 	}
 
-	visited[dividend][divisor] = true
-
-	if _, ok := visited[divisor]; !ok {
-		visited[divisor] = make(map[string]bool)
+	if parents[target] == target {
+		return target
 	}
-	visited[divisor][dividend] = true
+
+	p := find(parents, factors, parents[target])
+
+	// factors need to be updated if parent has been changed,
+	// otherwise, factor is not correct
+	if p != parents[target] {
+		factors[target] *= factors[parents[target]]
+		parents[target] = p
+	}
+
+	return parents[target]
+}
+
+// tc: O(mn), m: size of equations, n: size of queries, sc: O(m)
+func calcEquation2(equations [][]string, values []float64, queries [][]string) []float64 {
+	table := graph(equations, values)
+	result := make([]float64, len(queries))
+
+	for i := range queries {
+		result[i] = query(table, queries[i])
+	}
+
+	return result
+}
+
+func graph(equations [][]string, values []float64) map[string]map[string]float64 {
+	table := make(map[string]map[string]float64)
+
+	for i, eq := range equations {
+		if _, ok := table[eq[0]]; !ok {
+			table[eq[0]] = make(map[string]float64)
+		}
+
+		if _, ok := table[eq[1]]; !ok {
+			table[eq[1]] = make(map[string]float64)
+		}
+
+		table[eq[0]][eq[1]] = values[i]
+		table[eq[1]][eq[0]] = float64(1) / values[i]
+
+		// implies self / self = 1
+		table[eq[0]][eq[0]] = float64(1)
+		table[eq[1]][eq[1]] = float64(1)
+	}
+
+	return table
+}
+
+type EQ struct {
+	Val float64
+	Str string
+}
+
+func query(table map[string]map[string]float64, query []string) float64 {
+	if _, ok := table[query[0]]; !ok {
+		return float64(-1)
+	}
+
+	if _, ok := table[query[1]]; !ok {
+		return float64(-1)
+	}
+
+	queue := []EQ{{float64(1), query[1]}}
+	visited := make(map[string]bool)
+
+	for len(queue) > 0 {
+		q := queue[0]
+		queue = queue[1:]
+
+		if visited[q.Str] {
+			continue
+		}
+
+		visited[q.Str] = true
+
+		for str, val := range table[q.Str] {
+			if str == query[0] {
+				return float64(1) / (val * q.Val)
+			}
+
+			queue = append(queue, EQ{
+				Val: val * q.Val,
+				Str: str,
+			})
+		}
+	}
+
+	return float64(-1)
+}
+
+// tc: O(m*n^2), but it could be a wast of computation, since values should be
+// evaluated if query exist
+func calcEquation1(equations [][]string, values []float64, queries [][]string) []float64 {
+	table := buildGraph(equations, values)
+
+	result := make([]float64, len(queries))
+
+	for i, q := range queries {
+		if val, ok := table[q[0]][q[1]]; ok {
+			result[i] = val
+		} else {
+			result[i] = float64(-1)
+		}
+	}
+
+	return result
+}
+
+func buildGraph(equations [][]string, values []float64) map[string]map[string]float64 {
+	table := make(map[string]map[string]float64)
+
+	for i, eq := range equations {
+		if _, ok := table[eq[0]]; !ok {
+			table[eq[0]] = make(map[string]float64)
+		}
+
+		if _, ok := table[eq[1]]; !ok {
+			table[eq[1]] = make(map[string]float64)
+		}
+
+		table[eq[0]][eq[1]] = values[i]
+		table[eq[1]][eq[0]] = float64(1) / values[i]
+
+		table[eq[0]][eq[0]] = float64(1)
+		table[eq[1]][eq[1]] = float64(1)
+	}
+
+	for i := range table {
+		for j := range table {
+			if _, ok := table[i][j]; ok && i != j {
+				for k := range table {
+					if _, ok := table[j][k]; ok {
+						table[i][k] = table[i][j] * table[j][k]
+						table[k][i] = float64(1) / table[i][k]
+					}
+				}
+			}
+		}
+	}
+
+	return table
 }
 
 //	problems
@@ -227,10 +242,12 @@ func addVisited(dividend, divisor string, visited map[string]map[string]bool) {
 
 //	3.	add reference https://leetcode.com/problems/evaluate-division/discuss/147281/Java-Union-Find-solution-faster-than-99
 
-//		author uses union-find to solve the problem, interesting but not
-//		implement
+//		author uses union-find to solve the problem, interesting
+
+//		for each new coming equation, use new equations to update root relations
 
 //		when using union-find, divisor is always treated as root, occurrence
 //		order doesn't matter, as long as factor relationships is correct
+//		e.g. a / b = 2, a = 2 * b, that why treat divisor as root
 
 //		it's a pretty elegant solution
