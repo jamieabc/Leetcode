@@ -19,11 +19,9 @@ package main
 // Your algorithm should run in O(n) time and uses constant extra space.
 
 func firstMissingPositive(nums []int) int {
-	for i := 0; i < len(nums); {
-		if nums[i] > 0 && nums[i] < len(nums) && i != nums[i]-1 && nums[i] != nums[nums[i]-1] {
+	for i := range nums {
+		for i != nums[i]-1 && nums[i]-1 >= 0 && nums[i]-1 < len(nums) && nums[i] != nums[nums[i]-1] {
 			nums[i], nums[nums[i]-1] = nums[nums[i]-1], nums[i]
-		} else {
-			i++
 		}
 	}
 
@@ -36,5 +34,17 @@ func firstMissingPositive(nums []int) int {
 	return len(nums) + 1
 }
 
-//	problems
+//	Notes
+
 //	1.	boundary case when array is empty
+
+//	2.	be careful about condition to cause infinite loop, e.g. [1,1]
+
+//		core of this solution is that each number should eventually be placed at
+//		it's only valid position (i == nums[i]-1). keep cycling until specific
+//		number cannot be exchanged. at this situation, one boundary condition
+//		should be considered: target numbers and current number are same as
+//		expected value, e.g. [2, 1, 2]
+
+//	3.	inspired from solution, cyclic sort is described by "index as hash key"
+//		which is a very precise explanation.
