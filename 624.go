@@ -23,25 +23,19 @@ import (
 //    The integers in the m arrays will be in the range of [-10000, 10000].
 
 func maxDistance(arrays [][]int) int {
-	globalMax, globalMin := math.MinInt32, math.MaxInt32
+	smallest, largest := arrays[0][0], arrays[0][len(arrays[0])-1]
+	var maxDist int
 
-	// setup initial status
-	for i := 0; i < 2; i++ {
-		length := len(arrays[i])
-		globalMax = max(globalMax, arrays[i][length-1])
-		globalMin = min(globalMin, arrays[i][0])
+	// two numbers from different rows, so max distance need to be calculated,
+	// and previous smallest/largest can update
+	for i := 1; i < len(arrays); i++ {
+		arr := arrays[i]
+		maxDist = max(maxDist, max(abs(arr[0]-largest), abs(arr[len(arr)-1]-smallest)))
+		largest = max(largest, arr[len(arr)-1])
+		smallest = min(smallest, arr[0])
 	}
 
-	result := max(dist(arrays[0][0], arrays[1][len(arrays[1])-1]), dist(arrays[0][len(arrays[0])-1], arrays[1][0]))
-
-	for i := 2; i < len(arrays); i++ {
-		length := len(arrays[i])
-		result = max(result, max(dist(globalMax, arrays[i][0]), dist(globalMin, arrays[i][length-1])))
-		globalMax = max(globalMax, arrays[i][length-1])
-		globalMin = min(globalMin, arrays[i][0])
-	}
-
-	return result
+	return maxDist
 }
 
 type priorityQueue struct {
@@ -242,7 +236,7 @@ func min(i, j int) int {
 	return j
 }
 
-// 	problems
+// 	Notes
 //	1.	compare wrong, what I want is value of min index, not index value
 //	2.	optimize, no need for second pass, comparison can be done in single
 //		run
