@@ -47,52 +47,54 @@ import "fmt"
  */
 
 func depthSumInverse(nestedList []*NestedInteger) int {
-	var historySum, sum int
-	var list *[]*NestedInteger
-	list = &nestedList
+	var weighted, unweighted int
+	queue := nestedList
 
-	for len(*list) != 0 {
-		tmp := make([]*NestedInteger, 0)
-		for _, l := range *list {
-			if l.IsInteger() {
-				historySum += l.GetInteger()
+	// similar to BFS, order of number doesn't matter, every time process
+	// single number (same level in tree)
+	for len(queue) > 0 {
+		stop := len(queue)
+
+		for i := 0; i < stop; i++ {
+			if len(queue[i].GetList()) == 0 {
+				unweighted += queue[i].GetInteger()
 			} else {
-				tmp = append(tmp, l.GetList()...)
+				queue = append(queue, queue[i].GetList()...)
 			}
 		}
-		sum += historySum
-		list = &tmp
+
+		weighted += unweighted
+		queue = queue[stop:]
 	}
 
-	return sum
+	return weighted
 }
 
-func depthSumInverse2(nestedList []*NestedInteger) int {
-	rawSum, weighted, maxDepth := traverse(nestedList, 1)
-	return rawSum*(maxDepth+1) - weighted
-}
+func depthSumInverse1(nestedList []*NestedInteger) int {
+	nums := make([]int, 0)
+	dfs(nestedList, 0, &nums)
 
-func traverse(list []*NestedInteger, level int) (int, int, int) {
-	if len(list) == 0 {
-		return 0, 0, 0
+	var val int
+
+	for i := range nums {
+		val += nums[i] * (len(nums) - i)
 	}
 
-	var rawSum, weighted int
-	maxDepth := level
+	return val
+}
 
-	for _, l := range list {
-		if l.IsInteger() {
-			rawSum += l.GetInteger()
-			weighted += level * l.GetInteger()
+func dfs(nl []*NestedInteger, level int, nums *[]int) {
+	for level > len(*nums)-1 {
+		*nums = append(*nums, 0)
+	}
+
+	for _, l := range nl {
+		if len(l.GetList()) == 0 {
+			(*nums)[level] += l.GetInteger()
 		} else {
-			flat, tmp, depth := traverse(l.GetList(), level+1)
-			rawSum += flat
-			weighted += tmp
-			maxDepth = max(maxDepth, depth)
+			dfs(l.GetList(), level+1, nums)
 		}
 	}
-
-	return rawSum, weighted, maxDepth
 }
 
 //	problems
@@ -137,6 +139,17 @@ func traverse(list []*NestedInteger, level int) (int, int, int) {
 
 //	2. from another reference (https://leetcode.com/problems/nested-list-weight-sum-ii/discuss/83641/No-depth-variable-no-multiplication)
 
-//		It uses a variable to store all previous sum from specific list,
-//		the weighted means those sum are added multiple times. It's a BFS
-//		algorithm.
+//		this is a smart solution, initially I would like to get levels of each
+//		number, then try to multiply by depth. But this is not necessary, since
+//		going into next level # of times means what level that number sits in,
+//		for all previous sum, add them whenever entering next level
+
+//		the reason this works is because, for every number, order doesn't matter,
+//		only level matters.
+
+//		so, just like BFS, first process all single number, put them into a
+//		variable (unweighted), and add unweighted to total sum (weighted), then
+//		go to next level.
+
+//		because next level means all previous level number should be added again,
+//		unweighted is accumulated and added to total sum every level.
