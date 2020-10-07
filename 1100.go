@@ -27,6 +27,58 @@ package main
 //     1 <= K <= 10^4
 
 func numKLenSubstrNoRepeats(S string, K int) int {
+	if len(S) < K {
+		return 0
+	}
+
+	counter := make([]int, 26)
+
+	var valid, low, high int
+	for ; high < len(S); high++ {
+		// expand until duplicates found
+		for ; high < len(S); high++ {
+			counter[S[high]-'a']++
+			if counter[S[high]-'a'] > 1 {
+				break
+			}
+		}
+
+		// for range (low ~ high-1) w/o duplicates, which also means there are
+		// high - low - K + 1 intervals meets criteria
+		if high-low >= K {
+			valid += high - low - K + 1
+		}
+
+		// already reaches end, all intervals are counted
+		if high == len(S) {
+			return valid
+		}
+
+		// make sure window (low ~ high) without any duplicate
+		// because range (high ~ high-K) is counted, low should be updated to
+		// at least there
+		for low < high-K+1 || counter[S[high]-'a'] > 1 {
+			counter[S[low]-'a']--
+			low++
+		}
+	}
+
+	// after low is updated, need to check range again
+	if high-low >= K {
+		valid += high - low - K + 1
+	}
+
+	return valid
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
+}
+
+func numKLenSubstrNoRepeats1(S string, K int) int {
 	chars := make([]int, 26)
 	lenS := len(S)
 
@@ -71,7 +123,7 @@ func numKLenSubstrNoRepeats(S string, K int) int {
 	return result
 }
 
-//	problems
+//	Notes
 //	1.	inspired from reference https://leetcode.com/problems/find-k-length-substrings-with-no-repeated-characters/discuss/322982/Java-Sliding-Window-two-O(n)-codes-w-comments-and-analysis.
 
 //		My thinking is to use as sliding window and another array that stores number of chars in
