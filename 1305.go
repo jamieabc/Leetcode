@@ -46,7 +46,68 @@ package main
  *     Right *TreeNode
  * }
  */
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
 func getAllElements(root1 *TreeNode, root2 *TreeNode) []int {
+	n1, n2 := root1, root2
+	s1, s2 := make([]*TreeNode, 0), make([]*TreeNode, 0)
+	ans := make([]int, 0)
+
+	for (n1 != nil || len(s1) > 0) && (n2 != nil || len(s2) > 0) {
+		for n1 != nil {
+			s1 = append(s1, n1)
+			n1 = n1.Left
+		}
+		n1 = s1[len(s1)-1]
+
+		for n2 != nil {
+			s2 = append(s2, n2)
+			n2 = n2.Left
+		}
+		n2 = s2[len(s2)-1]
+
+		if n1.Val >= n2.Val {
+			ans = append(ans, n2.Val)
+			n2 = n2.Right
+			s2 = s2[:len(s2)-1]
+			n1 = nil
+		} else {
+			ans = append(ans, n1.Val)
+			n1 = n1.Right
+			s1 = s1[:len(s1)-1]
+			n2 = nil
+		}
+	}
+
+	// still need a whole traverse, in case one root is nil
+	inOrderTraverse(n1, s1, &ans)
+	inOrderTraverse(n2, s2, &ans)
+
+	return ans
+}
+
+func inOrderTraverse(node *TreeNode, stack []*TreeNode, ans *[]int) {
+	for node != nil || len(stack) > 0 {
+		for node != nil {
+			stack = append(stack, node)
+			node = node.Left
+		}
+
+		node = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+
+		*ans = append(*ans, node.Val)
+		node = node.Right
+	}
+}
+
+func getAllElements1(root1 *TreeNode, root2 *TreeNode) []int {
 	q1 := make([]*TreeNode, 0)
 	q2 := make([]*TreeNode, 0)
 
@@ -90,7 +151,7 @@ func traverse(node *TreeNode, queue *[]*TreeNode) {
 	}
 }
 
-//	problems
+//	Notes
 //	1.	wrong criteria of check i, j is valid
 
 //	2.	wrong condition, when j is increased, should not do checking cause it
