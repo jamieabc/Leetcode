@@ -31,10 +31,12 @@ package main
 //     Both the source and target strings consist of only lowercase English letters from "a"-"z".
 //     The lengths of source and target string are between 1 and 1000.
 
+// tc: O(n + m)
 func shortestWay(source string, target string) int {
 	// create a mapping, at index i, 0 ~ 25 means earliest char occurrence
 	// position
 	length := len(source)
+	// reverse index, next index of some character after starting index
 	mapping := make([][]int, length)
 	for i := range mapping {
 		mapping[i] = make([]int, 26)
@@ -46,6 +48,7 @@ func shortestWay(source string, target string) int {
 	}
 	mapping[length-1][source[length-1]-'a'] = length - 1
 
+	// recursive, start from last character, update corresponding index
 	for i := length - 2; i >= 0; i-- {
 		copy(mapping[i], mapping[i+1])
 		mapping[i][source[i]-'a'] = i
@@ -74,13 +77,15 @@ func shortestWay(source string, target string) int {
 	return count + 1
 }
 
+// tc: O(n + m), m: target length, n: source length
 func shortestWay3(source string, target string) int {
 	mapping := make([][]int, 26)
 	for i := range mapping {
 		mapping[i] = make([]int, len(source))
 	}
 
-	// a's index at 1, 3, 5 => [0, 2, 0, 4, 0, 6]
+	// store next index after occurrence of specific character
+	// e.g. a's index at 1, 3, 5 => [0, 2, 0, 4, 0, 6]
 	for i, c := range source {
 		mapping[c-'a'][i] = i + 1
 	}
@@ -121,6 +126,7 @@ func shortestWay3(source string, target string) int {
 	return count + 1
 }
 
+// tc: O(n + m log(n)), m: target length, n: source length
 func shortestWay2(source string, target string) int {
 	mapping := make([][]int, 26)
 	for i := range mapping {
@@ -131,48 +137,47 @@ func shortestWay2(source string, target string) int {
 		mapping[c-'a'] = append(mapping[c-'a'], i)
 	}
 
-	var count, k, l int
+	var count, low, high int
+	idx := -1
 
-	for j := 0; j < len(target); {
-		if len(mapping[target[j]-'a']) == 0 {
+	for i := range target {
+		// binary search
+		pos := int(target[i] - 'a')
+
+		// character not exist
+		if len(mapping[pos]) == 0 {
 			return -1
-		} else {
-			count, j = count+1, j+1
-			i := mapping[target[j-1]-'a'][0]
+		}
 
-			// binary search
-			for j < len(target) {
-				tmp := mapping[target[j]-'a']
-				if len(tmp) == 0 {
-					return -1
-				}
+		// binary search
+		tmp := -1
+		for low, high = 0, len(mapping[pos])-1; low <= high; {
+			mid := low + (high-low)/2
 
-				for k, l = 0, len(tmp)-1; k < l; {
-					mid := k + (l-k)/2
-
-					if tmp[mid] > i {
-						l = mid
-					} else {
-						k = mid + 1
-					}
-				}
-
-				if tmp[k] > i {
-					j++
-					i = tmp[k]
-				} else {
-					break
-				}
+			if mapping[pos][mid] > idx {
+				// if there are multiple same characters, need to find minimum
+				// e.g. source: aaa, target: aaaaaaaa
+				tmp = mapping[pos][mid]
+				high = mid - 1
+			} else if mapping[pos][mid] > idx {
+				high = mid - 1
+			} else {
+				low = mid + 1
 			}
+		}
+
+		if tmp != -1 {
+			idx = tmp
+		} else {
+			count++
+			idx = mapping[pos][0]
 		}
 	}
 
-	if count == 0 {
-		return -1
-	}
-	return count
+	return count + 1
 }
 
+// tc: O(mn), m: target length, n: largest array size for specific character
 func shortestWay1(source string, target string) int {
 	var count int
 
@@ -218,7 +223,9 @@ func shortestWay1(source string, target string) int {
 //		a = [1, 3, 3, 5, 5, 7, 7, 9, 9, -1]
 //		to know a's position after 6 can be done by a[6]
 
-//	4.	binary search has problem...boundary conditions
+//	4.	when using binary search, need to be careful if there's multiple same
+//		characters, first found might not be the best (smallest)
+//		e.g. source: "aaa", target: "aaaaaa"
 
 //	5.	when using table to store next index, need to take care of start
 //		index, when to stop, how to go next index
@@ -227,8 +234,11 @@ func shortestWay1(source string, target string) int {
 
 //		author default ith char next to be i+1, means each position is at
 //		at least increment by 1, after that update table for each character
-//		occurrence index, then updat whole table by occurrence index
+//		occurrence index, then update whole table by occurrence index
 
 //	7.	inspired from https://leetcode.com/problems/shortest-way-to-form-string/discuss/332419/O(M-%2B-N)-Java-solution-with-commented-code-and-detailed-explanation-(Beats-98)
 
-//		add O(n+m) solution
+//		use reverse index
+//		e.g. source: "abcab",
+//		table[0]['b'-'a'] = 1, which means start from index 0, next character of "b" is at 1
+//		table[1]['b'-'a'] = 4, which means start from index 1, next character of "b" is at 4
