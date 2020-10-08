@@ -27,6 +27,32 @@ import "math"
 //     1 <= label <= 10^6
 
 func pathInZigZagTree(label int) []int {
+	var level int
+	for i := 2; i-1 < label; i = i << 1 {
+		level++
+	}
+	ans := make([]int, level+1)
+	ans[len(ans)-1] = label
+
+	var idx, start int
+	for ; level > 0; level-- {
+		if level&1 > 0 {
+			for start, idx = 1<<(level+1)-1, 0; start-idx != label; idx++ {
+			}
+			label = (start+1)/4 + idx/2
+		} else {
+			for start, idx = 1<<level, 0; start+idx != label; idx++ {
+			}
+			label = start - 1 - idx/2
+		}
+
+		ans[level-1] = label
+	}
+
+	return ans
+}
+
+func pathInZigZagTree1(label int) []int {
 	level := 1
 	var count int
 	for count = 2; count-1 < label; count *= 2 {
@@ -64,6 +90,35 @@ func toZigzag(level, label int) int {
 	return size*2 - 1 - (label - size)
 }
 
-//	problems
+//	Notes
 //	1.	wrong checking for level, because label starts from 1, so when label
 //		is power of 2, level is wrong
+
+//	2.	inspired from https://leetcode.com/problems/path-in-zigzag-labelled-binary-tree/discuss/323293/C%2B%2B-O(log-n)
+//		what I think is to find relative index from start of that level, and
+//		find real zigzag value
+
+//		author thinks differently, first if no zigzag, parent = current/2, so
+//		he finds out the range of start & end of that level
+
+//		there's slightly difference
+
+//	3.	inspired from https://leetcode.com/problems/path-in-zigzag-labelled-binary-tree/discuss/324011/Python-O(logn)-time-and-space-with-readable-code-and-step-by-step-explanation
+
+//		use original tree as basic, find a way to map zigzag to original
+
+//             1
+//           /   \
+//         2       3
+//       /  \     /  \
+//     4     5   6     7
+//   / |    /|   |\    | \
+// 8   9  10 11 12 13  14  15
+
+//             1
+//           /   \
+//         3       2  <- 3+2-3 = 2/2 = 1
+//       /  \     /  \
+//     4     5   6     7   <- 7+4-4 = 7/2 = 3
+//   / |    /|   |\    | \
+// 15 14  13 12 11 10  9  8   <- 15+8-14 = 9/2 = 4
