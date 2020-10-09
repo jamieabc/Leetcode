@@ -17,41 +17,27 @@ package main
 //find(6) -> false
 
 type TwoSum struct {
-	mapping map[int]int
-	keys    []int
+	Nums map[int]int
 }
 
 /** Initialize your data structure here. */
 func Constructor() TwoSum {
 	return TwoSum{
-		mapping: make(map[int]int),
-		keys:    []int{},
+		Nums: make(map[int]int),
 	}
 }
 
 /** Add the number to an internal data structure.. */
 func (this *TwoSum) Add(number int) {
-	if _, ok := this.mapping[number]; !ok {
-		this.mapping[number] = 1
-		this.keys = append(this.keys, number)
-	} else {
-		this.mapping[number]++
-	}
+	this.Nums[number]++
 }
 
 /** Find if there exists any pair of numbers which sum is equal to the value. */
 func (this *TwoSum) Find(value int) bool {
-	for _, key := range this.keys {
-		remain := value - key
-		if c, ok := this.mapping[remain]; ok {
-			if remain != key {
-				return true
-			}
-
-			// in case it's duplicates, e.g. add(4), Find(8)
-			if remain == key && c >= 2 {
-				return true
-			}
+	for num, count := range this.Nums {
+		rest := value - num
+		if (num == rest && count > 1) || (num != rest && this.Nums[rest] > 0) {
+			return true
 		}
 	}
 
@@ -65,5 +51,7 @@ func (this *TwoSum) Find(value int) bool {
  * param_2 := obj.Find(value);
  */
 
-//	problems
+//	Notes
 //	1.	wrong logic when it's same number, any add will always exceeds 2
+
+//	2.	at least one operation tc needs to be O(n)
