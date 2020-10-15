@@ -25,25 +25,23 @@ package main
 //    Could you do it in-place with O(1) extra space?
 
 func rotate(nums []int, k int) {
-	length := len(nums)
-	if length == 0 {
+	size := len(nums)
+	if size <= 1 || k == size || k == 0 {
 		return
 	}
 
-	k = k % length
-	if k == 0 {
-		return
-	}
+	current := k % size
+	tmp := nums[0]
 
-	var count, start, prev, current, next int
-	for start, count = 0, 0; count < length; start++ {
-		current = start
-		prev = nums[current]
-		for next = -1; next != start; {
-			next = (current + k) % length
-			prev, nums[next] = nums[next], prev
-			current = next
-			count++
+	for start, i := 0, 0; i < size; i++ {
+		nums[current], tmp = tmp, nums[current]
+
+		if current == start {
+			start++
+			current = (start + k) % size
+			tmp = nums[start]
+		} else {
+			current = (current + k) % size
 		}
 	}
 }
