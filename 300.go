@@ -18,6 +18,73 @@ import "math"
 // Follow up: Could you improve it to O(n log n) time complexity?
 
 func lengthOfLIS(nums []int) int {
+	// seq[i] means last number for longest increasing subsequence length i, each
+	// lis sequence choose to have smallest last number
+	// e.g. [1, 3, 5, 2, 8, 4, 6]
+	// pick 1, length 1: [1]
+	// pick 3, length 2: [1, 3], 3 > 1, increase length
+	// pick 5, length 3: [1, 3, 5], 5 > 3, increase length
+	// pick 2, length 2: [1, 2], 1 < 2 <= 3
+	// pick 8, length 4: [1, 3, 5, 8], 8 > 5, increase length
+	// pick 4, length 3: [1, 3, 4], 3 < 4 <= 5
+	// pick 6, length 4: [1, 3, 5, 6], 5 < 6 <= 8
+	// take last number from length 1, 2, 3, 4, sequence becomes 1, 2, 4, 6
+	// which is a sorted array, can use binary search
+	seq := make([]int, 0)
+
+	for i := range nums {
+		if len(seq) == 0 || nums[i] > seq[len(seq)-1] {
+			// larger that existing largest, increase LIS length
+			seq = append(seq, nums[i])
+		} else {
+			if nums[i] < seq[0] {
+				// smaller than first number
+				seq[0] = nums[i]
+			} else {
+				// binary search
+				var tmp int
+				for low, high := 0, len(seq)-1; low <= high; {
+					mid := low + (high-low)/2
+
+					if seq[mid] < nums[i] {
+						low = mid + 1
+					} else {
+						tmp = mid
+						high = mid - 1
+					}
+				}
+				seq[tmp] = nums[i]
+			}
+		}
+	}
+
+	return len(seq)
+}
+
+// tc: O(n^2)
+func lengthOfLIS4(nums []int) int {
+	size := len(nums)
+
+	// dp[i] means longest length of increasing seqeunce
+	dp := make([]int, size)
+
+	var longest int
+
+	for i := range nums {
+		dp[i] = 1
+		for j := 0; j < i; j++ {
+			if nums[i] > nums[j] {
+				dp[i] = max(dp[i], dp[j]+1)
+			}
+		}
+
+		longest = max(longest, dp[i])
+	}
+
+	return longest
+}
+
+func lengthOfLIS3(nums []int) int {
 	table := make([][]int, len(nums))
 	for i := range table {
 		table[i] = make([]int, len(nums))
@@ -145,4 +212,13 @@ func max(i, j int) int {
 
 //	7.	add reference https://www.youtube.com/watch?v=S9oUiVYEq7E
 
-//		tc: O(n logn), didn't implement it
+//		tc: O(n log(n)), didn't implement it
+
+//	8.	for any given position, longest subsequence comes before all number less
+//		than self, so all previous calculated value can be reused
+
+//	9.	inspired from https://leetcode.com/problems/longest-increasing-subsequence/discuss/74824/JavaPython-Binary-search-O(nlogn)-time-with-explanation
+
+//		patience sorting https://www.cs.princeton.edu/courses/archive/spring13/cos423/lectures/LongestIncreasingSubsequence.pdf
+
+//		patience sorting https://segmentfault.com/a/1190000003819886
