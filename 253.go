@@ -86,11 +86,9 @@ func minMeetingRooms1(intervals [][]int) int {
 
 	for i := 0; i < size; i++ {
 		if minEnd.Len() == 0 || minEnd.Peek() > intervals[i][0] {
-			rooms++
-			maxRoom = max(maxRoom, rooms)
 			heap.Push(minEnd, intervals[i][1])
+			maxRoom = max(maxRoom, minEnd.Len())
 		} else {
-			rooms--
 			heap.Pop(minEnd)
 			i--
 		}
