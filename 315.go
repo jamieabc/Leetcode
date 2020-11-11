@@ -149,3 +149,7 @@ func max(i, j int) int {
 //		another dp technique is to store number that has inversion, since left
 //		& right subarray is already sorted, means if any number is from right,
 //		all remain left number shares this inversion.
+
+//	4.	to count number of smaller, when doing merge sort, select number from right
+//		adds to inversion, select number from left add inversion. This reduces
+//		computation to add 1 to left remaining number whenever smaller number sorted
