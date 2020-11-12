@@ -54,32 +54,25 @@ package main
  * }
  */
 func distributeCoins(root *TreeNode) int {
-	var steps int
+	var moves int
+	traverse(root, &moves)
 
-	_ = traverse(root, &steps)
-
-	return steps
+	return moves
 }
 
 // return value positive means transfer from child to parent
 // return value negative means transfer from parent to child
-func traverse(node *TreeNode, steps *int) int {
+func dfs(node *TreeNode, moves *int) int {
 	if node == nil {
 		return 0
 	}
 
-	var left, right int
-	if node.Left != nil {
-		left = traverse(node.Left, steps)
-	}
+	left, right := dfs(node.Left, moves), dfs(node.Right, moves)
 
-	if node.Right != nil {
-		right = traverse(node.Right, steps)
-	}
+	remain := node.Val + left + right - 1
+	*moves += abs(remain)
 
-	*steps += abs(left) + abs(right)
-
-	return node.Val - 1 + left + right
+	return remain
 }
 
 func abs(i int) int {
