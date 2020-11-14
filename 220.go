@@ -262,3 +262,7 @@ func abs(i int) int {
 
 //	7.	BST and array are basically same, inspired from sampe code, use array
 //		to store sorted numbers
+
+//	8.	inspired from https://leetcode.com/problems/contains-duplicate-iii/discuss/61645/AC-O(N)-solution-in-Java-using-buckets-with-explanation
+
+//		comments with clear explanation
