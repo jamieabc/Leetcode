@@ -33,208 +33,46 @@ import (
 //    0 <= k <= 104
 //    0 <= t <= 231 - 1
 
-type Node struct {
-	Val, Height, Bf int // bf: balance factor, right subtree height - left subtree height
-	Left, Right     *Node
-}
-
-func (node *Node) RotateRight() *Node {
-	n := node.Left
-	node.Left = n.Right
-	n.Right = node
-	return n
-}
-
-func (node *Node) RotateLeft() *Node {
-	n := node.Right
-	node.Right = n.Left
-	n.Left = node
-	return n
-}
-
-func Insert(node *Node, val int) *Node {
-	var n *Node
-	if node == nil {
-		n = &Node{
-			Val: val,
-		}
-
-		n.Update()
-		n.Balance()
-
-		return n
-	} else {
-		if val > node.Val {
-			n = Insert(node.Right, val)
-			node.Right = n
-		} else {
-			n = Insert(node.Left, val)
-			node.Left = n
-		}
-	}
-
-	n.Update()
-	n.Balance()
-
-	return node
-}
-
-func Remove(node *Node, val int) *Node {
-	// in case val not exist
-	if node == nil {
-		return nil
-	}
-
-	if node.Val == val {
-		n := findNextLarger(node)
-		if n == nil {
-			n = findPrevSmaller(node)
-		}
-
-		return n
-	} else if node.Val < val {
-		node.Right = Remove(node.Right, val)
-		node.Update()
-		node.Right = node.Balance()
-	} else {
-		node.Left = Remove(node.Left, val)
-		node.Update()
-		node.Left = node.Balance()
-	}
-
-	return node
-}
-
-func findNextLarger(node *Node) *Node {
-	if node.Right == nil {
-		return nil
-	}
-
-	var prev *Node
-	for prev, node = node, node.Right; node.Left != nil; prev, node = node, node.Left {
-	}
-
-	prev.Left = nil
-
-	return node
-}
-
-func findPrevSmaller(node *Node) *Node {
-	if node.Left == nil {
-		return nil
-	}
-
-	var prev *Node
-	for prev, node = node, node.Left; node.Right != nil; prev, node = node, node.Right {
-	}
-
-	prev.Right = nil
-	return node
-}
-
-func (node *Node) Update() {
-	node.Height = Height(node)
-
-	if node.Left == nil && node.Right == nil {
-		node.Bf = 0
-	} else if node.Left == nil {
-		node.Bf = node.Right.Height
-	} else if node.Right == nil {
-		node.Bf = -node.Left.Height
-	} else {
-		node.Bf = node.Right.Height - node.Left.Height
-	}
-}
-
-func (node *Node) Balance() *Node {
-	if node.Bf >= -1 && node.Bf <= 1 {
-		return node
-	}
-
-	// right children longer
-	if node.Bf == 2 {
-		if node.Right.Left != nil {
-			node.Right = node.Right.RotateRight()
-		}
-		return node.RotateLeft()
-	}
-
-	if node.Left.Right != nil {
-		node.Left = node.Left.RotateLeft()
-	}
-	return node.RotateRight()
-}
-
-func Height(node *Node) int {
-	if node == nil {
-		return -1
-	}
-
-	node.Height = 1 + max(Height(node.Left), Height(node.Right))
-
-	return node.Height
-}
-
-func max(i, j int) int {
-	if i >= j {
-		return i
-	}
-	return j
-}
-
-func InRange(node *Node, val, dist int) bool {
-	fmt.Println(node.Val, val, dist)
-	if node == nil {
-		return false
-	}
-
-	n := findNextLarger(node)
-	if n != nil && n != node && n.Val > val && n.Val <= val+dist {
-		fmt.Println("nl of ", node.Val, " is : ", n.Val)
-		return true
-	}
-
-	n = findPrevSmaller(node)
-	if n != nil && n != node && n.Val < val && n.Val >= val-dist {
-		fmt.Println("ns: ", node.Val)
-		return true
-	}
-	return false
-}
-
-func InOrder(node *Node) {
-	if node == nil {
-		return
-	}
-
-	InOrder(node.Left)
-	fmt.Printf("%d ", node.Val)
-	InOrder(node.Right)
-}
-
 func main() {
 	nums := []int{1, 5, 9, 1, 5, 9}
 	fmt.Println(containsNearbyAlmostDuplicate(nums, 1, 2))
 }
 
+type Sorted []int
+
+func (s *Sorted) Insert(val int) int {
+	idx := sort.SearchInts(*s, val)
+	*s = append(*s, 0)
+	copy((*s)[idx+1:], (*s)[idx:])
+	(*s)[idx] = val
+
+	return idx
+}
+
+func (s *Sorted) Remove(val int) {
+	idx := sort.SearchInts(*s, val)
+	copy((*s)[idx:], (*s)[idx+1:])
+	*s = (*s)[:len(*s)-1]
+}
+
+// tc: O(n log(n))
 func containsNearbyAlmostDuplicate(nums []int, k int, t int) bool {
 	if k == 0 {
 		return false
 	}
 
-	root := Insert(nil, nums[0])
-	for i := 1; i < len(nums); i++ {
-		InOrder(root)
-		fmt.Println()
+	s := &Sorted{}
 
-		if InRange(root, nums[i], t) {
+	for i := range nums {
+		idx := s.Insert(nums[i])
+
+		if (idx > 0 && abs((*s)[idx-1]-nums[i]) <= t) || (idx < len(*s)-1 &&
+			abs((*s)[idx+1]-nums[i]) <= t) {
 			return true
 		}
 
-		Insert(root, nums[i])
-
 		if i >= k {
-			Remove(root, nums[i-k])
+			s.Remove(nums[i-k])
 		}
 	}
 
@@ -244,35 +82,37 @@ func containsNearbyAlmostDuplicate(nums []int, k int, t int) bool {
 // tc: O(n)
 func containsNearbyAlmostDuplicate2(nums []int, k int, t int) bool {
 	buckets := make(map[int]int)
-	var bkt int
 
-	for i := range nums {
+	for i, num := range nums {
 		// remove number from bucket, only if it's expected (because there
 		// might be duplicate numbers, so only number with exactly same)
 		if i > k {
 			// if previous number exist numbers within same bucket, program
 			// already returns, so it means no numbers in same bucket, which
 			// is safe to remove this bucket
-			delete(buckets, bucket(nums[i-1-k], t))
+			delete(buckets, bucket(nums[i-k-1], t))
 		}
 
-		bkt = bucket(nums[i], t)
+		bkt := bucket(nums[i], t)
+
+		// already number in same bucket, this number difference must <= t
 		if _, ok := buckets[bkt]; ok {
 			return true
 		}
 
 		// check if adjacent buckets exist
-		if val, ok := buckets[bkt-1]; ok && abs(nums[i]-val) <= t {
+		if val, ok := buckets[bkt-1]; ok && num-val <= t {
 			return true
 		}
-		if val, ok := buckets[bkt+1]; ok && abs(nums[i]-val) <= t {
+
+		if val, ok := buckets[bkt+1]; ok && val-num <= t {
 			return true
 		}
 
 		// update bucket to latest index, because if there exist multiple
 		// numbers in same bucket, it should already return true in previous
 		// conditions
-		buckets[bkt] = nums[i]
+		buckets[bkt] = num
 	}
 
 	return false
@@ -419,3 +259,6 @@ func abs(i int) int {
 //	6.	for BST, in order to make sure distance t value exist, needs to find
 //		next larger successor & previous smaller successor, and check if these
 //		values with in distant t
+
+//	7.	BST and array are basically same, inspired from sampe code, use array
+//		to store sorted numbers
