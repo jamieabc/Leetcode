@@ -29,6 +29,62 @@ package main
 // Output: [1,4,8,2,5,9,3,6,7].
 
 type ZigzagIterator struct {
+	Data                   [][]int
+	Row, Column, MaxColumn int
+}
+
+func Constructor(v1, v2 []int) *ZigzagIterator {
+	data := make([][]int, 0)
+	if len(v1) > 0 {
+		data = append(data, v1)
+	}
+
+	if len(v2) > 0 {
+		data = append(data, v2)
+	}
+
+	z := &ZigzagIterator{
+		Data:      data,
+		MaxColumn: max(len(v1), len(v2)),
+	}
+
+	return z
+}
+
+func (this *ZigzagIterator) next() int {
+	val := this.Data[this.Row][this.Column]
+	this.findNext()
+
+	return val
+}
+
+func (this *ZigzagIterator) findNext() {
+	for this.Column < this.MaxColumn {
+		if this.Row >= len(this.Data)-1 {
+			this.Column++
+			this.Row = 0
+		} else {
+			this.Row++
+		}
+
+		if len(this.Data[this.Row]) > this.Column {
+			break
+		}
+	}
+}
+
+func (this *ZigzagIterator) hasNext() bool {
+	return this.Column < this.MaxColumn
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
+}
+
+type ZigzagIterator struct {
 	ptrs    []int
 	values  [][]int
 	size    int
@@ -70,3 +126,11 @@ func (this *ZigzagIterator) hasNext() bool {
  *	 ans = append(ans, obj.next())
  * }
  */
+
+//	Notes
+//	1.	cannot assume first array is always valid
+
+//	2.	inspired from https://leetcode.com/problems/zigzag-iterator/discuss/71779/Simple-Java-solution-for-K-vector
+
+//		only add array not empty, because empty list cannot be used anyway, it's
+//		easier to deal with corner case, instead of add array and check later
