@@ -24,56 +24,50 @@ package main
 // 1 <= mat[i][j] <= 100
 
 func matrixBlockSum(mat [][]int, K int) [][]int {
-	y := len(mat)
-	x := len(mat[0])
-	result := make([][]int, y)
-	for i := range result {
-		result[i] = make([]int, x)
-	}
-	dp := make([]int, x)
+	width, height := len(mat[0]), len(mat)
 
-	// setup dp
-	for i := 0; i <= K; i++ {
-		for tmp, j := 0, 0; j < x; j++ {
-			tmp += mat[i][j]
-			dp[j] += tmp
-		}
+	prefixSum := make([][]int, height)
+	for i := range prefixSum {
+		prefixSum[i] = make([]int, width)
 	}
 
-	var left, sum int
 	for i := range mat {
+		tmp := 0
 		for j := range mat[0] {
-			sum = dp[min(j+K, x-1)]
+			tmp += mat[i][j]
 
-			if j-K-1 >= 0 {
-				left = dp[j-K-1]
+			if i == 0 {
+				prefixSum[i][j] = tmp
 			} else {
-				left = 0
-			}
-
-			result[i][j] = sum - left
-		}
-
-		// out of range row from next row
-		if i-K >= 0 {
-			sum = 0
-			for j := range mat[0] {
-				sum += mat[i-K][j]
-				dp[j] -= sum
-			}
-		}
-
-		// newly added row from next row
-		if i+1+K < y {
-			sum = 0
-			for j := range mat[0] {
-				sum += mat[i+1+K][j]
-				dp[j] += sum
+				prefixSum[i][j] += prefixSum[i-1][j] + tmp
 			}
 		}
 	}
 
-	return result
+	ans := make([][]int, height)
+	for i := range ans {
+		ans[i] = make([]int, width)
+	}
+
+	for i := range ans {
+		for j := range ans[0] {
+			ans[i][j] += prefixSum[min(i+K, height-1)][min(j+K, width-1)]
+
+			if i > K {
+				ans[i][j] -= prefixSum[i-K-1][min(j+K, width-1)]
+			}
+
+			if j > K {
+				ans[i][j] -= prefixSum[min(i+K, height-1)][j-K-1]
+			}
+
+			if i > K && j > K {
+				ans[i][j] += prefixSum[i-K-1][j-K-1]
+			}
+		}
+	}
+
+	return ans
 }
 
 func min(i, j int) int {
