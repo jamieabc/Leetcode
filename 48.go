@@ -60,7 +60,22 @@ func rotate(matrix [][]int) {
 	}
 }
 
-//  problems
+func rotate1(matrix [][]int) {
+	size := len(matrix)
+	var next int
+
+	for rounds := 0; rounds < size/2; rounds++ {
+		for start, end := rounds, size-rounds-1; start < end; start++ {
+			matrix[start][size-1-rounds], next = matrix[rounds][start], matrix[start][size-1-rounds]
+			matrix[size-1-rounds][size-1-start], next = next, matrix[size-1-rounds][size-1-start]
+			matrix[size-1-start][rounds], next = next, matrix[size-1-start][rounds]
+			matrix[rounds][start] = next
+		}
+
+	}
+}
+
+//  Notes
 //  1.  reference from https://leetcode.com/problems/rotate-image/discuss/18872/A-common-method-to-rotate-the-image
 
 //      clockwise rotation can be done by flipping tops & downs then do
