@@ -52,6 +52,7 @@ func decodeString(s string) string {
 				chars = chars[:len(chars)-1]
 			}
 
+			// reverse string, because char is appended backward
 			for j, k := 0, len(tmp)-1; j < k; j, k = j+1, k-1 {
 				tmp[j], tmp[k] = tmp[k], tmp[j]
 			}
@@ -86,48 +87,36 @@ func decodeString(s string) string {
 }
 
 func decodeString1(s string) string {
-	return traverse(s)
+	_, str := decode(s, 0)
+
+	return string(str)
 }
 
-func traverse(s string) string {
-	var sb strings.Builder
-	length := len(s)
+func decode(s string, idx int) (int, []byte) {
+	str := make([]byte, 0)
+	size := len(s)
+	var i, num int
 
-	var j, k int
-	for i := 0; i < length; i++ {
+	for i = idx; i < size; i++ {
 		if isChar(s[i]) {
-			sb.WriteByte(s[i])
+			str = append(str, s[i])
+		} else if isNum(s[i]) {
+			num *= 10
+			num += int(s[i] - '0')
+		} else if s[i] == '[' {
+			next, tmp := decode(s, i+1)
+
+			for j := 0; j < num; j++ {
+				str = append(str, tmp...)
+			}
+			i = next
+			num = 0
 		} else {
-			for j = i + 1; j < len(s); j++ {
-				if !isNum(s[j]) {
-					break
-				}
-			}
-
-			n, _ := strconv.Atoi(s[i:j])
-			count := 1
-			for k = j + 1; k < len(s); k++ {
-				if s[k] == '[' {
-					count++
-				} else if s[k] == ']' {
-					count--
-				}
-
-				if count == 0 {
-					break
-				}
-			}
-			tmp := traverse(s[j+1 : k])
-
-			for ; n > 0; n-- {
-				sb.WriteString(tmp)
-			}
-
-			i = k
+			break
 		}
 	}
 
-	return sb.String()
+	return i, str
 }
 
 func isNum(b byte) bool {
@@ -135,7 +124,7 @@ func isNum(b byte) bool {
 }
 
 func isChar(b byte) bool {
-	return (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z')
+	return b >= 'a' && b <= 'z'
 }
 
 //	problems
