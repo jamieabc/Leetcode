@@ -46,6 +46,7 @@ func findBottomLeftValue(root *TreeNode) int {
 	return val
 }
 
+// DFS
 func traverse(node *TreeNode, level int, maxLevel, val *int) {
 	if node == nil {
 		return
@@ -60,7 +61,40 @@ func traverse(node *TreeNode, level int, maxLevel, val *int) {
 	traverse(node.Right, level+1, maxLevel, val)
 }
 
-//	problems
+// BFS
+func findBottomLeftValue1(root *TreeNode) int {
+	stack := []*TreeNode{root}
+	val := root.Val
+
+	for len(stack) > 0 {
+		size := len(stack)
+		var found bool
+
+		for i := 0; i < size; i++ {
+			if stack[i].Left != nil {
+				if !found {
+					val = stack[i].Left.Val
+					found = true
+				}
+				stack = append(stack, stack[i].Left)
+			}
+
+			if stack[i].Right != nil {
+				if !found {
+					val = stack[i].Right.Val
+					found = true
+				}
+				stack = append(stack, stack[i].Right)
+			}
+		}
+
+		stack = stack[size:]
+	}
+
+	return val
+}
+
+//	Notes
 //	1.	reference from https://leetcode.com/problems/find-bottom-left-tree-value/discuss/98779/Right-to-Left-BFS-(Python-%2B-Java)
 
 //		BFS can also do this, but aware that the order traverse is right then
