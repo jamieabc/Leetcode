@@ -50,7 +50,34 @@ func maxDepthAfterSplit(seq string) []int {
 	return result
 }
 
-//	problems
+func maxDepthAfterSplit1(seq string) []int {
+	size := len(seq)
+	ans := make([]int, size)
+
+	var left int
+
+	for i := range seq {
+		if seq[i] == '(' {
+			if left&1 == 0 {
+				ans[i] = 0
+			} else {
+				ans[i] = 1
+			}
+			left++
+		} else {
+			if left&1 > 0 {
+				ans[i] = 0
+			} else {
+				ans[i] = 1
+			}
+			left--
+		}
+	}
+
+	return ans
+}
+
+//	Notes
 //	1.	initially cannot understand the problem, thanks for reference https://leetcode.com/problems/maximum-nesting-depth-of-two-valid-parentheses-strings/discuss/358419/Confused-by-this-problem-I-was-too-but-here-is-how-it-became-crystal-clear...
 
 //	2.	stack is not necessary, it can be determined by current char == prev char
