@@ -38,54 +38,62 @@ package main
  *     Right *TreeNode
  * }
  */
-/**
- * Definition for a binary tree node.
- * type TreeNode struct {
- *     Val int
- *     Left *TreeNode
- *     Right *TreeNode
- * }
- */
-/**
- * Definition for a binary tree node.
- * type TreeNode struct {
- *     Val int
- *     Left *TreeNode
- *     Right *TreeNode
- * }
- */
-/**
- * Definition for a binary tree node.
- * type TreeNode struct {
- *     Val int
- *     Left *TreeNode
- *     Right *TreeNode
- * }
- */
 func kthSmallest(root *TreeNode, k int) int {
+	node := root
 	stack := make([]*TreeNode, 0)
 
-	for node := root; len(stack) > 0 || node != nil; {
-		if node != nil {
+	for node != nil || len(stack) > 0 {
+		for node != nil {
 			stack = append(stack, node)
 			node = node.Left
-		} else {
-			node = stack[len(stack)-1]
-			stack = stack[:len(stack)-1]
-
-			k--
-			if k == 0 {
-				return node.Val
-			}
-
-			node = node.Right
 		}
+
+		node = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+
+		k--
+		if k == 0 {
+			return node.Val
+		}
+
+		node = node.Right
 	}
 
-	return -1
+	return 0
 }
 
-//	problems
+func kthSmallest1(root *TreeNode, k int) int {
+	_, val := inOrder(root, k)
+
+	return val
+}
+
+// return sub-tree count, val
+func inOrder(node *TreeNode, k int) (int, int) {
+	if node == nil {
+		return 0, 0
+	}
+
+	left, val := inOrder(node.Left, k)
+
+	if left >= k {
+		return k, val
+	}
+
+	if left == k-1 {
+		return k, node.Val
+	}
+
+	right, val := inOrder(node.Right, k-1-left)
+
+	if right >= k-1-left {
+		return k, val
+	}
+
+	return left + right + 1, 0
+}
+
+//	Notes
 //	1.	not the fasted, use iteration instead
 
 //	2.	not update node
