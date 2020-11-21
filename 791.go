@@ -1,6 +1,8 @@
 package main
 
-import "strings"
+import (
+	"sort"
+)
 
 // S and T are strings composed of lowercase letters. In S, no letter occurs more than once.
 //
@@ -25,8 +27,27 @@ import "strings"
 // S and T consist of lowercase letters only.
 
 func customSortString(S string, T string) string {
+	counter := make([]int, 26)
+	for i := range counter {
+		counter[i] = 26
+	}
+
+	for i := range S {
+		counter[S[i]-'a'] = i
+	}
+
+	str := []byte(T)
+
+	sort.Slice(str, func(i, j int) bool {
+		return counter[str[i]-'a'] < counter[str[j]-'a']
+	})
+
+	return string(str)
+}
+
+func customSortString1(S string, T string) string {
 	arr := make([]int, 26)
-	var sb strings.Builder
+	ans := make([]byte, 0)
 
 	for i := range T {
 		arr[T[i]-'a']++
@@ -34,22 +55,22 @@ func customSortString(S string, T string) string {
 
 	for i := range S {
 		for arr[S[i]-'a'] > 0 {
-			sb.WriteByte(S[i])
+			ans = append(ans, S[i])
 			arr[S[i]-'a']--
 		}
 	}
 
 	for i := range arr {
 		for arr[i] > 0 {
-			sb.WriteByte(byte('a' + i))
+			ans = append(ans, byte('a'+i))
 			arr[i]--
 		}
 	}
 
-	return sb.String()
+	return string(ans)
 }
 
-//	problems
+//	Notes
 //	1.	from reference https://leetcode.com/problems/custom-sort-string/discuss/116573/Java-Bucket-sort-solution-O(N%2BM)-with-follow-up-questions
 
 //		arr1 is not needed, because it's already sorted.
