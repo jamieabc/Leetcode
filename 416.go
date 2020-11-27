@@ -27,6 +27,7 @@ package main
 //
 // Explanation: The array cannot be partitioned into equal sum subsets.
 
+// tc: O(mn), n: array size, m: subset of sums
 func canPartition(nums []int) bool {
 	var sum int
 	for _, n := range nums {
@@ -37,7 +38,7 @@ func canPartition(nums []int) bool {
 		return false
 	}
 
-	// dp[i][j] means sum j from index i items
+	// dp[i][j]: sum to j from index i
 	dp := make([][]bool, len(nums))
 	for i := range dp {
 		dp[i] = make([]bool, sum/2+1)
@@ -46,9 +47,12 @@ func canPartition(nums []int) bool {
 
 	for i := 1; i < len(nums); i++ {
 		for j := 1; j < len(dp[0]); j++ {
+			// not select
 			dp[i][j] = dp[i-1][j]
 
+			// select
 			if j >= nums[i] {
+				// very brilliant bottom-up dp
 				dp[i][j] = dp[i][j] || dp[i-1][j-nums[i]]
 			}
 		}
@@ -67,21 +71,13 @@ func canPartition3(nums []int) bool {
 		return false
 	}
 
-	// memo[i][j] means start from index i, sum to j is possible or not
-	memo := make([][]int, len(nums))
-	for i := range memo {
-		memo[i] = make([]int, sum/2+1)
-		memo[i][0] = 1
-
-		for j := 1; j < len(memo[0]); j++ {
-			memo[i][j] = -1
-		}
-	}
+	// memo[i][j]: does start from index i possible sum to j
+	memo := make(map[int]map[int]bool)
 
 	return dfs(nums, sum/2, 0, memo)
 }
 
-func dfs(nums []int, sum, idx int, memo [][]int) bool {
+func dfs(nums []int, sum, idx int, memo map[int]map[int]bool) bool {
 	if sum == 0 {
 		return true
 	}
@@ -90,8 +86,8 @@ func dfs(nums []int, sum, idx int, memo [][]int) bool {
 		return false
 	}
 
-	if memo[idx][sum] > -1 {
-		return memo[idx][sum] == 1
+	if _, ok := memo[idx][sum]; ok {
+		return memo[idx][sum]
 	}
 
 	var include, exclude bool
@@ -100,13 +96,12 @@ func dfs(nums []int, sum, idx int, memo [][]int) bool {
 	}
 	exclude = dfs(nums, sum, idx+1, memo)
 
-	if exclude || include {
-		memo[idx][sum] = 1
-	} else {
-		memo[idx][sum] = 0
+	if _, ok := memo[idx]; !ok {
+		memo[idx] = make(map[int]bool)
 	}
+	memo[idx][sum] = include || exclude
 
-	return memo[idx][sum] == 1
+	return memo[idx][sum]
 }
 
 func canPartition2(nums []int) bool {
@@ -140,6 +135,7 @@ func comb(nums []int, candidates map[int]bool) {
 	}
 }
 
+// tc: O(mn), n: array size, m: # of subset sums
 func canPartition1(nums []int) bool {
 	var sum int
 	for _, n := range nums {
@@ -149,32 +145,35 @@ func canPartition1(nums []int) bool {
 	if sum&1 == 1 {
 		return false
 	}
+	target := sum >> 1
 
-	// memo[i][j] == 1 means firsts i numbers can sum to j
+	// memo[i][j]: does first i numbers can sum to j
 	memo := make([][]bool, len(nums))
 	for i := range memo {
-		memo[i] = make([]bool, sum/2+1)
+		memo[i] = make([]bool, target+1)
 		memo[i][0] = true
 	}
 
-	if nums[0] < sum/2 {
+	if nums[0] <= target {
 		memo[0][nums[0]] = true
 	}
 
-	bfs(nums, sum/2, 1, memo)
+	bfs(nums, target, 1, memo)
 
-	return memo[len(memo)-1][sum/2]
+	return memo[len(memo)-1][target]
 }
 
 func bfs(nums []int, target, idx int, memo [][]bool) {
-	if idx >= len(nums) {
+	if idx == len(nums) {
 		return
 	}
 
 	for i := 0; i < len(memo[0]); i++ {
 		if memo[idx-1][i] {
+			// not select nums[idx]
 			memo[idx][i] = true
 
+			// select nums[idx]
 			if nums[idx]+i <= target {
 				memo[idx][nums[idx]+i] = true
 			}
@@ -199,3 +198,10 @@ func bfs(nums []int, target, idx int, memo [][]bool) {
 //		very important summary
 
 //	4.	for dfs, the goal is to find all possible values of subarray sum
+
+//	5.	for each number, select or not select, which means it's a binary tree
+
+//	6.	inspired from solution, most important observation is the graph of
+//		(not) selecting a number, which forms a binary tree
+
+//		by that, it can be solved by bfs/dfs/dp
