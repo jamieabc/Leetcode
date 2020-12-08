@@ -52,10 +52,47 @@ func numPairsDivisibleBy60(time []int) int {
 	return count
 }
 
-// problems
-// 1. wrong return of true/false
-// 2. wrong variable name
-// 3. it should be total count, not just exist
-// 4. count should add by remain, not modular
-// 5. remain number exist, doesn't mean modular number exist
-// 6. slow, using array of length 60 to do, see if it's faster
+func numPairsDivisibleBy60_1(time []int) int {
+	validNums := make([]int, 0)
+	for i := 60; i < 1000; i += 60 {
+		validNums = append(validNums, i)
+	}
+
+	counter := make(map[int]int)
+	var ans int
+
+	for _, t := range time {
+		for _, j := range validNums {
+			if j > t+500 {
+				break
+			}
+
+			if count, ok := counter[j-t]; ok {
+				ans += count
+			}
+		}
+		counter[t]++
+	}
+
+	return ans
+}
+
+// Notes
+
+//	1.	wrong return of true/false
+//	2.	wrong variable name
+//	3.	it should be total count, not just exist
+//	4.	count should add by remain, not modular
+//	5.	remain number exist, doesn't mean modular number exist
+//	6.	slow, using array of length 60 to do, see if it's faster
+
+//	7.	at first glance, I think it's a two sum problem, but then I found it's
+//		% not + operator, so I list all numbers that is divisible by 60, tc:
+//		O(16n)
+
+//	8.	inspired from https://leetcode.com/problems/pairs-of-songs-with-total-durations-divisible-by-60/discuss/256738/JavaC%2B%2BPython-Two-Sum-with-K-60
+
+//		since after %, number ranges from 0 ~ 59, and then only possible sum that
+//		meets critiera is a+b=60, convert it to two-sum problem
+
+//	9.	% operator limits outcome
