@@ -12,6 +12,37 @@ package main
 //  [ 7, 6, 5 ]
 // ]
 
+var dirs = [][]int{
+	{1, 0},  // east
+	{0, 1},  // south
+	{-1, 0}, // west
+	{0, -1}, // north
+}
+
+func generateMatrix(n int) [][]int {
+	ans := make([][]int, n)
+	for i := range ans {
+		ans[i] = make([]int, n)
+	}
+
+	x, y := -1, 0
+
+	for i, dir, steps := 1, 0, n; i <= n*n; {
+		for j := 0; j < steps; i, j = i+1, j+1 {
+			x, y = x+dirs[dir][0], y+dirs[dir][1]
+
+			ans[y][x] = i
+		}
+
+		dir = (dir + 1) % 4
+		if dir == 1 || dir == 3 {
+			steps--
+		}
+	}
+
+	return ans
+}
+
 var steps = [][2]int{
 	{0, 1},  // right
 	{1, 0},  // down
@@ -19,7 +50,7 @@ var steps = [][2]int{
 	{-1, 0}, // up
 }
 
-func generateMatrix(n int) [][]int {
+func generateMatrix1(n int) [][]int {
 	result := make([][]int, n)
 	for i := range result {
 		result[i] = make([]int, n)
