@@ -30,7 +30,142 @@ package main
 //     1 <= piles[i] <= 500
 //     sum(piles) is odd.
 
+// from https://leetcode.com/problems/stone-game/discuss/154610/DP-or-Just-return-true
 func stoneGame(piles []int) bool {
+	length := len(piles)
+
+	// dp[i][j]: number of stones alex can get more than bob
+	dp := make([]int, length)
+	for i := range dp {
+		dp[i] = piles[i]
+	}
+
+	for d := 1; d < length; d++ {
+		for i := 0; i < length-d; i++ {
+			dp[i] = max(piles[i]-dp[i], piles[i+d]-dp[i+d-1])
+		}
+	}
+
+	return dp[length-1] > 0
+}
+
+func stoneGame6(piles []int) bool {
+	size := len(piles)
+
+	// dp[i][j] means number of stones alex gets more
+	// than bob
+	dp := make([][]int, size)
+	for i := range dp {
+		dp[i] = make([]int, size)
+		dp[i][i] = piles[i]
+	}
+
+	for d := 1; d < size; d++ {
+		for i := 0; i+d < size; i++ {
+			dp[i][i+d] = max(piles[i]-dp[i+1][i+d], piles[i+d]-dp[i][i+d-1])
+		}
+	}
+
+	return dp[0][size-1] > 0
+}
+
+func stoneGame5(piles []int) bool {
+	size := len(piles)
+
+	// memo[i][j]: max piles can get from i ~ j
+	memo := make([][]int, size)
+	for i := range memo {
+		memo[i] = make([]int, size)
+		memo[i][i] = piles[i]
+	}
+
+	dfs(piles, memo, 0, size-1)
+
+	return memo[0][size-1] > max(memo[1][size-1], memo[0][size-2])
+}
+
+func dfs(piles []int, memo [][]int, start, end int) int {
+	if start > end {
+		return 0
+	}
+
+	if memo[start][end] > 0 {
+		return memo[start][end]
+	}
+
+	memo[start][end] = max(
+		piles[start]+max(
+			dfs(piles, memo, start+2, end),
+			dfs(piles, memo, start+1, end-1),
+		),
+		piles[end]+max(
+			dfs(piles, memo, start+1, end-1),
+			dfs(piles, memo, start, end-2),
+		),
+	)
+
+	return memo[start][end]
+}
+
+func stoneGame4(piles []int) bool {
+	size := len(piles)
+
+	// memo[i][j]: max piles can get from i ~ j
+	memo := make([][]int, size)
+	for i := range memo {
+		memo[i] = make([]int, size)
+		memo[i][i] = piles[i]
+	}
+
+	dfs(piles, memo, 0, size-1)
+
+	return memo[0][size-1] > max(memo[1][size-1], memo[0][size-2])
+}
+
+func dfs(piles []int, memo [][]int, start, end int) int {
+	if start > end {
+		return 0
+	}
+
+	if memo[start][end] > 0 {
+		return memo[start][end]
+	}
+
+	// achievable piles are next next round, so there are 4 cases:
+
+	//           b: start+1
+	//         /
+	// A: start
+	//         \
+	//           b: end
+
+	//           b: start
+	//         /
+	// A: end
+	//         \
+	//           b: end-1
+	memo[start][end] = max(
+		piles[start]+max(
+			dfs(piles, memo, start+2, end),
+			dfs(piles, memo, start+1, end-1),
+		),
+		piles[end]+max(
+			dfs(piles, memo, start+1, end-1),
+			dfs(piles, memo, start, end-2),
+		),
+	)
+
+	return memo[start][end]
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
+}
+
+func stoneGame3(piles []int) bool {
 	size := len(piles)
 	// memo[i][j] means max stones could get if remaining stones from i to j
 	memo := make([][]int, size)
@@ -73,22 +208,6 @@ func dfs(stones []int, start, end int, memo [][]int) int {
 
 	memo[start][end] = max(stones[start]+chooseStart, stones[end]+chooseEnd)
 	return memo[start][end]
-}
-
-func stoneGame3(piles []int) bool {
-	length := len(piles)
-	dp := make([]int, length)
-	for i := range dp {
-		dp[i] = piles[i]
-	}
-
-	for d := 1; d < length; d++ {
-		for i := 0; i < length-d; i++ {
-			dp[i] = max(piles[i]-dp[i], piles[i+d]-dp[i+d-1])
-		}
-	}
-
-	return dp[length-1] > 0
 }
 
 func stoneGame2(piles []int) bool {
