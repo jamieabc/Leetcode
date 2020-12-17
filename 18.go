@@ -20,58 +20,49 @@ import "sort"
 // ]
 
 func fourSum(nums []int, target int) [][]int {
-	size := len(nums)
 	sort.Ints(nums)
-	result := make([][]int, 0)
+	ans := make([][]int, 0)
+	size := len(nums)
 
-	for i := 0; i <= size-4; i++ {
-		for j := i + 1; j <= size-3; j++ {
-			searchSum(nums, nums[i], nums[j], j+1, size-1, target-nums[i]-nums[j], &result)
+	for a := 0; a < size-3; {
+		for b := a + 1; b < size-2; {
+			expected := target - nums[a] - nums[b]
 
-			for j <= size-3 {
-				if nums[j] == nums[j+1] {
-					j++
+			for c, d := b+1, size-1; c < size-1 && c < d; {
+				tmp := nums[c] + nums[d]
+
+				if tmp == expected {
+					ans = append(ans, []int{nums[a], nums[b], nums[c], nums[d]})
+
+					c++
+					for c < size-1 && nums[c] == nums[c-1] {
+						c++
+					}
+
+					d--
+					for d > c && nums[d] == nums[d+1] {
+						d--
+					}
+				} else if tmp < expected {
+					c++
 				} else {
-					break
+					d--
 				}
 			}
-		}
 
-		for i <= size-4 {
-			if nums[i] == nums[i+1] {
-				i++
-			} else {
-				break
+			b++
+			for b < size-2 && nums[b] == nums[b-1] {
+				b++
 			}
 		}
-	}
 
-	return result
-}
-
-func searchSum(nums []int, num1, num2, start, end, target int, result *[][]int) {
-	for start < end {
-		tmpSum := nums[start] + nums[end]
-
-		if tmpSum == target {
-			*result = append(*result, []int{num1, num2, nums[start], nums[end]})
-
-			// find next non-duplicate number
-			for start < len(nums)-1 && nums[start] == nums[start+1] {
-				start++
-			}
-			start++
-
-			for end > start && nums[end] == nums[end-1] {
-				end--
-			}
-			end--
-		} else if tmpSum > target {
-			end--
-		} else {
-			start++
+		a++
+		for a < size-3 && nums[a] == nums[a-1] {
+			a++
 		}
 	}
+
+	return ans
 }
 
 //	problems
