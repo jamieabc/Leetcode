@@ -42,18 +42,18 @@ func lengthOfLIS(nums []int) int {
 				seq[0] = nums[i]
 			} else {
 				// binary search
-				var tmp int
+				var idx int
 				for low, high := 0, len(seq)-1; low <= high; {
 					mid := low + (high-low)/2
 
 					if seq[mid] < nums[i] {
 						low = mid + 1
 					} else {
-						tmp = mid
+						idx = mid
 						high = mid - 1
 					}
 				}
-				seq[tmp] = nums[i]
+				seq[idx] = nums[i]
 			}
 		}
 	}
@@ -65,13 +65,14 @@ func lengthOfLIS(nums []int) int {
 func lengthOfLIS4(nums []int) int {
 	size := len(nums)
 
-	// dp[i] means longest length of increasing seqeunce
+	// dp[i]: longest length of increasing subsequence
 	dp := make([]int, size)
 
 	var longest int
 
 	for i := range nums {
-		dp[i] = 1
+		dp[i] = max(dp[i], 1)
+
 		for j := 0; j < i; j++ {
 			if nums[i] > nums[j] {
 				dp[i] = max(dp[i], dp[j]+1)
@@ -222,3 +223,9 @@ func max(i, j int) int {
 //		patience sorting https://www.cs.princeton.edu/courses/archive/spring13/cos423/lectures/LongestIncreasingSubsequence.pdf
 
 //		patience sorting https://segmentfault.com/a/1190000003819886
+
+//	10.	inspired from https://www.youtube.com/watch?v=22s1xxRvy28
+
+//		a video explains how patience sort works, key point is to separate numbers
+//		into piles, last number of each pile in increasing order, and each pile of
+//		number in decreasing order
