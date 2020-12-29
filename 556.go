@@ -1,6 +1,9 @@
 package main
 
-import "math"
+import (
+	"math"
+	"strconv"
+)
 
 // Given a positive 32-bit integer n, you need to find the smallest 32-bit integer which has exactly the same digits existing in the integer n and is greater in value than n. If no such positive 32-bit integer exists, you need to return -1.
 //
@@ -17,6 +20,52 @@ import "math"
 // Output: -1
 
 func nextGreaterElement(n int) int {
+	str := []byte(strconv.Itoa(n))
+	size := len(str)
+	counter := make([]int, 10)
+	counter[str[size-1]-'0']++
+
+	for i := size - 2; i >= 0; i-- {
+		if str[i] < str[i+1] {
+			// current digit < next digit, next greater value exists
+			counter[str[i]-'0']++
+
+			// found position to change (next smallest larger digit)
+			for j := int(str[i]-'0') + 1; j <= 9; j++ {
+				if counter[j] > 0 {
+					str[i] = byte('0' + j)
+					counter[j]--
+					break
+				}
+			}
+
+			// fill in digits in ascending order
+			for j := i + 1; j < size; j++ {
+				for k := range counter {
+					if counter[k] > 0 {
+						str[j] = byte('0' + k)
+						counter[k]--
+						break
+					}
+				}
+			}
+
+			break
+		} else {
+			// current digit >= next digit, cannot find any smaller value
+			counter[str[i]-'0']++
+		}
+	}
+
+	num, _ := strconv.Atoi(string(str))
+
+	if num == n || num >= math.MaxInt32 {
+		return -1
+	}
+	return num
+}
+
+func nextGreaterElement1(n int) int {
 	nums := make([]int, 0)
 	for j := n; j > 0; {
 		nums = append(nums, j%10)
