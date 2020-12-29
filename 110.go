@@ -34,13 +34,50 @@ package main
 //
 //Return false.
 
-type TreeNode struct {
-	Val   int
-	Left  *TreeNode
-	Right *TreeNode
-}
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
 
 func isBalanced(root *TreeNode) bool {
+	ok, _ := dfs(root)
+	return ok
+}
+
+func dfs(node *TreeNode) (bool, int) {
+	if node == nil {
+		return true, 0
+	}
+
+	lOK, l := dfs(node.Left)
+	rOK, r := dfs(node.Right)
+
+	if !lOK || !rOK || abs(l-r) > 1 {
+		return false, 0
+	}
+
+	return true, max(l, r) + 1
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
+}
+
+func abs(i int) int {
+	if i >= 0 {
+		return i
+	}
+	return -i
+}
+
+func isBalanced1(root *TreeNode) bool {
 	if root == nil {
 		return true
 	}
