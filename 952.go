@@ -142,6 +142,82 @@ func groupPrimeFactors(idx int, nums []int, primeGroups map[int][]int) {
 	}
 }
 
+func largestComponentSize1(A []int) int {
+	factors := make(map[int]int) // smallest factor for a number
+	parents := make(map[int]int) // what factors are grouped
+
+	for _, num := range A {
+		findFactors(num, factors, parents)
+	}
+
+	counter := make(map[int]int)
+	for _, num := range A {
+		p := find(parents, factors[num])
+		counter[p]++
+	}
+
+	var maxGroup int
+	for _, count := range counter {
+		maxGroup = max(maxGroup, count)
+	}
+
+	return maxGroup
+}
+
+func findFactors(num int, factors map[int]int, parents map[int]int) {
+	var smallest int
+	for i := 2; i*i <= num; i++ {
+		if tmp := num / i; tmp*i == num {
+			// use first factor, to avoid using numbers has other
+			// factors, e.g. 4
+			if _, ok := factors[num]; !ok {
+				factors[num] = i
+				smallest = i
+			}
+
+			p1, p2 := find(parents, i), find(parents, tmp)
+			smallest = min(smallest, min(p1, p2))
+			parents[p1] = smallest
+			parents[p2] = smallest
+		}
+	}
+
+	// prime factor
+	if _, ok := factors[num]; !ok {
+		factors[num] = num
+
+		// could already be added before
+		if _, ok := parents[num]; !ok {
+			parents[num] = num
+		}
+	}
+}
+
+// factors: 2, 5, 4
+func find(parents map[int]int, target int) int {
+	if _, ok := parents[target]; !ok {
+		parents[target] = target
+	} else if parents[target] != target {
+		parents[target] = find(parents, parents[target])
+	}
+
+	return parents[target]
+}
+
+func min(i, j int) int {
+	if i <= j {
+		return i
+	}
+	return j
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
+}
+
 //	Notes
 //	1.	be careful about common factor limit, not only satisfies n/2, but also
 //		need to satisfies >= 2
@@ -182,7 +258,7 @@ func groupPrimeFactors(idx int, nums []int, primeGroups map[int][]int) {
 //	12.	inspired from sample code, it's sufficient to check primes up to sqrt(n),
 //		but in a more brilliant way. n = sqrt(n) * sqrt(n), if some prime number
 //		is smaller than sqrt(n) means it "might" exist another prime number
-//		larger thatn sqrt(n)
+//		larger than sqrt(n)
 
 //		e.g. sqrt(35) = 5.xxxx, check up to 5, 35 / 5 = 7
 
@@ -206,7 +282,7 @@ func groupPrimeFactors(idx int, nums []int, primeGroups map[int][]int) {
 //		found during processing numbers.
 
 //		this technique can be used by author is because he uses a graph to
-//		demonstrate edges among numbers, and after graph is build, he traverse
+//		demonstrate edges among numbers, and after graph is built, he traverses
 //		this graph to find maximum groups
 
 //	13.	after thinking, even with union, technique to find primes still can be
@@ -214,7 +290,7 @@ func groupPrimeFactors(idx int, nums []int, primeGroups map[int][]int) {
 //		hash to more quickly found
 
 //	14.	inspired from sample code, author provides a quick way to union: not to
-//		to union for each number, instead, create a map to store what prime
+//		to union for every number, instead, create a map to store what prime
 // 		numbers has edges, and do union when this graph is done.
 
 //		it's fast because it can find minimum parent when do the union one time,
@@ -227,8 +303,20 @@ func groupPrimeFactors(idx int, nums []int, primeGroups map[int][]int) {
 //		because I think finding all prime number at first is actually not that
 //		efficient, especially when numbers in the array are not that big
 
-//	15.	inspired from solution, union-find tc: O(M * log N), M: union or find
-//		operation count, N: number of elements, but if union-find is called upon
-//		building up, average tc would be O(1)
+//	15.	inspired from solution, union-find tc: O(N * log M), M: largest number
+//		in input, N: size of input, but if union-find is called upon building
+//		up, average tc would be O(N)
 
 //		overall tc: O(N * sqrt(K)), K: max number in the list
+
+//	16.	to avoid duplicate number in prime group, author uses a technique to
+//		divide number by found factor until that factor no longer exists, this
+//		avoids redundant factors such as 2, 4, 8, 16, etc.
+
+//		also, factors are generated in ascending order
+
+//	17.	factors are used to union numbers, so it's not necessary to know what
+//		that factors are union, should focus on what numbers are union
+
+//		I still make mistake on focusing factors, but that's not important at
+//		all, factors acts an in-direct indicator
