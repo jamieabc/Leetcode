@@ -11,6 +11,7 @@ package main
 // To the right of 2 there is only 1 smaller element (1).
 // To the right of 6 there is 1 smaller element (1).
 // To the right of 1 there is 0 smaller element.
+
 func countSmaller(nums []int) []int {
 	size := len(nums)
 
@@ -30,7 +31,7 @@ func countSmaller(nums []int) []int {
 }
 
 func mergeSort(nums, sorting, result []int, start, end int) {
-	if end == start {
+	if end <= start {
 		return
 	}
 
@@ -42,27 +43,17 @@ func mergeSort(nums, sorting, result []int, start, end int) {
 
 func merge(nums, sorting, result []int, start, mid, end int) {
 	tmp := make([]int, end-start+1)
-	var inversion int
+	var store, smaller int
 
-	for idx, i, j := 0, start, mid+1; i <= mid || j <= end; idx++ {
-		if i <= mid && j <= end {
-			if nums[sorting[i]] <= nums[sorting[j]] {
-				tmp[idx] = sorting[i]
-				result[sorting[i]] += inversion
-				i++
-			} else {
-				tmp[idx] = sorting[j]
-				j++
-				inversion++
-			}
-		} else if i <= mid {
-			tmp[idx] = sorting[i]
-			result[sorting[i]] += inversion
-			i++
-		} else {
-			tmp[idx] = sorting[j]
-			inversion++
+	for i, j := start, mid+1; i <= mid || j <= end; store++ {
+		if i == mid+1 || (j <= end && nums[sorting[j]] < nums[sorting[i]]) {
+			tmp[store] = sorting[j]
+			smaller++
 			j++
+		} else {
+			tmp[store] = sorting[i]
+			result[sorting[i]] += smaller
+			i++
 		}
 	}
 
@@ -153,3 +144,5 @@ func max(i, j int) int {
 //	4.	to count number of smaller, when doing merge sort, select number from right
 //		adds to inversion, select number from left add inversion. This reduces
 //		computation to add 1 to left remaining number whenever smaller number sorted
+
+//	5.	most important, need another sorted array stores index
