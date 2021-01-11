@@ -87,3 +87,6 @@ func find(groups []int, idx int) int {
 	}
 	return groups[idx]
 }
+
+//	Notes
+//	1.	use rank (how many items belong to this group) to faster union process
