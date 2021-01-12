@@ -90,3 +90,7 @@ func find(groups []int, idx int) int {
 
 //	Notes
 //	1.	use rank (how many items belong to this group) to faster union process
+
+//	2.	inspired from https://leetcode.com/problems/smallest-string-with-swaps/discuss/388257/C%2B%2B-with-picture-union-find
+
+//		voturbac directly append char w/ same group and sort them
