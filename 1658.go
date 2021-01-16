@@ -83,6 +83,46 @@ func minOperations(nums []int, x int) int {
 	return shortest
 }
 
+func minOperations3(nums []int, x int) int {
+	size := len(nums)
+	var sum int
+	for _, n := range nums {
+		sum += n
+	}
+
+	// all
+	if sum < x {
+		return -1
+	}
+
+	if sum == x {
+		return size
+	}
+
+	var ops int
+	target := sum - x
+	sum = 0
+
+	for i, j := 0, 0; i < size; {
+		if i == j || (j < size && sum < target) {
+			sum += nums[j]
+			j++
+		} else {
+			sum -= nums[i]
+			i++
+		}
+
+		if sum == target {
+			ops = max(ops, j-i)
+		}
+	}
+
+	if ops == 0 {
+		return -1
+	}
+	return size - ops
+}
+
 func minOperations2(nums []int, x int) int {
 	var sum int
 	for _, num := range nums {
