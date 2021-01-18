@@ -35,6 +35,70 @@ func findPermutation(s string) []int {
 	return result
 }
 
+func findPermutation2(s string) []int {
+	size := len(s) + 1
+
+	// initialize ans, assume all chars are 'I'
+	ans := make([]int, size)
+	for i := range ans {
+		ans[i] = i + 1
+	}
+
+	for start, end := 0, 0; start < size; {
+		if end == size-1 || s[end] == 'I' {
+			if start != end {
+				// between start ~ end are D
+				for i, j := start, min(size-1, end); i < j; i, j = i+1, j-1 {
+					ans[i], ans[j] = ans[j], ans[i]
+				}
+				start, end = end+1, end+1
+			} else {
+				start, end = start+1, end+1
+			}
+		} else {
+			// D, keep moving till I or end encountered
+			end++
+		}
+	}
+
+	return ans
+}
+
+func min(i, j int) int {
+	if i <= j {
+		return i
+	}
+	return j
+}
+
+func findPermutation1(s string) []int {
+	ans := make([]int, 0)
+	stack := []int{1}
+	size := len(s)
+
+	for i, num := 0, 2; i < size; i, num = i+1, num+1 {
+		if s[i] == 'I' {
+			if i > 0 && s[i-1] == 'D' {
+				for len(stack) > 0 {
+					ans = append(ans, stack[len(stack)-1])
+					stack = stack[:len(stack)-1]
+				}
+			} else {
+				ans = append(ans, stack[len(stack)-1])
+				stack = stack[:len(stack)-1]
+			}
+		}
+		stack = append(stack, num)
+	}
+
+	for len(stack) > 0 {
+		ans = append(ans, stack[len(stack)-1])
+		stack = stack[:len(stack)-1]
+	}
+
+	return ans
+}
+
 //	problems
 //	1.	brute force, should use better way to find solution
 
