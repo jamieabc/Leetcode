@@ -24,7 +24,54 @@ import "math"
  *     Right *TreeNode
  * }
  */
+
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
 func largestValues(root *TreeNode) []int {
+	ans := make([]int, 0)
+	if root == nil {
+		return ans
+	}
+
+	queue := []*TreeNode{root}
+
+	for len(queue) > 0 {
+		size := len(queue)
+		maxVal := math.MinInt32
+
+		for i := 0; i < size; i++ {
+			maxVal = max(maxVal, queue[i].Val)
+
+			if queue[i].Left != nil {
+				queue = append(queue, queue[i].Left)
+			}
+
+			if queue[i].Right != nil {
+				queue = append(queue, queue[i].Right)
+			}
+		}
+
+		ans = append(ans, maxVal)
+		queue = queue[size:]
+	}
+
+	return ans
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
+}
+
+func largestValues1(root *TreeNode) []int {
 	result := make([]int, 0)
 
 	if root == nil {
