@@ -17,7 +17,30 @@ package main
 //     All inputs will be in lowercase.
 //     The order of your output does not matter.
 
+// array can be used in map
+type table [26]int
+
 func groupAnagrams(strs []string) [][]string {
+	counter := make(map[table][]string)
+
+	for _, str := range strs {
+		var c table
+		for i := range str {
+			c[str[i]-'a']++
+		}
+		counter[c] = append(counter[c], str)
+	}
+
+	ans := make([][]string, 0)
+
+	for _, v := range counter {
+		ans = append(ans, v)
+	}
+
+	return ans
+}
+
+func groupAnagrams1(strs []string) [][]string {
 	result := make([][]string, 0)
 	signatures := make(map[string][]string)
 
@@ -65,11 +88,11 @@ func mapKey(data []int) string {
 	return string(b)
 }
 
-//	problems
+//	Notes
 //	1.	too slow, remove some memory allocation
 
 //	2.	still too slow, I think problems comes from too many groups to search,
-//		I can use map for faster find, with custom key strucutre tea -> a1e1t1
+//		I can use map for faster find, with custom key structure tea -> a1e1t1
 
 //	3.	when grouping, it's a hidden criteria that dedup is needed
 
@@ -79,3 +102,12 @@ func mapKey(data []int) string {
 //	5.	from reference https://leetcode.com/problems/group-anagrams/discuss/19176/Share-my-short-JAVA-solution
 
 //		it's also possible to convert those char bucket into string
+
+//	6.	inspired from https://leetcode.com/problems/group-anagrams/discuss/19233/O(M-*-N)-algorithm-using-hash-without-sort()
+
+//		author uses [26]primes to get encoded key (a * 2, b * 3, c * 5, etc.), thus
+//		sort is not used
+
+//	7.	inspired from sample code, after counting all char frequency, convert it
+//		to lexicographical string, it can be used as key because anagrams with
+//		same lexicographical string (sort could also work)
