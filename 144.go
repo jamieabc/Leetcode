@@ -23,7 +23,31 @@ package main
  *     Right *TreeNode
  * }
  */
+
 func preorderTraversal(root *TreeNode) []int {
+	node := root
+	stack := make([]*TreeNode, 0)
+	ans := make([]int, 0)
+
+	for node != nil || len(stack) > 0 {
+		for node != nil {
+			ans = append(ans, node.Val)
+			if node.Right != nil {
+				stack = append(stack, node.Right)
+			}
+			node = node.Left
+		}
+
+		if len(stack) > 0 {
+			node = stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+		}
+	}
+
+	return ans
+}
+
+func preorderTraversal1(root *TreeNode) []int {
 	result := make([]int, 0)
 
 	if root == nil {
@@ -38,6 +62,7 @@ func preorderTraversal(root *TreeNode) []int {
 		stack = stack[:len(stack)-1]
 		result = append(result, node.Val)
 
+		// pre-order means left -> right, so put nodes into stack in reversed order
 		if node.Right != nil {
 			stack = append(stack, node.Right)
 		}
