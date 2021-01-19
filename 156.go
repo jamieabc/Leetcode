@@ -71,7 +71,20 @@ func upsideDownBinaryTree(root *TreeNode) *TreeNode {
 	return prev
 }
 
-func upsideDownBinaryTree2(root *TreeNode) *TreeNode {
+func upsideDownBinaryTree4(root *TreeNode) *TreeNode {
+	if root == nil || root.Left == nil {
+		return root
+	}
+
+	newRoot := upsideDownBinaryTree4(root.Left)
+	root.Left.Left = root.Right
+	root.Left.Right = root
+	root.Left, root.Right = nil, nil
+
+	return newRoot
+}
+
+func upsideDownBinaryTree3(root *TreeNode) *TreeNode {
 	if root == nil || root.Left == nil {
 		return root
 	}
@@ -101,7 +114,37 @@ func upsideDownBinaryTree2(root *TreeNode) *TreeNode {
 	return newRoot
 }
 
-func upsideDownBinaryTree3(root *TreeNode) *TreeNode {
+func upsideDownBinaryTree2(root *TreeNode) *TreeNode {
+	if root == nil || (root.Left == nil && root.Right == nil) {
+		return root
+	}
+
+	var newRoot *TreeNode
+	for newRoot = root; newRoot.Left != nil; newRoot = newRoot.Left {
+	}
+
+	postOrder(root)
+
+	return newRoot
+}
+
+func postOrder(node *TreeNode) *TreeNode {
+	if node == nil {
+		return nil
+	}
+
+	l, r := postOrder(node.Left), postOrder(node.Right)
+
+	if l != nil {
+		l.Right = node
+		l.Left = r
+		node.Left, node.Right = nil, nil
+	}
+
+	return node
+}
+
+func upsideDownBinaryTree1(root *TreeNode) *TreeNode {
 	if root == nil || root.Left == nil {
 		return root
 	}
@@ -129,7 +172,7 @@ func traverse(node *TreeNode) *TreeNode {
 	return newRoot
 }
 
-//	problems
+//	Notes
 //	1.	beware of corner cases, especially when empty node, single node
 
 //	2.	limitation on right, so left could be empty or single
@@ -172,3 +215,10 @@ func traverse(node *TreeNode) *TreeNode {
 //		- when flipping tree, right child be will changed into left node
 //		- since original tree structure is tear apart, it needs to store
 //		  next & prev nodes
+
+//	9.	inspired from https://leetcode.com/problems/binary-tree-upside-down/discuss/49406/Java-recursive-(O(logn)-space)-and-iterative-solutions-(O(1)-space)-with-explanation-and-figure
+
+//		very elegant solution, both in recursive & iterative way
+//		the reason it's elegant is because author finds out a proper way to model
+//		the problem in such simple way. I was still in the form of current & next,
+//		but author sees this problem is node.left.left, which avoid some checkings
