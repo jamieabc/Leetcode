@@ -134,23 +134,15 @@ func flipEquiv2(r1, r2 *TreeNode) bool {
 }
 
 func flipEquiv1(n1, n2 *TreeNode) bool {
-	return compare(n1, n2)
-}
-
-func compare(n1, n2 *TreeNode) bool {
 	if n1 == nil && n2 == nil {
 		return true
 	}
 
-	if (n1 == nil && n2 != nil) || (n1 != nil && n2 == nil) {
+	if (n1 == nil && n2 != nil) || (n1 != nil && n2 == nil) || n1.Val != n2.Val {
 		return false
 	}
 
-	if n1.Val != n2.Val {
-		return false
-	}
-
-	return (compare(n1.Left, n2.Left) && compare(n1.Right, n2.Right)) || (compare(n1.Left, n2.Right) && compare(n1.Right, n2.Left))
+	return (flipEquiv1(n1.Left, n2.Left) && flipEquiv1(n1.Right, n2.Right)) || (flipEquiv1(n1.Left, n2.Right) && flipEquiv1(n1.Right, n2.Left))
 }
 
 //	problems
@@ -162,3 +154,6 @@ func compare(n1, n2 *TreeNode) bool {
 
 //	2.	add single stack solution, it's much more complex because I have to
 //		know exact order of each node
+
+//	3.	to use iterative way, most important thing is fixed one order, try to find
+//		the other linked list with same order of values
