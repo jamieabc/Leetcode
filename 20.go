@@ -35,6 +35,28 @@ package main
 //Output: true
 
 func isValid(s string) bool {
+	stack := make([]byte, 0)
+
+	for i := range s {
+		if s[i] == '(' {
+			stack = append(stack, ')')
+		} else if s[i] == '[' {
+			stack = append(stack, ']')
+		} else if s[i] == '{' {
+			stack = append(stack, '}')
+		} else {
+			if len(stack) == 0 || stack[len(stack)-1] != s[i] {
+				return false
+			}
+
+			stack = stack[:len(stack)-1]
+		}
+	}
+
+	return len(stack) == 0
+}
+
+func isValid(s string) bool {
 	if len(s) == 0 {
 		return true
 	}
@@ -85,3 +107,10 @@ func (s *stack) pop() rune {
 		return ' '
 	}
 }
+
+//	Notes
+//	1.	becareful about boundary conditions such as emtpy stack
+
+//	2.	inspired from https://leetcode.com/problems/valid-parentheses/discuss/9178/Short-java-solution
+
+//		no need to pop stack and check each type matching, can just push valid order into stack
