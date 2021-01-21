@@ -27,7 +27,65 @@ package main
  *     Right *TreeNode
  * }
  */
+
+// tc: O(n)
 func constructFromPrePost(pre []int, post []int) *TreeNode {
+	var preIdx, postIdx int
+	return linearTraverse(pre, post, &preIdx, &postIdx)
+}
+
+func linearTraverse(pre, post []int, preIdx, postIdx *int) *TreeNode {
+	node := &TreeNode{
+		Val: pre[*preIdx],
+	}
+
+	*preIdx++
+
+	if post[*postIdx] != node.Val {
+		node.Left = linearTraverse(pre, post, preIdx, postIdx)
+	}
+
+	if post[*postIdx] != node.Val {
+		node.Right = linearTraverse(pre, post, preIdx, postIdx)
+	}
+
+	*postIdx++
+
+	return node
+}
+
+// tc: worst O(n^2), average O(n log(n))
+func constructFromPrePost2(pre []int, post []int) *TreeNode {
+	preLength := len(pre)
+	if preLength == 0 {
+		return nil
+	}
+
+	node := &TreeNode{
+		Val: pre[0],
+	}
+
+	if preLength == 1 {
+		return node
+	}
+
+	var leftLength int
+
+	// find length of left subtree
+	for i := 1; i < preLength; i++ {
+		if pre[i] == post[preLength-2] {
+			leftLength = i - 1
+			break
+		}
+	}
+
+	node.Left = constructFromPrePost(pre[1:1+leftLength], post[:leftLength])
+	node.Right = constructFromPrePost(pre[1+leftLength:], post[leftLength:preLength-1])
+
+	return node
+}
+
+func constructFromPrePost1(pre []int, post []int) *TreeNode {
 	length := len(pre)
 	root := &TreeNode{
 		Val: pre[0],
@@ -68,48 +126,17 @@ func traverse(pre, post []int, parent *TreeNode) {
 	}
 }
 
-func constructFromPrePost2(pre []int, post []int) *TreeNode {
-	preLength := len(pre)
-	if preLength == 0 {
-		return nil
-	}
-
-	node := &TreeNode{
-		Val: pre[0],
-	}
-
-	if preLength == 1 {
-		return node
-	}
-
-	var leftLength int
-
-	// find length of left subtree
-	for i := 1; i < preLength; i++ {
-		if pre[i] == post[preLength-2] {
-			leftLength = i - 1
-			break
-		}
-	}
-
-	node.Left = constructFromPrePost(pre[1:1+leftLength], post[:leftLength])
-	node.Right = constructFromPrePost(pre[1+leftLength:], post[leftLength:preLength-1])
-
-	return node
-}
-
-// reference: https://www.youtube.com/watch?v=53aOi0Drp9I
-// problems
-// 1. cannot assume when length <= 3, it must be N-L-R, it could also be right is empty, when length is 3, possible situations are:
+//	Notes
+//	1. cannot assume when length <= 3, it must be N-L-R, it could also be right is empty, when length is 3, possible situations are:
 //     N             N
 //   L   R         L
 //               R
-// 2. avoid slice index out of range, should use post length to decide
-// 3. if some part is empty, just ignore it instead of using it
-// 4. I kind of think it wrong, the condition should be if left of pre == right of post
-// 5. optimize, length of pre & post are corresponded, so there's no need to calculate right index at post, just get length of left subtree, remaining elements are right subtree
-// 6. optimize, at it comes to situation of one child is empty, no need to distinguish, it will put all nodes into right
-// 7. optimize, no need to check when length is 2, because alogrithm will put all into right side
+//	2. avoid slice index out of range, should use post length to decide
+//	3. if some part is empty, just ignore it instead of using it
+//	4. I kind of think it wrong, the condition should be if left of pre == right of post
+//	5. optimize, length of pre & post are corresponded, so there's no need to calculate right index at post, just get length of left subtree, remaining elements are right subtree
+//	6. optimize, at it comes to situation of one child is empty, no need to distinguish, it will put all nodes into right
+//	7. optimize, no need to check when length is 2, because alogrithm will put all into right side
 
 //	8. 	rewrite, forget about situation when length == 2, still with 2
 //		possibilities
@@ -123,3 +150,11 @@ func constructFromPrePost2(pre []int, post []int) *TreeNode {
 //		with this property, keep build tree using pre-order. when pre-order
 //		number equals post-order means that sub tree is all built, then
 //		starts to build right child tree
+
+//	10.	inspired from https://www.youtube.com/watch?v=53aOi0Drp9I
+
+//		tc: O(n log(n)) ~ O(n^2), for every node, best case would split half, worse
+//		would need to traverse all nodes to find match node
+
+//	11.	if matched right node if found in pre, there's no need to find matched
+//		left node in post, because length match
