@@ -37,6 +37,43 @@ func shortestWordDistance(words []string, word1 string, word2 string) int {
 	return minDist
 }
 
+func shortestWordDistance1(words []string, word1 string, word2 string) int {
+	shortest := len(words)
+
+	if word1 == word2 {
+		prev := -1
+
+		for i := range words {
+			if words[i] == word1 {
+				if prev != -1 {
+					shortest = min(shortest, i-prev)
+				}
+				prev = i
+			}
+		}
+
+		return shortest
+	}
+
+	idx1, idx2 := -1, -1
+
+	for i := range words {
+		if words[i] == word1 {
+			if idx2 != -1 {
+				shortest = min(shortest, i-idx2)
+			}
+			idx1 = i
+		} else if words[i] == word2 {
+			if idx1 != -1 {
+				shortest = min(shortest, i-idx1)
+			}
+			idx2 = i
+		}
+	}
+
+	return shortest
+}
+
 func min(i, j int) int {
 	if i <= j {
 		return i
@@ -44,7 +81,7 @@ func min(i, j int) int {
 	return j
 }
 
-//	problems
+//	Notes
 //	1.	same word should exist different position
 
 //	2.	too slow, use binary search
