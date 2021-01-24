@@ -46,7 +46,57 @@ func numberOfArithmeticSlices(A []int) int {
 	return total
 }
 
-//	problems
+func numberOfArithmeticSlices2(A []int) int {
+	size := len(A)
+
+	// dp[i]: # of ways for sequence ends at i
+	dp := make([]int, size)
+	var count int
+
+	for i := 2; i < size; i++ {
+		if A[i-2]-A[i-1] == A[i-1]-A[i] {
+			dp[i] = dp[i-1] + 1
+			count += dp[i]
+		} else {
+			dp[i] = 0
+		}
+	}
+
+	return count
+}
+
+// tc: O(n)
+func numberOfArithmeticSlices1(A []int) int {
+	var count int
+	size := len(A)
+	if size < 3 {
+		return 0
+	}
+
+	for low, high := 0, 0; low < size; {
+		if high-low < 2 {
+			high = low + 2
+		}
+
+		for ; high < size && A[low]-A[low+1] == A[high-1]-A[high]; high++ {
+		}
+
+		count += max(0, high-low-2)
+
+		low++
+	}
+
+	return count
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
+}
+
+//	Notes
 //	1.	not considering boundary cases, such as array is empty, because
 //		maxDiff relies on length - 1
 
@@ -66,4 +116,4 @@ func numberOfArithmeticSlices(A []int) int {
 
 //	4.	inspired from https://leetcode.com/problems/arithmetic-slices/discuss/90093/3ms-C%2B%2B-Standard-DP-Solution-with-Very-Detailed-Explanation
 
-//		array length must be larger or eaqual 3, otherwise will be 0
+//		array length must be larger or equals 3, otherwise will be 0
