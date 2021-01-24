@@ -40,6 +40,7 @@ func (h *MinHeap) Pop() interface{} {
 	return x
 }
 
+// tc: O(n log(k))
 func mergeKLists(lists []*ListNode) *ListNode {
 	h := &MinHeap{}
 	heap.Init(h)
@@ -72,7 +73,41 @@ func mergeKLists(lists []*ListNode) *ListNode {
 	return head
 }
 
-//	problems
+// tc: O(kn)
+func mergeKLists1(lists []*ListNode) *ListNode {
+	var head, cur *ListNode
+	var idx int
+
+	for true {
+		var next *ListNode
+
+		for i := range lists {
+			if lists[i] != nil {
+				if next == nil || next.Val > lists[i].Val {
+					next = lists[i]
+					idx = i
+				}
+			}
+		}
+
+		if next == nil {
+			break
+		}
+
+		if head == nil {
+			head = next
+			cur = next
+		} else {
+			cur.Next = next
+			cur = next
+		}
+		lists[idx] = next.Next
+	}
+
+	return head
+}
+
+//	Notes
 //	1.	pointer might be nil
 
 //	2.	use original linked list
