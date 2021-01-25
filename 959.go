@@ -128,56 +128,75 @@ func idx(length, i, j, k int) int {
 }
 
 func regionsBySlashes1(grid []string) int {
-	y := len(grid)
-	if y == 0 {
-		return 0
+	w, h := len(grid[0]), len(grid)
+
+	arr := make([][]byte, h*3)
+	for i := range arr {
+		arr[i] = make([]byte, w*3)
 	}
 
-	scaleFactor := 3
-	scaled := make([][]int, scaleFactor*y)
-	for i := range scaled {
-		scaled[i] = make([]int, scaleFactor*y)
-	}
+	// setup upscaled array (3*3 times larger)
+	for i := 0; i < h; i++ {
+		for j := 0; j < w; j++ {
 
-	for i := range grid {
-		for j := range grid[i] {
 			if grid[i][j] == '/' {
-				for k, l, m := i*scaleFactor, (j+1)*scaleFactor-1, scaleFactor; m > 0; k, l, m = k+1, l-1, m-1 {
-					scaled[k][l] = -1
+				for k, l := i*3, (j+1)*3-1; k < (i+1)*3; k, l = k+1, l-1 {
+					arr[k][l] = '/'
 				}
 			} else if grid[i][j] == '\\' {
-				for k, l, m := i*scaleFactor, j*scaleFactor, scaleFactor; m > 0; k, l, m = k+1, l+1, m-1 {
-					scaled[k][l] = -1
+				for k, l := i*3, j*3; k < (i+1)*3; k, l = k+1, l+1 {
+					arr[k][l] = '\\'
 				}
 			}
 		}
 	}
 
-	var count int
+	var region int
 
-	for i := range scaled {
-		for j := range scaled {
-			if scaled[i][j] == 0 {
-				count++
-				spread(&scaled, i, j, count)
+	visited := make([][]bool, h*3)
+	for i := range visited {
+		visited[i] = make([]bool, w*3)
+	}
+
+	for i := range arr {
+		for j := range arr[0] {
+			if arr[i][j] == byte(0) && !visited[i][j] {
+				region++
+
+				// BFS
+				bfs(arr, visited, j, i)
 			}
 		}
 	}
 
-	return count
+	return region
 }
 
-func spread(scaled *[][]int, i, j, count int) {
-	if i < 0 || j < 0 || i == len(*scaled) || j == len(*scaled) {
-		return
-	}
+var dirs = [][]int{
+	{0, 1},
+	{0, -1},
+	{1, 0},
+	{-1, 0},
+}
 
-	if (*scaled)[i][j] == 0 {
-		(*scaled)[i][j] = count
-		spread(scaled, i-1, j, count)
-		spread(scaled, i, j-1, count)
-		spread(scaled, i, j+1, count)
-		spread(scaled, i+1, j, count)
+func bfs(arr [][]byte, visited [][]bool, x, y int) {
+	stack := [][]int{{y, x}}
+
+	for len(stack) > 0 {
+		p := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+
+		if !visited[p[0]][p[1]] {
+			visited[p[0]][p[1]] = true
+
+			for _, d := range dirs {
+				newY, newX := d[0]+p[0], d[1]+p[1]
+
+				if newX >= 0 && newY >= 0 && newX < len(arr[0]) && newY < len(arr) && arr[newY][newX] == byte(0) && !visited[newY][newX] {
+					stack = append(stack, []int{newY, newX})
+				}
+			}
+		}
 	}
 }
 
@@ -195,7 +214,7 @@ func spread(scaled *[][]int, i, j, count int) {
 //	2.	inspired from https://leetcode.com/problems/regions-cut-by-slashes/discuss/205680/JavaC%2B%2BPython-Split-4-parts-and-Union-Find
 
 //		this guy is so brilliant, how come he think of such a way of union...
-//		counts is started as maximum (n*n*4), each time a union is find, count
+//		counts is started as maximum (n*n*4), each time a union is found, count
 //		reduced
 
 //	3.	when union, sequence matters
@@ -208,6 +227,8 @@ func spread(scaled *[][]int, i, j, count int) {
 //		because unionned data of a cell depend on order of / or \
 //		e.g if / is first processed, 0 1 2 3 => 3 1 1 3
 //			if \ if first processed, 0 1 2 3 => 1 1 3 3
+//		 \0/
+//	    3/2\ 1
 
 //		so it's important to find out what causes this triangle to be merged,
 //		that's why author uses single length array, and use parent function to
