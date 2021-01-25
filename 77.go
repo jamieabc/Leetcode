@@ -18,6 +18,30 @@ import "crypto/x509"
 // ]
 
 func combine(n int, k int) [][]int {
+	ans := make([][]int, 0)
+
+	recursive(n, k, 1, []int{}, &ans)
+
+	return ans
+}
+
+func recursive(n, k, start int, cur []int, ans *[][]int) {
+	if k == 0 {
+		*ans = append(*ans, cur)
+		return
+	}
+
+	// beware of limit, since there's not enough number left, terminate process
+	for i := start; i <= n-k+1; i++ {
+		tmp := make([]int, len(cur)+1)
+		copy(tmp, cur)
+		tmp[len(cur)] = i
+
+		recursive(n, k-1, i+1, tmp, ans)
+	}
+}
+
+func combine3(n int, k int) [][]int {
 	result := make([][]int, 0)
 	stack := make([]int, k)
 
@@ -43,7 +67,7 @@ func combine(n int, k int) [][]int {
 	return result
 }
 
-func combine1(n int, k int) [][]int {
+func combine2(n int, k int) [][]int {
 	result := make([][]int, 0)
 	if n < k {
 		return result
@@ -79,7 +103,7 @@ func combine1(n int, k int) [][]int {
 	return result
 }
 
-func combine2(n int, k int) [][]int {
+func combine1(n int, k int) [][]int {
 	result := make([][]int, 0)
 
 	if n < k {
@@ -127,3 +151,8 @@ func combinations(n, k, start, idx int, flags []bool, tmp []int, result *[][]int
 //	4.	add reference https://leetcode.com/problems/combinations/discuss/27090/DP-for-the-problem
 
 //		author use dp to solve problem, but I didn't take time to read it
+
+//	5.	inspired from https://leetcode.com/problems/combinations/discuss/27002/Backtracking-Solution-Java
+
+//		first comment explains why my recursive loop so slow, because some
+//		paths won't get enough numbers, no need to do it
