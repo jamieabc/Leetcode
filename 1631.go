@@ -42,32 +42,46 @@ import (
 //     1 <= heights[i][j] <= 106
 
 // bellman-ford, relaxation by edges
-// tc: O((mn)^2)
+// tc: O(ve) = O((mn)^2)
 func minimumEffortPath(heights [][]int) int {
 	w, h := len(heights[0]), len(heights)
 
-	// dp[i][j] means shortest path from (0, 0) to (i, j)
+	// dp[i][j]: minimum effort from 0 to heights[i][j]
 	dp := make([][]int, h)
 	for i := range dp {
 		dp[i] = make([]int, w)
+
 		for j := range dp[i] {
 			dp[i][j] = math.MaxInt32
 		}
 	}
+
 	dp[0][0] = 0
-	queue := [][]int{{0, 0, 0}}
+
+	// need to use queue here, acts as some kind of BFS, if use stack then it's
+	// more like dfs, which is not efficient
+	queue := [][]int{{0, 0}}
+
+	dirs := [][]int{
+		{0, 1},
+		{0, -1},
+		{1, 0},
+		{-1, 0},
+	}
 
 	for len(queue) > 0 {
-		q := queue[0]
+		p := queue[0]
 		queue = queue[1:]
 
-		for _, d := range dir {
-			x, y := q[0]+d[0], q[1]+d[1]
+		for _, d := range dirs {
+			newY, newX := d[0]+p[0], d[1]+p[1]
 
-			if validPoint(heights, x, y) {
-				if cost := max(q[2], abs(heights[y][x]-heights[q[1]][q[0]])); dp[y][x] > cost {
-					dp[y][x] = cost
-					queue = append(queue, []int{x, y, cost})
+			if newX >= 0 && newY >= 0 && newX < w && newY < h {
+				diff := max(dp[p[0]][p[1]], abs(heights[p[0]][p[1]]-heights[newY][newX]))
+
+				if diff < dp[newY][newX] {
+					dp[newY][newX] = diff
+					queue = append(queue, []int{newY, newX})
 				}
 			}
 		}
@@ -194,6 +208,8 @@ func reachable(heights [][]int, criteria int) bool {
 	return false
 }
 
+// this algorithm is similar to construct minimum spanning tree, start from
+// smallest edge guarantees once condition met, it is best answer (BFS)
 // tc: O(mn log(mn))
 func minimumEffortPath2(heights [][]int) int {
 	w, h := len(heights[0]), len(heights)
@@ -224,6 +240,8 @@ func minimumEffortPath2(heights [][]int) int {
 			}
 		}
 
+		// since start from smallest edge, if 0-target are connected means
+		// smallest found
 		if find(parents, 0) == find(parents, target) {
 			return edge[2]
 		}
@@ -285,15 +303,16 @@ func (h *MinHeap) Pop() interface{} {
 	return x
 }
 
+// dijkstra, edge weight >= 0
 // tc: O(wh log(wh)), w & h: width & height of points
 func minimumEffortPath1(heights [][]int) int {
-	w, h := len(heights[0])-1, len(heights)-1
+	w, h := len(heights[0]), len(heights)
 	mh := &MinHeap{}
 	heap.Init(mh)
 
-	visited := make([][]bool, len(heights))
+	visited := make([][]bool, h)
 	for i := range visited {
-		visited[i] = make([]bool, len(heights[0]))
+		visited[i] = make([]bool, w)
 	}
 	heap.Push(mh, []int{0, 0, 0})
 
@@ -304,7 +323,7 @@ func minimumEffortPath1(heights [][]int) int {
 		}
 		visited[top[0]][top[1]] = true
 
-		if top[0] == h && top[1] == w {
+		if top[0] == h-1 && top[1] == w-1 {
 			return top[2]
 		}
 
@@ -371,3 +390,9 @@ func abs(i int) int {
 
 //	5.	for binary search, iterate through whole array to find reasonable range,
 //		reduce unwanted computations
+
+//	6.	bellman-ford comes from the fact that if negative loop weight not exist,
+//		at most n-1 iterations will find smallest cost from a to b.
+
+//		find smaller cost (relaxation) for every edges, every time smaller cost
+//		found from a helps to find smallest cost, time complexity is O(ve)
