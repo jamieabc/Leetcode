@@ -33,6 +33,25 @@ package main
 //
 
 func concatenatedBinary(n int) int {
+	num, digits := 1, 1
+	var ans int
+	mod := int(1e9 + 7)
+
+	for ; num <= n; num++ {
+		if num == 1<<digits {
+			digits++
+		}
+
+		ans = ans << digits
+		ans |= num
+
+		ans = ans % mod
+	}
+
+	return ans
+}
+
+func concatenatedBinary1(n int) int {
 	mod := int64(1e9 + 7)
 	var ans int64
 
@@ -55,3 +74,9 @@ func digits(i int) int {
 
 //	Notes
 //	1.	inspired from solution, add mean or operation
+
+//	2.	inspired from solution, since # of digits is known, use that to check
+
+//	3.	add https://leetcode.com/problems/concatenation-of-consecutive-binary-numbers/discuss/963549/python-(log(n))-2-approach
+
+//		not implement it, but seems brilliant
