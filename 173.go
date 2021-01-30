@@ -53,21 +53,15 @@ func Constructor(root *TreeNode) BSTIterator {
 
 /** @return the next smallest number */
 func (this *BSTIterator) Next() int {
-	cur := this.stack[len(this.stack)-1]
-	val := cur.Val
-	this.stack = this.stack[:len(this.stack)-1]
+	size := len(this.stack)
+	n := this.stack[size-1]
+	this.stack = this.stack[:size-1]
 
-	if cur.Right != nil {
-		this.stack = append(this.stack, cur.Right)
-		cur = cur.Right.Left
-
-		for cur != nil {
-			this.stack = append(this.stack, cur)
-			cur = cur.Left
-		}
+	for node := n.Right; node != nil; node = node.Left {
+		this.stack = append(this.stack, node)
 	}
 
-	return val
+	return n.Val
 }
 
 /** @return whether we have a next smallest number */
@@ -113,6 +107,8 @@ func (this *BSTIterator) HasNext() bool {
 //		but it comes to me the other question, how to write post-order
 //		traversal in iterative?
 
+//		added 2021/1/30, put nodes in reverse order of L-R-N, which is N-R-L
+
 //	4.	inspired from https://leetcode.com/problems/binary-search-tree-iterator/discuss/52584/My-java-accepted-solution
 
-//		this is the transfomation from traditional in-order traversal
+//		this is the transformation from traditional in-order traversal
