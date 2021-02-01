@@ -28,6 +28,22 @@ package main
 //     1 <= k <= nums.length
 
 func mostCompetitive(nums []int, k int) []int {
+	stack := make([]int, 0)
+	maxRemoved := len(nums) - k
+
+	for i := range nums {
+		for maxRemoved > 0 && len(stack) > 0 && stack[len(stack)-1] > nums[i] {
+			stack = stack[:len(stack)-1]
+			maxRemoved--
+		}
+
+		stack = append(stack, nums[i])
+	}
+
+	return stack[:k]
+}
+
+func mostCompetitive2(nums []int, k int) []int {
 	size := len(nums)
 	stack := make([]int, 0)
 	toRemove := size - k
@@ -170,3 +186,6 @@ func mostCompetitive1(nums []int, k int) []int {
 
 //		becareful, when values are same, sorting order should put smaller index
 //		earlier
+
+//	4.	inspired from solution, there are max numbers to be removed, make sure
+//		stack length always larger than that value
