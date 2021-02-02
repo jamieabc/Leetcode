@@ -25,9 +25,48 @@ package main
  *     Right *TreeNode
  * }
  */
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+
+func levelOrder(root *TreeNode) [][]int {
+	ans := make([][]int, 0)
+
+	if root == nil {
+		return ans
+	}
+
+	queue := []*TreeNode{root}
+
+	for len(queue) > 0 {
+		size := len(queue)
+		level := make([]int, size)
+
+		for i := 0; i < size; i++ {
+			level[i] = queue[i].Val
+			if queue[i].Left != nil {
+				queue = append(queue, queue[i].Left)
+			}
+
+			if queue[i].Right != nil {
+				queue = append(queue, queue[i].Right)
+			}
+		}
+
+		ans = append(ans, level)
+		queue = queue[size:]
+	}
+
+	return ans
+}
 
 // DFS
-func levelOrder(root *TreeNode) [][]int {
+func levelOrder2(root *TreeNode) [][]int {
 	result := make([][]int, 0)
 	traverse(&result, 0, root)
 	return result
