@@ -36,6 +36,53 @@ package main
  * }
  */
 
+type Codec struct {
+}
+
+func Constructor() *Codec {
+	return &Codec{}
+}
+
+func (this *Codec) encode(root *Node) *TreeNode {
+	if root == nil {
+		return nil
+	}
+
+	node := &TreeNode{
+		Val: root.Val,
+	}
+	var prev *TreeNode
+
+	for _, n := range root.Children {
+		tmp := this.encode(n)
+		if prev != nil {
+			prev.Right = tmp
+		} else {
+			node.Left = tmp
+		}
+		prev = tmp
+	}
+
+	return node
+}
+
+func (this *Codec) decode(root *TreeNode) *Node {
+	if root == nil {
+		return nil
+	}
+
+	node := &Node{
+		Val:      root.Val,
+		Children: make([]*Node, 0),
+	}
+
+	for n := root.Left; n != nil; n = n.Right {
+		node.Children = append(node.Children, this.decode(n))
+	}
+
+	return node
+}
+
 type MappingNodes struct {
 	node  *Node
 	tree  *TreeNode
@@ -176,7 +223,7 @@ func (this *Codec) rebuild() {
  * ans := obj.decode(bst);
  */
 
-//	problems
+//	Notes
 //	1. inspired from https://leetcode.com/problems/encode-n-ary-tree-to-binary-tree/discuss/160687/Super-Simple-Java-Beats-99-2ms-with-clear-Explanation
 
 //		siblings all at right child
