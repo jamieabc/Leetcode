@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 // Given a picture consisting of black and white pixels, find the number of black lonely pixels.
 //
 // The picture is represented by a 2D char array consisting of 'B' and 'W', which means black and white pixels respectively.
@@ -20,6 +22,58 @@ package main
 // The range of width and height of the input 2D array is [1,500].
 
 func findLonelyPixel(picture [][]byte) int {
+	table := make(map[int]int)
+
+	for i := range picture {
+		for j := range picture[0] {
+			if picture[i][j] == byte('B') {
+				// if one union at x = 0, the other union at y = 0,
+				// these two union operations will corrupt
+				// so, j+1 to avoid error
+				union(table, i, -(j + 1))
+			}
+		}
+	}
+
+	counter := make(map[int]int)
+	for x := range table {
+		// need to do path compress, avoid any number no updated
+		counter[find(table, x)]++
+	}
+
+	var count int
+	for _, v := range counter {
+		// x: -y, -y: -y, two records means single B at row & column
+		if v == 2 {
+			count++
+		}
+	}
+
+	return count
+}
+
+func union(table map[int]int, x, y int) {
+	if _, ok := table[x]; !ok {
+		table[x] = x
+	}
+
+	if _, ok := table[y]; !ok {
+		table[y] = y
+	}
+
+	table[find(table, x)] = find(table, y)
+}
+
+func find(table map[int]int, x int) int {
+	if table[x] != x {
+		table[x] = find(table, table[x])
+	}
+
+	return table[x]
+}
+
+// tc: O(mn), sc: O(m+n)
+func findLonelyPixel2(picture [][]byte) int {
 	var count int
 	y := len(picture)
 	if y == 0 {
@@ -52,7 +106,58 @@ func findLonelyPixel(picture [][]byte) int {
 	return count
 }
 
-//	problems
+// tc: O(mn), sc: O(m)
+func findLonelyPixel1(picture [][]byte) int {
+	w, h := len(picture[0]), len(picture)
+	col := make([]bool, w)
+
+	var count int
+
+	for i := range picture {
+		var b int
+		idx := -1
+
+		// check row
+		for j := range picture[0] {
+			if picture[i][j] == byte('B') {
+				b++
+
+				if idx == -1 {
+					idx = j
+				} else {
+					col[idx] = true
+					idx = j
+				}
+			}
+		}
+
+		if b == 0 {
+			continue
+		}
+
+		if b > 1 || col[idx] {
+			col[idx] = true
+			continue
+		}
+
+		// check col
+		for j := i + 1; j < h; j++ {
+			if picture[j][idx] == byte('B') {
+				col[idx] = true
+				break
+			}
+		}
+
+		if !col[idx] {
+			count++
+		}
+		col[idx] = true
+	}
+
+	return count
+}
+
+//	Notes
 //	1.	in the case of all 'B', the algo is wrong because converts 'B' to 'W'
 
 //	2.	boundary condition for only first line
@@ -82,3 +187,9 @@ func findLonelyPixel(picture [][]byte) int {
 //		just increment W -> X -> Y, B -> C -> D, etc. I think this is smart
 //		but w/ some corner cases need to deal with, so didn't take time to
 //		traverse.
+
+//	9.	problem is not hard, but takes me 5 wrong submissions
+
+//	10.	inspired from https://leetcode.com/problems/lonely-pixel-i/discuss/390101/Python-union-find-row-scanning
+
+//		author used union-find to group x -> y (in hash, x > 0, y < 0)
