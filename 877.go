@@ -30,8 +30,39 @@ package main
 //     1 <= piles[i] <= 500
 //     sum(piles) is odd.
 
-// from https://leetcode.com/problems/stone-game/discuss/154610/DP-or-Just-return-true
+// tc: O(n^2)
 func stoneGame(piles []int) bool {
+	size := len(piles)
+
+	// dp[i][j]: alex can get from i ~ j
+	dp := make([][]int, size)
+	for i := range dp {
+		dp[i] = make([]int, size)
+		dp[i][i] = piles[i]
+	}
+
+	for d := 1; d < size; d++ {
+		for i := 0; i+d < size; i++ {
+			if d > 1 {
+				// min comes from others pick best solution
+				dp[i][i+d] = piles[i+d] + min(dp[i+1][i+d-1], dp[i][i+d-2])
+			} else {
+				dp[i][i+d] = max(piles[i+1], piles[i])
+			}
+		}
+	}
+
+	if size <= 3 {
+		return true
+	}
+
+	// choose min, because either alex pick first or last, must
+	// be in one of the condition
+	return dp[0][size-1] > min(dp[1][size-1], dp[0][size-2])
+}
+
+// from https://leetcode.com/problems/stone-game/discuss/154610/DP-or-Just-return-true
+func stoneGame7(piles []int) bool {
 	length := len(piles)
 
 	// dp[i][j]: number of stones alex can get more than bob
