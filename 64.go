@@ -16,6 +16,33 @@ package main
 // Explanation: Because the path 1→3→1→1→1 minimizes the sum.
 
 func minPathSum(grid [][]int) int {
+	w, h := len(grid[0]), len(grid)
+
+	// dp[i][j]: max point at [i, j]
+	dp := make([][]int, h)
+	for i := range dp {
+		dp[i] = make([]int, w)
+	}
+
+	dp[0][0] = grid[0][0]
+	for j := 1; j < w; j++ {
+		dp[0][j] = dp[0][j-1] + grid[0][j]
+	}
+
+	for i := 1; i < h; i++ {
+		dp[i][0] = dp[i-1][0] + grid[i][0]
+	}
+
+	for i := 1; i < h; i++ {
+		for j := 1; j < w; j++ {
+			dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])
+		}
+	}
+
+	return dp[h-1][w-1]
+}
+
+func minPathSum2(grid [][]int) int {
 	y := len(grid)
 	if y == 0 {
 		return 0
