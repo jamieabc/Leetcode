@@ -129,3 +129,7 @@ func validateBinaryTreeNodes(n int, leftChild []int, rightChild []int) bool {
 //		non-nil, the boundary condition one node only(single root)
 
 //	11.	too slow, since map is used as a set, use array instead
+
+//	12.	inspired from https://leetcode.com/problems/validate-binary-tree-nodes/discuss/517596/Count-Parents-and-Union-Find and sample code
+
+//		union-find is another way to solve it
