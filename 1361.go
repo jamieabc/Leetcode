@@ -39,53 +39,65 @@ package main
 //
 
 func validateBinaryTreeNodes(n int, leftChild []int, rightChild []int) bool {
-	nodes := make([]bool, n)
+	children := make([][]int, n)
+	visited := make([]bool, n)
 
-	for _, c := range leftChild {
-		if c == -1 {
-			continue
+	for i := range leftChild {
+		l, r := leftChild[i], rightChild[i]
+
+		if l != -1 {
+			children[i] = append(children[i], l)
+			visited[l] = true
 		}
 
-		if !nodes[c] {
-			nodes[c] = true
-		} else {
+		if r != -1 {
+			children[i] = append(children[i], r)
+			visited[r] = true
+		}
+
+		// at most 2 children
+		if len(children[i]) > 2 {
 			return false
 		}
 	}
 
-	for _, c := range rightChild {
-		if c == -1 {
-			continue
+	var root int
+	for i := range visited {
+		if !visited[i] {
+			root = i
+			break
 		}
+	}
 
-		if !nodes[c] {
-			nodes[c] = true
-		} else {
+	// reset visited
+	for i := range visited {
+		visited[i] = false
+	}
+
+	// traverse from root
+	queue := []int{root}
+
+	// start from root, each node should be visited only once
+	var count int
+	for len(queue) > 0 {
+		n := queue[0]
+		queue = queue[1:]
+
+		// every node should be visited once
+		if visited[n] {
 			return false
 		}
+		visited[n] = true
+		count++
+
+		queue = append(queue, children[n]...)
 	}
 
-	// root will not appear in any child
-	root := -1
-	for i := range nodes {
-		if !nodes[i] {
-			if root == -1 {
-				root = i
-				continue
-			} else {
-				return false
-			}
-		}
-	}
-
-	if root == -1 || (n > 1 && leftChild[root] == -1 && rightChild[root] == -1) {
-		return false
-	}
-
-	return true
+	// all nodes should be visited from root
+	return count == n
 }
 
-//	problems
+//	Notes
 //	1.	when checking parent <-> child loop, cannot assume parent's parent
 //		always exist (root), but other situation shoule be false
 
