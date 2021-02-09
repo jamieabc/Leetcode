@@ -40,6 +40,51 @@ package main
 //     At most one piece is allowed in a cell.
 
 func queensAttacktheKing(queens [][]int, king []int) [][]int {
+	size := 8
+
+	board := make([][]bool, size)
+	for i := range board {
+		board[i] = make([]bool, size)
+	}
+
+	for _, q := range queens {
+		board[q[0]][q[1]] = true
+	}
+
+	// 0: left, going clock-wise
+	dirs := make([]bool, size)
+	dir := [][]int{
+		{0, -1},
+		{-1, -1},
+		{-1, 0},
+		{-1, 1},
+		{0, 1},
+		{1, 1},
+		{1, 0},
+		{1, -1},
+	}
+	ans := make([][]int, 0)
+
+	// bfs, start from minimum distance and go forward
+	for d := 1; d < size; d++ {
+		for i := range dirs {
+			if dirs[i] {
+				continue
+			}
+
+			newY, newX := king[0]+d*dir[i][0], king[1]+d*dir[i][1]
+
+			if newY >= 0 && newX >= 0 && newY < size && newX < size && board[newY][newX] {
+				ans = append(ans, []int{newY, newX})
+				dirs[i] = true
+			}
+		}
+	}
+
+	return ans
+}
+
+func queensAttacktheKing1(queens [][]int, king []int) [][]int {
 	mapping := make(map[int]bool)
 	size := 8
 	result := make([][]int, 0)
@@ -105,12 +150,15 @@ func max(i, j int) int {
 	return j
 }
 
-//	problems
+//	Notes
 //	1.	inspired from https://leetcode.com/problems/queens-that-can-attack-the-king/discuss/403669/Python-Check-8-steps-in-8-Directions
 
 //		transform (i, j) => i * N + j, which can be set in a map, then start
 //		from king's position distance from 1 to 8 for all directions.
 //		with this method, first found will be closest
+
+//		very concise code, it has reverse relationship, y from -1 ~ 1, x from -1 ~ 1, distance
+//		from 1 ~ 8
 
 //	2.	be careful about negative index
 
