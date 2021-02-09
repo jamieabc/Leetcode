@@ -38,54 +38,119 @@ package main
 //
 //
 
+// not only check only one root, but also check every node's indegree
 func validateBinaryTreeNodes(n int, leftChild []int, rightChild []int) bool {
-	nodes := make([]bool, n)
+	parents := make([]int, n)
+	for i := range parents {
+		parents[i] = i
+	}
+	indegree := make([]bool, n)
 
-	for _, c := range leftChild {
-		if c == -1 {
-			continue
-		}
-
-		if !nodes[c] {
-			nodes[c] = true
-		} else {
+	for i := 0; i < n; i++ {
+		if !check(parents, leftChild, indegree, i) || !check(parents, rightChild, indegree, i) {
 			return false
 		}
 	}
 
-	for _, c := range rightChild {
-		if c == -1 {
-			continue
-		}
-
-		if !nodes[c] {
-			nodes[c] = true
-		} else {
+	// check only one root
+	for i := 1; i < n; i++ {
+		if find(parents, i) != find(parents, 0) {
 			return false
 		}
-	}
-
-	// root will not appear in any child
-	root := -1
-	for i := range nodes {
-		if !nodes[i] {
-			if root == -1 {
-				root = i
-				continue
-			} else {
-				return false
-			}
-		}
-	}
-
-	if root == -1 || (n > 1 && leftChild[root] == -1 && rightChild[root] == -1) {
-		return false
 	}
 
 	return true
 }
 
-//	problems
+func check(parents, tree []int, indegree []bool, idx int) bool {
+	if tree[idx] == -1 {
+		return true
+	}
+
+	if indegree[tree[idx]] {
+		return false
+	}
+	indegree[tree[idx]] = true
+
+	p1, p2 := find(parents, idx), find(parents, tree[idx])
+
+	if p1 == p2 {
+		return false
+	}
+
+	parents[p2] = p1
+
+	return true
+}
+
+func find(parents []int, idx int) int {
+	if parents[idx] != idx {
+		parents[idx] = find(parents, parents[idx])
+	}
+
+	return parents[idx]
+}
+
+func validateBinaryTreeNodes1(n int, leftChild []int, rightChild []int) bool {
+	children := make([][]int, n)
+	visited := make([]bool, n)
+
+	for i := range leftChild {
+		l, r := leftChild[i], rightChild[i]
+
+		if l != -1 {
+			children[i] = append(children[i], l)
+			visited[l] = true
+		}
+
+		if r != -1 {
+			children[i] = append(children[i], r)
+			visited[r] = true
+		}
+
+		// at most 2 children
+		if len(children[i]) > 2 {
+			return false
+		}
+	}
+
+	var root int
+	for i := range visited {
+		if !visited[i] {
+			root = i
+			break
+		}
+	}
+
+	// reset visited
+	for i := range visited {
+		visited[i] = false
+	}
+
+	// traverse from root
+	queue := []int{root}
+
+	// start from root, each node should be visited only once
+	var count int
+	for len(queue) > 0 {
+		n := queue[0]
+		queue = queue[1:]
+
+		// every node should be visited once
+		if visited[n] {
+			return false
+		}
+		visited[n] = true
+		count++
+
+		queue = append(queue, children[n]...)
+	}
+
+	// all nodes should be visited from root
+	return count == n
+}
+
+//	Notes
 //	1.	when checking parent <-> child loop, cannot assume parent's parent
 //		always exist (root), but other situation shoule be false
 
@@ -117,3 +182,13 @@ func validateBinaryTreeNodes(n int, leftChild []int, rightChild []int) bool {
 //		non-nil, the boundary condition one node only(single root)
 
 //	11.	too slow, since map is used as a set, use array instead
+
+//	12.	inspired from https://leetcode.com/problems/validate-binary-tree-nodes/discuss/517596/Count-Parents-and-Union-Find and sample code
+
+//		union-find is another way to solve it
+
+//		each node at most with 2 children, so no need to check that, but
+//		there's possibility a node be child of different node, so union-find
+//		can be used to find this
+
+//		check left & right children can be combined into one function
