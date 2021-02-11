@@ -23,8 +23,18 @@ package main
 //     1 <= nums.length <= 10^5
 //     0 <= nums[i] <= 10^5
 
-// 3, 3, 7, 7, 10, 11, 11
 func singleNonDuplicate(nums []int) int {
+	var num int
+
+	for _, n := range nums {
+		num ^= n
+	}
+
+	return num
+}
+
+// 3, 3, 7, 7, 10, 11, 11
+func singleNonDuplicate1(nums []int) int {
 	length := len(nums)
 	if length == 1 {
 		return nums[0]
@@ -47,17 +57,7 @@ func singleNonDuplicate(nums []int) int {
 	return nums[i]
 }
 
-func singleNonDuplicate1(nums []int) int {
-	var num int
-
-	for _, n := range nums {
-		num ^= n
-	}
-
-	return num
-}
-
-//	problems
+//	Notes
 //	1.	inspired from https://leetcode.com/problems/single-element-in-a-sorted-array/discuss/627786/C%2B%2B-O(log-n)-time-O(1)-space-or-Simple-and-clean-or-Use-xor-to-keep-track-of-odd-even-pair
 
 //		unique number only appears at even index, and array length is
