@@ -73,13 +73,6 @@ func countSquares(matrix [][]int) int {
 	return count
 }
 
-func min(i, j int) int {
-	if i <= j {
-		return i
-	}
-	return j
-}
-
 func countSquares1(matrix [][]int) int {
 	y := len(matrix)
 	if y == 0 {
@@ -96,19 +89,12 @@ func countSquares1(matrix [][]int) int {
 
 	for i := range matrix {
 		for j := range matrix[0] {
-			if i == 0 || j == 0 {
-				dp[i][j] = matrix[i][j]
-			} else {
-				if matrix[i][j] == 1 {
-					if dp[i-1][j] > 0 && dp[i][j-1] > 0 && dp[i-1][j-1] > 0 {
-						dp[i][j] = min(min(dp[i-1][j], dp[i][j-1]), dp[i-1][j-1]) + 1
-					} else {
-						dp[i][j] = matrix[i][j]
-					}
+			if matrix[i][j] == 1 {
+				if i > 0 && j > 0 {
+					dp[i][j] = min(dp[i-1][j-1], min(dp[i-1][j], dp[i][j-1])) + 1
+				} else {
+					dp[i][j] = 1
 				}
-			}
-
-			if dp[i][j] > 0 {
 				count += dp[i][j]
 			}
 		}
@@ -124,7 +110,7 @@ func min(i, j int) int {
 	return j
 }
 
-//	problems
+//	Notes
 //	1.	wrong logic when calculate square
 
 //	2.	i think it can be done in 1D dp, because dp calculation only relates
@@ -137,3 +123,7 @@ func min(i, j int) int {
 //		it can use original matrix to store dp, so not extra memory space is needed
 
 //		description of dp is precise, dp[i][j] means the size of biggest square with A[i][j] as bottom-right corner.
+
+//	5.	inspired from https://leetcode.com/problems/count-square-submatrices-with-all-ones/discuss/441620/DP-with-figure-explanation
+
+//		author provides thinking process of dp, basically find transformation among each state
