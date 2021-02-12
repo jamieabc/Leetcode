@@ -43,6 +43,10 @@ import "sort"
 //     1 <= nums[i] <= 109
 
 func minimumDeviation(nums []int) int {
+	sort.Ints(nums)
+	size := len(nums)
+	deviation := nums[size-1] - nums[0]
+
 	// shrink all numbers
 	for i := range nums {
 		for nums[i]&1 == 0 {
@@ -50,15 +54,12 @@ func minimumDeviation(nums []int) int {
 		}
 	}
 
-	sort.Ints(nums)
-	size := len(nums)
-
-	deviation := nums[size-1] - nums[0]
+	deviation = min(deviation, nums[size-1]-nums[0])
 
 	for i := 0; i < size-1; i++ {
 		if nums[i] != nums[i+1] {
 			if nums[i]<<1 <= nums[i+1] || nums[i+1]<<1 <= nums[size-1] {
-				return nums[size-1] - nums[i]<<1
+				return min(deviation, nums[size-1]-nums[i]<<1)
 			}
 
 			if nums[i]<<1 > nums[size-1] {
@@ -105,3 +106,5 @@ func min(i, j int) int {
 //		case 3: current_smallest * 2 > largest
 
 //	3.	it could happen that original array has smallest deviation
+
+//	4.	after operation, largest & smallest may change, needs to sort again
