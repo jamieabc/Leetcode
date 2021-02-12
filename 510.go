@@ -67,6 +67,26 @@ package main
  */
 
 func inorderSuccessor(node *Node) *Node {
+	if node == nil {
+		return nil
+	}
+
+	// larger one comes from parent
+	if node.Right == nil {
+		prev := node
+		for node = node.Parent; node != nil && node.Left != prev; prev, node = node, node.Parent {
+		}
+
+		return node
+	}
+
+	// larger node comes from left-most node of right subtree
+	for node = node.Right; node != nil && node.Left != nil; node = node.Left {
+	}
+	return node
+}
+
+func inorderSuccessor1(node *Node) *Node {
 	var prev *Node
 	for n := node; n != nil; prev, n = n, n.Parent {
 		// node is left of parent
@@ -85,7 +105,7 @@ func inorderSuccessor(node *Node) *Node {
 	return nil
 }
 
-//	problems
+//	Notes
 //	1.	if only node is root, I cannot always assume parent is not nil
 
 //	2.	when I want to access two variables (a.b.c), need to care that it might
@@ -94,3 +114,7 @@ func inorderSuccessor(node *Node) *Node {
 //	3.	refactor in a better recursive
 
 //	4.	time complexity is O(log n)
+
+//	5.	inspired from https://leetcode.com/problems/inorder-successor-in-bst-ii/discuss/231587/Java-find-in-parents-or-find-in-descendents
+
+//		instead of trying to compare node, compare value which is more straight forward
