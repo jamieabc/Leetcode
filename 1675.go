@@ -1,6 +1,9 @@
 package main
 
-import "sort"
+import (
+	"math"
+	"sort"
+)
 
 // You are given an array nums of n positive integers.
 //
@@ -43,27 +46,39 @@ import "sort"
 //     1 <= nums[i] <= 109
 
 func minimumDeviation(nums []int) int {
-	sort.Ints(nums)
 	size := len(nums)
-	deviation := nums[size-1] - nums[0]
+	largest, smallest := math.MinInt32, math.MaxInt32
 
 	// shrink all numbers
 	for i := range nums {
+		largest, smallest = max(largest, nums[i]), min(smallest, nums[i])
+
 		for nums[i]&1 == 0 {
 			nums[i] = nums[i] >> 1
 		}
 	}
 
-	deviation = min(deviation, nums[size-1]-nums[0])
+	sort.Ints(nums)
+	deviation := min(largest-smallest, nums[size-1]-nums[0])
 
 	for i := 0; i < size-1; i++ {
 		if nums[i] != nums[i+1] {
-			if nums[i]<<1 <= nums[i+1] || nums[i+1]<<1 <= nums[size-1] {
+			// 2 * smallest > largest, new deviation could be
+			// 2 * smallest - next number or
+			// all numbers are doubled except the number smaller than largest
+			if nums[i]<<1 > nums[size-1] {
+				return min(deviation, min(nums[size-2]<<1-nums[size-1], nums[i]<<1-nums[i+1]))
+			}
+
+			// 2 * smallest <= next number && 2 * smallest < largest,
+			// means 2 * smallest becomes new smallest
+			if nums[i]<<1 <= nums[i+1] && nums[i]<<1 < nums[size-1] {
 				return min(deviation, nums[size-1]-nums[i]<<1)
 			}
 
-			if nums[i]<<1 > nums[size-1] {
-				return min(deviation, nums[size-2]<<1-nums[size-1])
+			// 2 * next number <= largest,
+			if nums[i+1]<<1 <= nums[size-1] {
+				return min(deviation, nums[size-1]-nums[i+1])
 			}
 
 			return min(deviation, (nums[i+1]-nums[i])<<1)
@@ -75,6 +90,13 @@ func minimumDeviation(nums []int) int {
 
 func min(i, j int) int {
 	if i <= j {
+		return i
+	}
+	return j
+}
+
+func max(i, j int) int {
+	if i >= j {
 		return i
 	}
 	return j
@@ -108,3 +130,10 @@ func min(i, j int) int {
 //	3.	it could happen that original array has smallest deviation
 
 //	4.	after operation, largest & smallest may change, needs to sort again
+
+//	5.	find original largest & smallest, even with this, still not be correct
+
+//		original [10, 4, 3] => deviation = 7
+//		change   [2, 3, 5]  => deviation = 3
+
+// 		logic is still wrong
