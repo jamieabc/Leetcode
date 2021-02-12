@@ -28,41 +28,42 @@ import "fmt"
 // You can assume that no duplicate edges will appear in edges. Since all edges are undirected, [0, 1] is the same as [1, 0] and thus will not appear together in edges.
 
 func countComponents(n int, edges [][]int) int {
-	count := n
-	arr := make([]int, n)
-	for i := range arr {
-		arr[i] = i
+	parents, ranks := make([]int, n), make([]int, n)
+	for i := range parents {
+		parents[i] = i
+		ranks[i] = 1
 	}
 
-	for _, e := range edges {
-		r1 := parent(arr, e[0])
-		r2 := parent(arr, e[1])
+	count := n
 
-		if r1 != r2 {
-			m := min(r1, r2)
-			arr[r1] = m
-			arr[r2] = m
+	for _, edge := range edges {
+		p1, p2 := find(parents, edge[0]), find(parents, edge[1])
+
+		if p1 != p2 {
 			count--
+
+			if ranks[p1] >= ranks[p2] {
+				parents[p2] = p1
+				ranks[p1]++
+			} else {
+				parents[p1] = p2
+				ranks[p2]++
+			}
 		}
 	}
+
 	return count
 }
 
-func parent(arr []int, n int) int {
-	if arr[n] != n {
-		arr[n] = parent(arr, arr[n])
+func find(parents []int, idx int) int {
+	if parents[idx] != idx {
+		parents[idx] = find(parents, parents[idx])
 	}
-	return arr[n]
+
+	return parents[idx]
 }
 
-func min(i, j int) int {
-	if i <= j {
-		return i
-	}
-	return j
-}
-
-func countComponents1(n int, edges [][]int) int {
+func countComponents2(n int, edges [][]int) int {
 	if n == 0 {
 		return 0
 	}
@@ -129,7 +130,7 @@ func min(i, j int) int {
 	return j
 }
 
-func countComponents2(n int, edges [][]int) int {
+func countComponents1(n int, edges [][]int) int {
 	mapping := make(map[int][]int)
 
 	for _, e := range edges {
@@ -161,7 +162,7 @@ func countComponents2(n int, edges [][]int) int {
 	return count
 }
 
-//	problems
+//	Notes
 //	1.	traversing route should not be order dependent
 
 //	2.	from test case, even if node is not connected, still treat it as
@@ -188,7 +189,7 @@ func countComponents2(n int, edges [][]int) int {
 //	7.	inspired from https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/discuss/77578/Java-concise-DFS
 
 //		when traversing, it's important to mark all connect points, e.g.
-//		[1, 5] means 1 -> 5 & 5 -> 1, with this data, I can avoit order
+//		[1, 5] means 1 -> 5 & 5 -> 1, with this data, I can avoid order
 //		traverse dependent problem.
 
 //		time complexity is O(V+E), every node and edges are visited
