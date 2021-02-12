@@ -1,5 +1,7 @@
 package main
 
+import "sort"
+
 // You are given an array nums of n positive integers.
 //
 // You can perform two types of operations on any element of the array any number of times:
@@ -40,6 +42,43 @@ package main
 //     2 <= n <= 105
 //     1 <= nums[i] <= 109
 
+func minimumDeviation(nums []int) int {
+	// shrink all numbers
+	for i := range nums {
+		for nums[i]&1 == 0 {
+			nums[i] = nums[i] >> 1
+		}
+	}
+
+	sort.Ints(nums)
+	size := len(nums)
+
+	deviation := nums[size-1] - nums[0]
+
+	for i := 0; i < size-1; i++ {
+		if nums[i] != nums[i+1] {
+			if nums[i]<<1 <= nums[i+1] || nums[i+1]<<1 <= nums[size-1] {
+				return nums[size-1] - nums[i]<<1
+			}
+
+			if nums[i]<<1 > nums[size-1] {
+				return min(deviation, nums[size-2]<<1-nums[size-1])
+			}
+
+			return min(deviation, (nums[i+1]-nums[i])<<1)
+		}
+	}
+
+	return deviation
+}
+
+func min(i, j int) int {
+	if i <= j {
+		return i
+	}
+	return j
+}
+
 //	Notes
 //	1.	odd -> become larger, odd -> become smaller
 //		this problem cares only about largest & smallest, to make it simpler, make all
@@ -64,3 +103,5 @@ package main
 //				    largest - current_smallest)
 
 //		case 3: current_smallest * 2 > largest
+
+//	3.	it could happen that original array has smallest deviation
