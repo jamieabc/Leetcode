@@ -62,103 +62,85 @@ package main
 // For simplicity, not mentioned rules should be ignored in this problem. For example, you don't need to reveal all the unrevealed mines when the game is over, consider any cases that you will win the game or flag any squares.
 
 func updateBoard(board [][]byte, click []int) [][]byte {
-	if board[click[0]][click[1]] == 'M' {
-		board[click[0]][click[1]] = 'X'
+	if board[click[0]][click[1]] == byte('M') {
+		board[click[0]][click[1]] = byte('X')
 		return board
 	}
 
-	update(board, click[0], click[1])
-	for _, i := range adj(board, click[0], click[1]) {
-		_ = updateBoard(board, []int{i[0], i[1]})
+	queue := [][]int{click}
+
+	for len(queue) > 0 {
+		p := queue[0]
+		queue = queue[1:]
+
+		// already processed
+		if board[p[0]][p[1]] == byte('B') {
+			continue
+		}
+
+		mine := adjMines(board, p)
+		if mine == 0 {
+			board[p[0]][p[1]] = byte('B')
+
+			for _, i := range []int{-1, 0, 1} {
+				for _, j := range []int{-1, 0, 1} {
+					if i == 0 && j == 0 {
+						continue
+					}
+
+					newY, newX := p[0]+i, p[1]+j
+
+					if validPoint(board, newY, newX) && board[newY][newX] == byte('E') {
+						queue = append(queue, []int{newY, newX})
+					}
+				}
+			}
+		} else {
+			board[p[0]][p[1]] = byte('0'+mine)
+		}
 	}
 
 	return board
 }
 
-func isValid(board [][]byte, y, x int) bool {
-	if x < 0 || y < 0 || x == len(board[0]) || y == len(board) {
-		return false
-	}
-	return true
-}
+func adjMines(board [][]byte, pos []int) int {
+	var mine int
 
-func update(board [][]byte, y, x int) {
-	if !isValid(board, y, x) {
-		return
-	}
-
-	if board[y][x] == 'E' {
-		b := adjBomb(board, y, x)
-		if b == 0 {
-			board[y][x] = 'B'
-		} else {
-			board[y][x] = byte(b + '0')
-		}
-	}
-}
-
-func adjBomb(board [][]byte, y, x int) int {
-	var bomb int
-
-	for i := y - 1; i <= y+1; i++ {
-		for j := x - 1; j <= x+1; j++ {
-			if i == y && j == x {
+	for _, i := range []int{-1, 0, 1} {
+		for _, j := range []int{-1, 0, 1} {
+			if i == 0 && j == 0 {
 				continue
 			}
 
-			if isBomb(board, i, j) {
-				bomb++
+			newY, newX := pos[0]+i, pos[1]+j
+
+			if validPoint(board, newY, newX) && board[newY][newX] == byte('M') {
+				mine++
 			}
 		}
 	}
 
-	return bomb
+	return mine
 }
 
-func isBomb(board [][]byte, y, x int) bool {
-	if !isValid(board, y, x) {
-		return false
-	}
+func validPoint(board [][]byte, y, x int) bool {
+	w, h := len(board[0]), len(board)
 
-	return board[y][x] == 'M'
+	return y >= 0 && x >= 0 && y < h && x < w
 }
 
-func isRevealable(board [][]byte, y, x int) bool {
-	if !isValid(board, y, x) {
-		return false
-	}
-
-	if board[y][x] == 'E' {
-		return true
-	}
-
-	return false
-}
-
-// return with y, x
-func adj(board [][]byte, y, x int) [][]int {
-	result := make([][]int, 0)
-
-	// adj only move forward when it's blank (B)
-	if board[y][x] != 'B' {
-		return result
-	}
-
-	// bottom
-	for i := y - 1; i <= y+1; i++ {
-		for j := x - 1; j <= x+1; j++ {
-			if i == x && j == y {
-				continue
-			}
-
-			if isRevealable(board, i, j) {
-				result = append(result, []int{i, j})
-			}
-		}
-	}
-
-	return result
-}
-
-//	problems
+//	Notes
 //	1.	too slow, don't use stack for too many memory update
+
+//	2.	this is BFS from click position, only thing to be aware is that all 8 directions
+//		are considered as neighbor, will be put into queue
+
+//	3.	visited might not be necessary, but becareful causes infinite loop
+//		because there are 8 directions, same position might be added multiple time, so
+//		need to check if any point is already processed
+
+//	4.	inspired from https://leetcode.com/problems/minesweeper/discuss/99841/Straight-forward-Java-solution
+
+//		could also use to denote
+//		int[] dx = {-1, 0, 1, -1, 1, 0, 1, -1};
+//    	int[] dy = {-1, 1, 1, 0, -1, -1, 0, 1};
