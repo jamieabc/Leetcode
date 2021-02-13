@@ -22,47 +22,76 @@ import "sort"
 // -50000 <= nums[i] <= 50000
 
 func sortArray(nums []int) []int {
-	return mergeSort(nums)
+	quickSort(nums, 0, len(nums)-1)
+
+	return nums
 }
 
-func mergeSort(nums []int) []int {
-	length := len(nums)
-	if length <= 1 {
-		return nums
+func quickSort(nums []int, start, end int) {
+	idx := partition(nums, start, end)
+
+	if idx != -1 {
+		quickSort(nums, start, idx-1)
+		quickSort(nums, idx+1, end)
+	}
+}
+
+func partition(nums []int, start, end int) int {
+	if start >= end {
+		return -1
 	}
 
-	if length == 2 {
-		if nums[0] <= nums[1] {
-			return []int{nums[0], nums[1]}
-		} else {
-			return []int{nums[1], nums[0]}
+	store, pivot := start, nums[start]
+	nums[start], nums[end] = nums[end], nums[start]
+
+	for i := start; i < end; i++ {
+		if nums[i] < pivot {
+			nums[store], nums[i] = nums[i], nums[store]
+			store++
 		}
 	}
 
-	// split
-	mid := (length - 1) / 2
-	a := mergeSort(nums[:mid])
-	b := mergeSort(nums[mid:])
+	nums[store], nums[end] = nums[end], nums[store]
 
-	result := make([]int, 0)
-
-	// merge
-	for i, j := 0, 0; i < len(a) || j < len(b); {
-		if i != len(a) && (j == len(b) || a[i] <= b[j]) {
-			result = append(result, a[i])
-			i++
-		} else {
-			result = append(result, b[j])
-			j++
-		}
-	}
-
-	return result
+	return store
 }
 
 func sortArray1(nums []int) []int {
-	sort.Slice(nums, func(i, j int) bool {
-		return nums[i] < nums[j]
-	})
-	return nums
+	return mergeSort(nums, 0, len(nums)-1)
 }
+
+func mergeSort(nums []int, start, end int) []int {
+	if start == end {
+		return nums[start : start+1]
+	}
+
+	mid := start + (end-start)>>1
+	arr1, arr2 := mergeSort(nums, start, mid), mergeSort(nums, mid+1, end)
+
+	ans := make([]int, len(arr1)+len(arr2))
+
+	for idx, p1, p2 := 0, 0, 0; idx < len(ans); idx++ {
+		if p2 == len(arr2) || (p1 < len(arr1) && arr1[p1] < arr2[p2]) {
+			ans[idx] = arr1[p1]
+			p1++
+		} else {
+			ans[idx] = arr2[p2]
+			p2++
+		}
+	}
+
+	return ans
+}
+
+//	Notes
+//	1.	merge sort: divide & conquer
+//		quick sort: quick select
+
+//	2.	inspired from https://leetcode.com/problems/sort-an-array/discuss/461394/Python-3-(Eight-Sorting-Algorithms)-(With-Explanation)
+
+//		there are also:
+//		selection sort (find smallest in remaining array, take it out and put into new array)
+//		bubble sort (swap adj number if next number is larger),
+//		insertion sort (for every number, checks previous numbers to find it proper location)
+//		heap sort (use heap)
+//		bucket sort
