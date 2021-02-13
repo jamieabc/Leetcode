@@ -30,36 +30,36 @@ package main
  *     Right *TreeNode
  * }
  */
+
 func findFrequentTreeSum(root *TreeNode) []int {
-	mapping := make(map[int]int)
-	maxFreq := -1
+	counter := make(map[int]int)
+	var maxOccurrence int
 
-	postOrder(root, mapping, &maxFreq)
-	result := make([]int, 0)
+	recursive(root, counter, &maxOccurrence)
 
-	for k, v := range mapping {
-		if v == maxFreq {
-			result = append(result, k)
+	ans := make([]int, 0)
+
+	for key, val := range counter {
+		if val == maxOccurrence {
+			ans = append(ans, key)
 		}
 	}
 
-	return result
+	return ans
 }
 
-func postOrder(node *TreeNode, mapping map[int]int, maxFreq *int) int {
+func recursive(node *TreeNode, counter map[int]int, maxOccurrence *int) int {
 	if node == nil {
 		return 0
 	}
 
-	l := postOrder(node.Left, mapping, maxFreq)
-	r := postOrder(node.Right, mapping, maxFreq)
+	cur := node.Val + recursive(node.Left, counter, maxOccurrence) + recursive(node.Right, counter, maxOccurrence)
 
-	sum := l + r + node.Val
-	mapping[sum]++
+	counter[cur]++
 
-	if mapping[sum] > *maxFreq {
-		*maxFreq = mapping[sum]
+	if counter[cur] > *maxOccurrence {
+		*maxOccurrence = counter[cur]
 	}
 
-	return sum
+	return cur
 }
