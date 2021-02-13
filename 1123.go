@@ -44,7 +44,43 @@ package main
  *     Right *TreeNode
  * }
  */
+
 func lcaDeepestLeaves(root *TreeNode) *TreeNode {
+	n, _ := traverse(root, 0)
+
+	return n
+}
+
+func traverse(node *TreeNode, level int) (*TreeNode, int) {
+	if node == nil {
+		return nil, level
+	}
+
+	left, l1 := traverse(node.Left, level+1)
+	right, l2 := traverse(node.Right, level+1)
+
+	// leaf
+	if left == nil && right == nil {
+		return node, level
+	}
+
+	if left != nil && right != nil {
+		if l1 == l2 {
+			return node, l1
+		} else if l1 > l2 {
+			return left, l1
+		}
+		return right, l2
+	}
+
+	if left == nil {
+		return right, l2
+	}
+
+	return left, l1
+}
+
+func lcaDeepestLeaves1(root *TreeNode) *TreeNode {
 	anc := root
 	deepest := 0
 
@@ -84,7 +120,7 @@ func max(i, j int) int {
 	return j
 }
 
-//	problems
+//	Notes
 //	1.	reference from https://leetcode.com/problems/lowest-common-ancestor-of-deepest-leaves/discuss/334577/JavaC%2B%2BPython-Two-Recursive-Solution
 
 //		LCA - lowest common ancestor
