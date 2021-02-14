@@ -43,38 +43,34 @@ import "strings"
 //     How to make sure the duplicated files you find are not false positive?
 
 func findDuplicate(paths []string) [][]string {
-	mapping := make(map[string][]string)
+	table := make(map[string][]string)
 
 	for _, p := range paths {
-		strs := strings.Split(p, " ")
-		dir := strs[0]
+		strs := strings.Fields(p)
+
 		for i := 1; i < len(strs); i++ {
-			filename, content := extract(strs[i])
-			mapping[content] = append(mapping[content], dir+"/"+filename)
+			var j int
+			for ; j < len(strs[i]) && strs[i][j] != '('; j++ {
+			}
+
+			content := strs[i][j : len(strs[i])-1]
+
+			table[content] = append(table[content], strs[0]+"/"+strs[i][:j])
 		}
 	}
 
-	result := make([][]string, 0)
-	for _, v := range mapping {
-		if len(v) > 1 {
-			result = append(result, v)
+	ans := make([][]string, 0)
+
+	for _, files := range table {
+		if len(files) > 1 {
+			ans = append(ans, files)
 		}
 	}
 
-	return result
+	return ans
 }
 
-func extract(str string) (string, string) {
-	for i := len(str) - 1; i >= 0; i-- {
-		if str[i] == '(' {
-			return str[:i], str[i+1 : len(str)-1]
-		}
-	}
-
-	return "", ""
-}
-
-//	problems
+//	Notes
 //	1.	target is to find duplicates, not find group
 
 //	2.	add reference https://leetcode.com/problems/find-duplicate-file-in-system/discuss/104123/C%2B%2B-clean-solution-answers-to-follow-up
@@ -83,10 +79,20 @@ func extract(str string) (string, string) {
 //		in a directory, instead of having 100 sub-directories, BFS might
 //		in general w/ more memory usage
 
+//		also, map file size as key of a hash, instead of whole file content
+
+//		md5 small part of a file, only if md5 value same needs to compare byte by byte
+
+//		time complexity is O(n^2*k) cause it might need to compare all others, k is file
+//		size
+
 //		also, it's a good way to compare meta data first (e.g. file size),
 //		then hash file with a small part of content, at last is byte by
 //		byte comparison
 
-//		time complexity is O(n^2) cause it might need to compare all others
+//	3.	inspired from https://leetcode.com/problems/find-duplicate-file-in-system/discuss/104120/Follow-up-questions-discussion/170646
 
-//	3.	add reference https://leetcode.com/problems/find-duplicate-file-in-system/discuss/104120/Follow-up-questions-discussion
+//		GFS stores file in chunks, so XOR file chunks as check sum and compare one by one
+
+//	4.	inspired form sample code, use "a" + "b"  to faster string concatenation
+//		there's a strings.Fields which separates string by white space
