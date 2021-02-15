@@ -33,7 +33,68 @@ package main
 //
 //     N is a positive integer and will not exceed 15.
 
-func countArrangement(N int) int {
+func countArrangement(n int) int {
+	var count, used int
+
+	// start store from n, because it reduces so many possible candidates
+	backtracking(n, n, used, &count)
+
+	return count
+}
+
+func backtracking(n, store, used int, count *int) {
+	if store == 0 {
+		*count++
+		return
+	}
+
+	for i := 1; i <= n; i++ {
+		if (1<<(n-i))&used > 0 {
+			continue
+		}
+		used |= 1 << (n - i)
+
+		// check condition
+		if i%store == 0 || store%i == 0 {
+			backtracking(n, store-1, used, count)
+		}
+
+		used ^= 1 << (n - i)
+	}
+}
+
+func countArrangement2(n int) int {
+	var count int
+	var used int
+
+	// start store from n, because it reduces so many possible candidates
+	backtracking(n, n, used, &count)
+
+	return count
+}
+
+func backtracking(n, store, used int, count *int) {
+	if store == 0 {
+		*count++
+		return
+	}
+
+	for i := 1; i <= n; i++ {
+		if (1<<(i-1))&used == 1 {
+			continue
+		}
+		used |= 1 << (i - 1)
+
+		// check condition
+		if i%store == 0 || store%i == 0 {
+			backtracking(n, store-1, used, count)
+		}
+
+		used ^= 1 << (i - 1)
+	}
+}
+
+func countArrangement1(N int) int {
 	var count int
 	flags := make([]bool, N)
 	mapping := make(map[int][]int)
@@ -75,7 +136,7 @@ func permutation(n int, flags *[]bool, length int, mapping map[int][]int, count 
 	}
 }
 
-//	problems
+//	Notes
 //	1.	too slow, due to memory operation
 
 //	2.	no need to track all data, just record it's size
@@ -87,3 +148,19 @@ func permutation(n int, flags *[]bool, length int, mapping map[int][]int, count 
 //		start from big number cause it has less choices
 
 //		it can further reduce cause length == 1 is always valid
+
+//	5.	inspired from https://leetcode.com/problems/beautiful-arrangement/discuss/1000132/Python-DP-%2B-bitmasks-explained
+
+//		start from largest number reduces runtime, because larger number tends to
+//		have less possible candidates
+
+//		use bitmask to reduce runtime
+
+//	6.	inspired form https://leetcode.com/problems/beautiful-arrangement/discuss/1000788/C%2B%2B-Backtracking-DFS-%2B-Bitwise-Solutions-Compared-and-Explained-100-Time-~95-Space
+
+//		uses bitmask for seen
+//		use ^ to reset bit at some position
+
+//		need to be careful, bitmask has opposite order than using array, e.g.
+//		used 		0, 		1, 		2, 		3
+//      bitmask  << 3,   << 2,   << 1,   << 0
