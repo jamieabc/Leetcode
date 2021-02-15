@@ -28,8 +28,32 @@ package main
 //     The given kill id is guaranteed to be one of the given PIDs.
 //     n >= 1.
 
-// iterative
 func killProcess(pid []int, ppid []int, kill int) []int {
+	table := make(map[int][]int)
+
+	for i := range pid {
+		if ppid[i] != 0 {
+			table[ppid[i]] = append(table[ppid[i]], pid[i])
+		}
+	}
+
+	ans := make([]int, 0)
+	queue := []int{kill}
+
+	for len(queue) > 0 {
+		p := queue[0]
+		queue = queue[1:]
+
+		ans = append(ans, p)
+
+		queue = append(queue, table[p]...)
+	}
+
+	return ans
+}
+
+// iterative
+func killProcess2(pid []int, ppid []int, kill int) []int {
 	if len(pid) == 0 || len(ppid) == 0 || kill == 0 {
 		return []int{}
 	}
