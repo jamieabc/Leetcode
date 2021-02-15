@@ -43,43 +43,42 @@ import "strings"
 //     String A and B are of the same length.
 
 func smallestEquivalentString(A string, B string, S string) string {
-	mapping := make([]int, 26)
-	for i := range mapping {
-		mapping[i] = i
+	parents, ranks := make([]int, 26), make([]int, 26)
+	for i := range parents {
+		parents[i] = i
+		ranks[i] = 1
 	}
 
 	for i := range A {
-		a, b := find(mapping, toIndex(A[i])), find(mapping, toIndex(B[i]))
-		if a <= b {
-			mapping[b] = a
+		p1, p2 := find(parents, int(A[i]-'a')), find(parents, int(B[i]-'a'))
+		if ranks[p1] >= ranks[p2] {
+			parents[p2] = p1
+			ranks[p1]++
 		} else {
-			mapping[a] = b
+			parents[p1] = p2
+			ranks[p2]++
 		}
 	}
 
-	var sb strings.Builder
+	ans := make([]byte, len(S))
 
-	for i := range S {
-		sb.WriteByte(byte(find(mapping, toIndex(S[i])) + 'a'))
+	for i := range ans {
+		group := find(parents, int(S[i]-'a'))
+
+		for j := range parents {
+			if parents[j] == group {
+				ans[i] = byte('a' + j)
+				break
+			}
+		}
 	}
 
-	return sb.String()
+	return string(ans)
 }
 
-func toIndex(b byte) int {
-	return int(b - 'a')
-}
-
-func min(i, j int) int {
-	if i <= j {
-		return i
+func find(parents []int, idx int) int {
+	if parents[idx] != idx {
+		parents[idx] = find(parents, parents[idx])
 	}
-	return j
-}
-
-func find(mapping []int, i int) int {
-	if mapping[i] != i {
-		mapping[i] = find(mapping, mapping[i])
-	}
-	return mapping[i]
+	return parents[idx]
 }
