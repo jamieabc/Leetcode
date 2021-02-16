@@ -28,43 +28,98 @@ package main
 // M[i][i] = 1 for all students.
 // If M[i][j] = 1, then M[j][i] = 1.
 
-func findCircleNum(M [][]int) int {
-	arr := make([]int, len(M))
-	for i := range arr {
-		arr[i] = i
+// worst tc: O(n^3), n^2 for edges, and worst case of union-find is n
+func findCircleNum(isConnected [][]int) int {
+	size := len(isConnected)
+
+	parents, ranks := make([]int, size), make([]int, size)
+	for i := range parents {
+		parents[i] = i
+		ranks[i] = 1
 	}
 
-	for i := range M {
-		for j := i + 1; j < len(M); j++ {
-			if M[i][j] == 1 {
-				r1, r2 := find(arr, i), find(arr, j)
-				if r1 <= r2 {
-					arr[r2] = r1
-				} else {
-					arr[r1] = r2
+	disconnected := size
+
+	for i, c := range isConnected {
+		for j := range c {
+			if c[j] == 1 && i != j {
+				p1, p2 := find(parents, i), find(parents, j)
+
+				if p1 != p2 {
+					disconnected--
+
+					if ranks[p1] >= ranks[p2] {
+						parents[p2] = p1
+						ranks[p1]++
+					} else {
+						parents[p1] = p2
+						ranks[p2]++
+					}
 				}
 			}
-
 		}
 	}
 
+	// another way to find connected component, there is only one root
+	// var count int
+	// for i := range parents {
+	// 	if parents[i] == i {
+	// 		count++
+	// 	}
+	// }
+
+	return disconnected
+}
+
+func find(parents []int, idx int) int {
+	if parents[idx] != idx {
+		parents[idx] = find(parents, parents[idx])
+	}
+
+	return parents[idx]
+}
+
+// tc: O(n^2), all edges are visited once
+func findCircleNum1(isConnected [][]int) int {
+	size := len(isConnected)
+	visited := make([]bool, size)
 	var count int
-	for i := range arr {
-		if i == arr[i] {
-			count++
+
+	for i := range visited {
+		if visited[i] {
+			continue
 		}
+		count++
+
+		bfs(isConnected, i, visited)
 	}
+
 	return count
 }
 
-func find(arr []int, i int) int {
-	if i != arr[i] {
-		arr[i] = find(arr, arr[i])
-	}
+func bfs(isConnected [][]int, start int, visited []bool) {
+	queue := []int{start}
 
-	return arr[i]
+	for len(queue) > 0 {
+		n := queue[0]
+		queue = queue[1:]
+
+		if visited[n] {
+			continue
+		}
+		visited[n] = true
+
+		for i, v := range isConnected[n] {
+			if i != n && v == 1 && !visited[i] {
+				queue = append(queue, i)
+			}
+		}
+	}
 }
 
-//	problems
+//	Notes
 //	1.	description is quite vague, but if b = a's direct, c = b's direct, d = c's direct, then
 //		a, b, c, d all forms a circle
+
+//	2.	worst tc of union-find is O(n^3), traverse all edges with O(n^2), and
+//		worst cast of union-find is O(n)
