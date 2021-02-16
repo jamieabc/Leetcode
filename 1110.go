@@ -31,7 +31,58 @@ package main
  *     Right *TreeNode
  * }
  */
+
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
 func delNodes(root *TreeNode, to_delete []int) []*TreeNode {
+	table := make(map[int]bool)
+	for _, i := range to_delete {
+		table[i] = true
+	}
+
+	ans := make([]*TreeNode, 0)
+
+	postOrder(root, table, &ans)
+
+	// becareful about root, because nodes put into answer as long as parent
+	// is removed, bur root has no parent
+	if !table[root.Val] {
+		ans = append(ans, root)
+	}
+
+	return ans
+}
+
+func postOrder(node *TreeNode, table map[int]bool, ans *[]*TreeNode) *TreeNode {
+	if node == nil {
+		return nil
+	}
+
+	// need to update tree when node is deleted
+	node.Left, node.Right = postOrder(node.Left, table, ans), postOrder(node.Right, table, ans)
+
+	if table[node.Val] {
+		if node.Left != nil {
+			*ans = append(*ans, node.Left)
+		}
+
+		if node.Right != nil {
+			*ans = append(*ans, node.Right)
+		}
+
+		return nil
+	}
+
+	return node
+}
+
+func delNodes1(root *TreeNode, to_delete []int) []*TreeNode {
 	result := make([]*TreeNode, 0)
 	mapping := make(map[int]bool)
 	for _, i := range to_delete {
@@ -76,6 +127,6 @@ func dfs(node *TreeNode, deletes map[int]bool, result *[]*TreeNode) int {
 	return 0
 }
 
-//  problems
+//  Notes
 //  1.  be careful about root, it root is not removed, then root itself needs
 //      to be put into answer
