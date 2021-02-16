@@ -46,8 +46,12 @@ func max(i, j int) int {
 	return j
 }
 
-//	problems
+//	Notes
 //	1.	inspired from https://leetcode.com/problems/container-with-most-water/discuss/6100/Simple-and-clear-proofexplanation
+
+//		author concludes with some explanation, widest area always a candidate
+//		if width is shrink, height need to be increased, thus it's safe to remove
+//		shorter one
 
 //		author doesn't check condition when height are same, so I think more about it. if height of
 //		i, j are same, then there are two conditions:
@@ -59,3 +63,16 @@ func max(i, j int) int {
 //		also, for the minimum height * length condition, author didn't consider it, I think a little
 //		more about it. because width is always 1, and the minimum difference to lowest is 1, but
 //		due to width changes, it will not happen that min height * length is largest
+
+//	2.	extremely hard for me to think, I though it was stack but fail to find
+//		it pattern
+
+//		to get most area, it only care about smaller one and don't care about
+//		higher one, because area is bounded by lower one
+
+//		so it's not just caring about the highest before/after self, width
+//		also matters, that's the reason start from left most & right most bars
+
+//	3.	inspired from https://leetcode.com/problems/container-with-most-water/discuss/200246/Proof-by-formula
+
+//		author provides a proof why it's safe to remove shorter bar
