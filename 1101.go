@@ -38,42 +38,49 @@ import "sort"
 // logs[i][1] != logs[i][2]
 
 func earliestAcq(logs [][]int, N int) int {
-	arr := make([]int, N)
-	for i := range arr {
-		arr[i] = i
-	}
-	count := N - 1
-
 	sort.Slice(logs, func(i, j int) bool {
-		return logs[i][0] <= logs[j][0]
+		return logs[i][0] < logs[j][0]
 	})
 
-	for _, l := range logs {
-		r1, r2 := find(arr, l[1]), find(arr, l[2])
-		if r1 != r2 {
-			count--
-			if r1 < r2 {
-				arr[r2] = r1
+	groups, ranks := make([]int, N), make([]int, N)
+	for i := range groups {
+		groups[i] = i
+		ranks[i] = 1
+	}
+
+	for _, log := range logs {
+		p1, p2 := find(groups, log[1]), find(groups, log[2])
+
+		if p1 != p2 {
+			N--
+
+			if ranks[p1] >= ranks[p2] {
+				groups[p2] = p1
+				ranks[p1]++
 			} else {
-				arr[r1] = r2
+				groups[p1] = p2
+				ranks[p2]++
 			}
 		}
 
-		if count == 0 {
-			return l[0]
+		if N == 1 {
+			return log[0]
 		}
 	}
 
 	return -1
 }
 
-func find(arr []int, i int) int {
-	if arr[i] != i {
-		arr[i] = find(arr, arr[i])
+func find(groups []int, idx int) int {
+	if groups[idx] != idx {
+		groups[idx] = find(groups, groups[idx])
 	}
-	return arr[i]
+	return groups[idx]
 }
 
-//	problems
-//	1.	event is not sorted, I have to sort it first, cause it wants earliest
-//		event time
+//	Notes
+//	1.	to make sure earliest timestamp is get, need to sort logs by time in
+//		ascending, such that when all vertex are connected, it's guarantee
+//		earliest time
+
+//	2.	N disconnected, when N == 1 means all connected
