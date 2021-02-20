@@ -45,58 +45,64 @@ import (
 //     2 <= n <= 105
 //     1 <= nums[i] <= 109
 
+type MaxHeap []int
+
+func (h MaxHeap) Len() int           { return len(h) }
+func (h MaxHeap) Less(i, j int) bool { return h[i] > h[j] }
+func (h MaxHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h MaxHeap) Peek() int          { return h[0] }
+
+func (h *MaxHeap) Push(x interface{}) {
+	*h = append(*h, x.(int))
+}
+
+func (h *MaxHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[:n-1]
+	return x
+}
+
 func minimumDeviation(nums []int) int {
-	size := len(nums)
-	largest, smallest := math.MinInt32, math.MaxInt32
-
-	// shrink all numbers
 	for i := range nums {
-		largest, smallest = max(largest, nums[i]), min(smallest, nums[i])
-
-		for nums[i]&1 == 0 {
-			nums[i] = nums[i] >> 1
+		if nums[i]&1 > 0 {
+			nums[i] = nums[i] << 1
 		}
 	}
 
-	sort.Ints(nums)
-	deviation := min(largest-smallest, nums[size-1]-nums[0])
-
-	for i := 0; i < size-1; i++ {
-		if nums[i] != nums[i+1] {
-			// 2 * smallest > largest, new deviation could be
-			// 2 * smallest - next number or
-			// all numbers are doubled except the number smaller than largest
-			if nums[i]<<1 > nums[size-1] {
-				return min(deviation, min(nums[size-2]<<1-nums[size-1], nums[i]<<1-nums[i+1]))
-			}
-
-			// 2 * smallest <= next number && 2 * smallest < largest,
-			// means 2 * smallest becomes new smallest
-			if nums[i]<<1 <= nums[i+1] && nums[i]<<1 < nums[size-1] {
-				return min(deviation, nums[size-1]-nums[i]<<1)
-			}
-
-			// 2 * next number <= largest,
-			if nums[i+1]<<1 <= nums[size-1] {
-				return min(deviation, nums[size-1]-nums[i+1])
-			}
-
-			return min(deviation, (nums[i+1]-nums[i])<<1)
-		}
+	low := math.MaxInt32
+	for _, n := range nums {
+		low = min(low, n)
 	}
 
-	return deviation
+	maxHeap := &MaxHeap{}
+	heap.Init(maxHeap)
+
+	for _, n := range nums {
+		heap.Push(maxHeap, n)
+	}
+
+	ans := maxHeap.Peek() - low
+
+	// try to reduce deviation by half largest number, if number
+	// cannot be half (already even), then stop
+	for true {
+		n := heap.Pop(maxHeap).(int)
+		if n&1 > 0 {
+			break
+		}
+
+		low = min(low, n>>1)
+		ans = min(ans, maxHeap.Peek()-low)
+		heap.Push(maxHeap, n>>1)
+	}
+
+	return ans
 }
 
 func min(i, j int) int {
 	if i <= j {
-		return i
-	}
-	return j
-}
-
-func max(i, j int) int {
-	if i >= j {
 		return i
 	}
 	return j
@@ -137,3 +143,18 @@ func max(i, j int) int {
 //		change   [2, 3, 5]  => deviation = 3
 
 // 		logic is still wrong
+
+//	6.	inspired from https://youtu.be/OTlusbuZX94?t=1371
+
+//		odd => larger, even => smaller, the strategy is to double all odd numbers
+//		then use heap to track max numbers, if it's even, half it, need to also check
+//		if new half number will be smaller than current minimum
+
+//		I have come up with similar idea to make all even numbers to odd, but I guess
+//		this is in wrong direction, because there could have multiple division, where
+//		to stop?
+
+//		e.g. 24 -> 12 -> 6 -> 3
+
+//		and start from odd will be a pretty good strategy, because every number
+//		doubled is even
