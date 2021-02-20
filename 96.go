@@ -31,7 +31,7 @@ func numTrees(n int) int {
 	return dp[n]
 }
 
-//	problems
+//	Notes
 
 //	1.	inspired from https://leetcode.com/problems/unique-binary-search-trees/discuss/31666/DP-Solution-in-6-lines-with-explanation.-F(i-n)-G(i-1)-*-G(n-i)
 
@@ -61,8 +61,11 @@ func numTrees(n int) int {
 //		count(m+1 ~ n) = BST(n - (m+1) + 1) = BST(n-m) cause it's all about
 //		total count, is same count for 5 ~ 8 and 2 ~ 5
 
-///		thanks for author's explanation...
+//		thanks for author's explanation...
 
-//	2.	inspiref from https://leetcode.com/problems/unique-binary-search-trees/discuss/31706/Dp-problem.-10%2B-lines-with-comments
+//	2.	inspired from https://leetcode.com/problems/unique-binary-search-trees/discuss/31706/Dp-problem.-10%2B-lines-with-comments
 
 //		this is more reasonable for me
+
+//	3.	becareful about boundary conditions, if start dp from 2, then i need to check if
+//		n >= 2, because it might cause array out of boundary exception
