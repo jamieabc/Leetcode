@@ -41,6 +41,44 @@ func findDuplicate(nums []int) int {
 	return slow
 }
 
+func findDuplicate2(nums []int) int {
+	// since number from 1 ~ n, all positive and unique except one number,
+	// use index as value to check if any number visited twice
+	for i := range nums {
+		if nums[abs(nums[i])-1] < 0 {
+			return abs(nums[i])
+		} else {
+			nums[abs(nums[i])-1] *= -1
+		}
+	}
+
+	return 0
+}
+
+func abs(i int) int {
+	if i >= 0 {
+		return i
+	}
+	return -i
+}
+
+// cyclic sort
+// tc: O(n)
+func findDuplicate2(nums []int) int {
+	for i := range nums {
+		for i+1 != nums[i] {
+			if nums[i] == nums[nums[i]-1] {
+				return nums[i]
+			}
+
+			nums[i], nums[nums[i]-1] = nums[nums[i]-1], nums[i]
+		}
+	}
+
+	return 0
+}
+
+// could just sort
 func findDuplicate1(nums []int) int {
 	length := len(nums)
 
@@ -64,7 +102,7 @@ func findDuplicate1(nums []int) int {
 	return i
 }
 
-//	problems
+//	Notes
 //	1.	add reference https://leetcode.com/problems/find-the-duplicate-number/discuss/72846/My-easy-understood-solution-with-O(n)-time-and-O(1)-space-without-modifying-the-array.-With-clear-explanation.
 
 //		it's a brilliant solution, use slow & fast pointer, if there's a loop
@@ -73,6 +111,6 @@ func findDuplicate1(nums []int) int {
 
 //		when 2 ptrs meet, from calculation that distance from start point
 //		to loop == meet to loop, so it's easy to put either fast/slow back
-//		to original and go each step until they meeet
+//		to original and go each step until they meet
 
 //		time complexity is O(n)
