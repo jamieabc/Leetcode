@@ -43,31 +43,67 @@ package main
 //           -> "F"                                    -> "F"
 
 func parseTernary(expression string) string {
-	length := len(expression)
-	if length <= 1 {
-		return expression
+	var idx int
+
+	return recursive(expression, &idx)
+}
+
+func recursive(exp string, idx *int) string {
+	char := exp[*idx]
+
+	if *idx == len(exp)-1 || exp[*idx+1] == ':' {
+		*idx += 2
+		return string(char)
 	}
 
-	stack := make([]byte, 0)
+	*idx += 2
 
-	for i := length - 1; i >= 0; i-- {
+	first, second := recursive(exp, idx), recursive(exp, idx)
+
+	if char == 'T' {
+		return first
+	}
+	return second
+}
+
+func parseTernary2(expression string) string {
+	size := len(expression)
+	stack := []byte{expression[size-1]}
+
+	var tmp byte
+	for i := size - 2; i >= 0; i -= 2 {
+		stack = append(stack, expression[i-1])
+
 		if expression[i] == '?' {
-			i--
-			t := stack[len(stack)-2]
-			f := stack[len(stack)-1]
-			stack = stack[:len(stack)-2]
-
-			if expression[i] == 'T' {
-				stack = append(stack, t)
+			if expression[i-1] == 'T' {
+				tmp = stack[len(stack)-2]
 			} else {
-				stack = append(stack, f)
+				tmp = stack[len(stack)-3]
 			}
-		} else if expression[i] != ':' {
-			stack = append(stack, expression[i])
+			stack = stack[:len(stack)-3]
+			stack = append(stack, tmp)
 		}
 	}
 
-	return string(stack[0])
+	return string(stack)
+}
+
+func parseTernary1(expression string) string {
+	size := len(expression)
+
+	if size > 1 {
+		for i := size - 1; i >= 0; i-- {
+			if expression[i] == '?' {
+				if expression[i-1] == 'T' {
+					return parseTernary1(expression[:i-1] + expression[i+1:i+2] + expression[i+4:])
+				} else {
+					return parseTernary1(expression[:i-1] + expression[i+3:])
+				}
+			}
+		}
+	}
+
+	return expression
 }
 
 //	problems
@@ -85,3 +121,23 @@ func parseTernary(expression string) string {
 //	4.	add reference https://leetcode.com/problems/ternary-expression-parser/discuss/92173/Java-O(n)-using-Binary-Tree
 
 //		author builds tree to traverse, but I didn't take time to go through
+
+//	5.	inspired from https://leetcode.com/problems/ternary-expression-parser/discuss/92166/Very-easy-1-pass-Stack-Solution-in-JAVA-(NO-STRING-CONCAT)/96758
+
+//		there's a one pass recursive solution
+
+//	6.	inspired from https://leetcode.com/problems/ternary-expression-parser/discuss/92164/Easy-and-Concise-5-lines-PythonJava-Solution
+
+//		the point of this problem is to find closest pair of unused (?, : )
+
+//		ans since ? always has a :, if there's a ?, find unused closest : afterwards
+
+//		the trait of this sequence can be reduced by a pair of (?, :), ans use closest, so
+//		stack can be used
+
+//	7.	inspired from https://leetcode.com/problems/ternary-expression-parser/discuss/92185/Short-Python-solutions-one-O(n)
+
+//		should provides a O(n^2) solution, at least know how to solve it in normal
+//		ways
+
+//		since every ? pair with :, search backward to find last ?
