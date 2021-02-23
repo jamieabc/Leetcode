@@ -175,3 +175,15 @@ func max(i, j int) int {
 //		dfs, like tree traversal, is a way of solving problem top-down, so
 //		the point is to find what kind of result can be stored, and find out
 //		transformation relationship
+
+//		the other point is, result only fix when reaches bottom
+
+//		e.g. [1, 2, 9, 3], k = 2
+//			   ^            		cut here, 1 + [2, 9, 3]
+
+//			[2, 9, 3], k = 2
+//			  ^                 	cut here, 2 + [9, 3]
+
+//			[9, 3], k = 2
+//			  ^ 					cut here, 9 + [3] = 12
+//			     ^					cut here, 9 + 9 = 18, then return back
