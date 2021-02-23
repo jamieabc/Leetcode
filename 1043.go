@@ -169,3 +169,9 @@ func max(i, j int) int {
 
 //		sub-problem pattern is revealed, because both [10], [3] & [10, 3] is
 //		already considered at second last number
+
+//	6.	after 7 months, cannot solve this problem.
+
+//		dfs, like tree traversal, is a way of solving problem top-down, so
+//		the point is to find what kind of result can be stored, and find out
+//		transformation relationship
