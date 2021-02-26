@@ -25,13 +25,40 @@ package main
 //pushed is a permutation of popped.
 //pushed and popped have distinct values.
 
+// it's more elegant to cleanup stack after pushing, as third code list
+func validateStackSequences(pushed []int, popped []int) bool {
+	stack := make([]int, 0)
+
+	var i, j int
+	for i, j = 0, 0; i < len(pushed); {
+		if len(stack) > 0 && stack[len(stack)-1] == popped[j] {
+			j++
+			stack = stack[:len(stack)-1]
+			continue
+		}
+
+		if i < len(pushed) {
+			stack = append(stack, pushed[i])
+			i++
+		}
+	}
+
+	for ; j < len(popped) && len(stack) > 0; j++ {
+		if stack[len(stack)-1] == popped[j] {
+			stack = stack[:len(stack)-1]
+		}
+	}
+
+	return len(stack) == 0
+}
+
 // since every item should appear once
 // the easier way is to follow operation of push/pop
 // a pointer to popped item list, if this popped item is same as top of stack
 // pop it and go to next popped item, otherwise push next pushed item
 // operation is invalid when find stack is not empty
 
-func validateStackSequences(pushed []int, popped []int) bool {
+func validateStackSequences4(pushed []int, popped []int) bool {
 	i, j := 0, 0
 	for _, n := range pushed {
 		pushed[i] = n
@@ -119,7 +146,7 @@ func validateStackSequences1(pushed []int, popped []int) bool {
 	return true
 }
 
-//	problems
+//	Notes
 //	1.	inspired from https://leetcode.com/problems/validate-stack-sequences/discuss/197685/C%2B%2BJavaPython-Simulation-O(1)-Space
 
 //		an elegant code
