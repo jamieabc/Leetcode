@@ -26,7 +26,50 @@ import "math"
 //   1  -1   2  -1
 //   0  -1   3   4
 
+var dirs = [][]int{
+	{0, 1},
+	{0, -1},
+	{1, 0},
+	{-1, 0},
+}
+
 func wallsAndGates(rooms [][]int) {
+	queue := make([][]int, 0)
+
+	for i := range rooms {
+		for j := range rooms[i] {
+			if rooms[i][j] == 0 {
+				queue = append(queue, []int{i, j})
+			}
+		}
+	}
+
+	w, h := len(rooms[0]), len(rooms)
+	var steps int
+
+	// bfs
+	for len(queue) > 0 {
+		size := len(queue)
+		steps++
+
+		for i := 0; i < size; i++ {
+			r := queue[0]
+			queue = queue[1:]
+			y, x := r[0], r[1]
+
+			for _, dir := range dirs {
+				newY, newX := y+dir[0], x+dir[1]
+
+				if newX >= 0 && newY >= 0 && newX < w && newY < h && rooms[newY][newX] == math.MaxInt32 {
+					rooms[newY][newX] = steps
+					queue = append(queue, []int{newY, newX})
+				}
+			}
+		}
+	}
+}
+
+func wallsAndGates1(rooms [][]int) {
 	stack := make([][]int, 0)
 
 	if len(rooms) == 0 {
@@ -76,3 +119,12 @@ func adj(rooms [][]int, i, j int) [][]int {
 
 	return result
 }
+
+//	Notes
+//	1.	inspired form https://leetcode.com/problems/walls-and-gates/discuss/72748/Benchmarks-of-DFS-and-BFS
+
+//		author uses array []int{0, 1, 0, -1, 0} to denote 4 directions
+
+//	2.	inspired form https://leetcode.com/problems/walls-and-gates/discuss/72746/My-short-java-solution-very-easy-to-understand
+
+//		dfs
