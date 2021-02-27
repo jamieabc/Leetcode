@@ -19,7 +19,57 @@ package main
 //     1 <= K <= A.length <= 500
 //     0 <= A[i] <= 10^6
 
-func maxSumAfterPartitioning(A []int, K int) int {
+func maxSumAfterPartitioning(arr []int, k int) int {
+	size := len(arr)
+
+	// dp[i]: maximum score can get after i
+	dp := make([]int, size)
+
+	for i := size - 1; i >= 0; i-- {
+		var largest, maxSoFar int
+
+		for j := 0; j < k && i+j < size; j++ {
+			largest = max(largest, arr[i+j])
+
+			if i+j+1 < size {
+				maxSoFar = max(maxSoFar, largest*(j+1)+dp[i+j+1])
+			} else {
+				maxSoFar = max(maxSoFar, largest*(j+1))
+			}
+		}
+
+		dp[i] = maxSoFar
+	}
+
+	return dp[0]
+}
+
+func maxSumAfterPartitioning5(arr []int, k int) int {
+	size := len(arr)
+
+	// dp[i]: maximum score can get before i
+	dp := make([]int, size)
+
+	for i := range arr {
+		var largest, maxSoFar int
+
+		for j := 0; j < k && i-j >= 0; j++ {
+			largest = max(largest, arr[i-j])
+
+			if i-j-1 >= 0 {
+				maxSoFar = max(maxSoFar, largest*(j+1)+dp[i-j-1])
+			} else {
+				maxSoFar = max(maxSoFar, largest*(j+1))
+			}
+		}
+
+		dp[i] = maxSoFar
+	}
+
+	return dp[size-1]
+}
+
+func maxSumAfterPartitioning4(A []int, K int) int {
 	memo := make([]int, len(A))
 	return dfs(A, K, 0, memo)
 }
@@ -44,6 +94,34 @@ func dfs(nums []int, K, start int, memo []int) int {
 	memo[start] = maxSum
 
 	return maxSum
+}
+
+func maxSumAfterPartitioning3(arr []int, k int) int {
+	size := len(arr)
+
+	// dp[i][j]: largest sum from i ~ j
+	dp := make([][]int, size+k+1)
+	for i := range dp {
+		dp[i] = make([]int, size+k+1)
+	}
+
+	for i := size - 1; i >= 0; i-- {
+		dp[i][i] = arr[i] + dp[i+1][size-1]
+		maxSoFar, largestNum := dp[i][i], arr[i]
+
+		for j := 1; j < k && i+j < size; j++ {
+			largestNum = max(largestNum, arr[i+j])
+
+			dp[i][i+j] = max(dp[i][i+j], largestNum*(j+1)+dp[i+j+1][size-1])
+			maxSoFar = max(maxSoFar, dp[i][i+j])
+		}
+
+		if dp[i][size-1] == 0 {
+			dp[i][size-1] = maxSoFar
+		}
+	}
+
+	return dp[0][size-1]
 }
 
 func maxSumAfterPartitioning2(A []int, K int) int {
@@ -145,7 +223,16 @@ func max(i, j int) int {
 //		   				maxSum(i-3) + max(a[i], a[i-1], a[i-2]) * 3,
 //						...)
 
-// so dp can be reduced down to 1D
+// 		dp can reduce down to 1D, also means only care about maximum up to some
+//		index, and this value is independent from later sub-problems
+
+//		also, the problem can be partitioned into small independent categories,
+//		like counting cares about future appear numbers, only different is in
+//		this case cares about previous numbers
+
+//		key point here is to convert consideration of a point influence range
+//		from -k ~ +k to -k only, k is actually a parameter controls influence
+//		range, later numbers are no influenced by former numbers
 
 //	3.	add reference https://leetcode.com/problems/partition-array-for-maximum-sum/discuss/299443/Java-O(NK).-Faster-than-99.82.-Less-memory-than-100.-With-Explanation.
 
@@ -169,3 +256,35 @@ func max(i, j int) int {
 
 //		sub-problem pattern is revealed, because both [10], [3] & [10, 3] is
 //		already considered at second last number
+
+//	6.	after 7 months, cannot solve this problem.
+
+//		dfs, like tree traversal, is a way of solving problem top-down, so
+//		the point is to find what kind of result can be stored, and find out
+//		transformation relationship
+
+//		the other point is, result only fix when reaches bottom
+
+//		e.g. [1, 2, 9, 3], k = 2
+//			   ^            		cut here, 1 + [2, 9, 3]
+
+//			[2, 9, 3], k = 2
+//			  ^                 	cut here, 2 + [9, 3]
+
+//			[9, 3], k = 2
+//			  ^ 					cut here, 9 + [3] = 12
+//			     ^					cut here, 9 + 9 = 18, then return back
+
+//		when thinking this problem, I stuck at how to select numbers,
+//		[1, 5, 3, 8], k = 2, if choose first two as group, becomes [5, 5, 3, 8]
+//		but since 3 < 5, it would be nice to choose [1, 5, 5, 8], so how can
+//		I decide the decision? The trick is go to last number, there's only one
+//		way to select, and go back a little, use max to decide which one is
+//		better.
+
+//		as I realize last number with no selection, I finally know bottom-up
+//		works, because that's how dfs intended to work.
+
+//	7.	in between decision process, there could have 2*k range of selection,
+//		so the only way to reduce choices is down to last number, that's also
+//		the reason bottom-up work
