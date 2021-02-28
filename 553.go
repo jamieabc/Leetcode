@@ -31,6 +31,48 @@ import (
 //     There is only one optimal division for each test case.
 
 func optimalDivision(nums []int) string {
+	ans := make([]byte, 0)
+
+	tmp := make([]byte, 0)
+	for n := nums[0]; n > 0; n /= 10 {
+		tmp = append(tmp, byte((n%10)+'0'))
+	}
+	for i := len(tmp) - 1; i >= 0; i-- {
+		ans = append(ans, tmp[i])
+	}
+
+	size := len(nums)
+	if size == 1 {
+		return string(ans)
+	}
+
+	ans = append(ans, byte('/'))
+	if size > 2 {
+		ans = append(ans, byte('('))
+	}
+
+	for i := 1; i < size; i++ {
+		if i > 1 {
+			ans = append(ans, byte('/'))
+		}
+
+		tmp := make([]byte, 0)
+		for j := nums[i]; j > 0; j /= 10 {
+			tmp = append(tmp, byte((j%10)+'0'))
+		}
+		for j := len(tmp) - 1; j >= 0; j-- {
+			ans = append(ans, tmp[j])
+		}
+	}
+
+	if size > 2 {
+		ans = append(ans, byte(')'))
+	}
+
+	return string(ans)
+}
+
+func optimalDivision1(nums []int) string {
 	length := len(nums)
 	if length == 1 {
 		return strconv.Itoa(nums[0])
@@ -57,7 +99,7 @@ func optimalDivision(nums []int) string {
 	return sb.String()
 }
 
-//  problems
+//  Notes
 //  1.  add reference https://leetcode.com/problems/optimal-division/discuss/101687/Easy-to-understand-simple-O(n)-solution-with-explanation
 
 //      this problem has many dislike, so I just refer to others for answer
