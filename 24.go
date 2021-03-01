@@ -15,15 +15,26 @@ type ListNode struct {
 	Next *ListNode
 }
 
-/**
- * Definition for singly-linked list.
- * type ListNode struct {
- *     Val int
- *     Next *ListNode
- * }
- */
-
 func swapPairs(head *ListNode) *ListNode {
+	dummy := &ListNode{
+		Next: head,
+	}
+
+	prev, cur := dummy, head
+	var next *ListNode
+
+	for cur != nil && cur.Next != nil {
+		next = cur.Next.Next
+		prev.Next = cur.Next
+		cur.Next.Next = cur
+		cur.Next = next
+		prev, cur = cur, cur.Next
+	}
+
+	return dummy.Next
+}
+
+func swapPairs2(head *ListNode) *ListNode {
 	if head == nil || head.Next == nil {
 		return head
 	}
