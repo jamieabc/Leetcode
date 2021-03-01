@@ -30,7 +30,44 @@ package main
  *     Right *TreeNode
  * }
  */
+
 func twoSumBSTs(root1 *TreeNode, root2 *TreeNode, target int) bool {
+	stack1, stack2 := make([]*TreeNode, 0), make([]*TreeNode, 0)
+	node1, node2 := root1, root2
+
+	for (node1 != nil || len(stack1) > 0) && (node2 != nil || len(stack2) > 0) {
+		// start from smallest
+		for ; node1 != nil; node1 = node1.Left {
+			stack1 = append(stack1, node1)
+		}
+
+		// start from largest
+		for ; node2 != nil; node2 = node2.Right {
+			stack2 = append(stack2, node2)
+		}
+
+		node1, node2 = stack1[len(stack1)-1], stack2[len(stack2)-1]
+
+		val := node1.Val + node2.Val
+		if val == target {
+			return true
+		} else if val > target {
+			// select smaller number
+			node1 = nil
+			stack2 = stack2[:len(stack2)-1]
+			node2 = node2.Left
+		} else {
+			// select larger number
+			node2 = nil
+			stack1 = stack1[:len(stack1)-1]
+			node1 = node1.Right
+		}
+	}
+
+	return false
+}
+
+func twoSumBSTs3(root1 *TreeNode, root2 *TreeNode, target int) bool {
 	if root1 == nil || root2 == nil {
 		return false
 	}
