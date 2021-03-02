@@ -67,7 +67,40 @@ func mctFromLeafValues(arr []int) int {
 	return sum
 }
 
-func mctFromLeafValues2(arr []int) int {
+// tc: O(n^2)
+func mctFromLeafValues4(arr []int) int {
+	var ans int
+
+	for len(arr) > 1 {
+		smallest := math.MaxInt32
+		var toRemove int
+
+		for i := 0; i < len(arr)-1; i++ {
+			tmp := arr[i] * arr[i+1]
+			if tmp < smallest {
+				smallest = tmp
+				toRemove = i
+			}
+		}
+
+		ans += smallest
+
+		// smaller leaf will never be used anymore
+		if arr[toRemove] > arr[toRemove+1] {
+			toRemove++
+		}
+
+		tmp := make([]int, len(arr)-1)
+		copy(tmp, arr[:toRemove])
+		copy(tmp[toRemove:], arr[toRemove+1:])
+		arr = tmp
+	}
+
+	return ans
+}
+
+// tc: O(n^2)
+func mctFromLeafValues3(arr []int) int {
 	nums := make([]int, 16)
 	for i := range arr {
 		nums[arr[i]]++
@@ -104,6 +137,50 @@ func mctFromLeafValues2(arr []int) int {
 	return sum
 }
 
+func mctFromLeafValues2(arr []int) int {
+	size := len(arr)
+	memo := make([][]int, size)
+	for i := range memo {
+		memo[i] = make([]int, size)
+	}
+
+	return dfs(arr, memo, 0, len(arr)-1)
+}
+
+// dfs returns sum of non-leaves from start ~ end
+// tc: O(n^3), separate into n sub-problems, each sub-problem scan takes n
+// 1 + 2^2 + 3^2 + 4^2 + ... + n^2 = O(n^3)
+func dfs(arr []int, memo [][]int, start, end int) int {
+	// leaf
+	if start == end {
+		return 0
+	}
+
+	if memo[start][end] != 0 {
+		return memo[start][end]
+	}
+
+	smallest := math.MaxInt32
+	for i := start; i < end; i++ {
+		left, right := arr[start], arr[i+1]
+
+		for j := start + 1; j <= i; j++ {
+			left = max(left, arr[j])
+		}
+
+		for j := i + 2; j <= end; j++ {
+			right = max(right, arr[j])
+		}
+
+		smallest = min(smallest, dfs(arr, memo, start, i)+dfs(arr, memo, i+1, end)+left*right)
+	}
+
+	memo[start][end] = smallest
+
+	return smallest
+}
+
+// tc: O(n^2)
 func mctFromLeafValues1(arr []int) int {
 	length := len(arr)
 	maxi := make([][]int, length)
@@ -164,7 +241,7 @@ func min(i, j int) int {
 	return j
 }
 
-//	problems
+//	Notes
 //	1.	don't know how to do it
 
 //	2.	inspired from https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/discuss/340033/C%2B%2B-with-comments
@@ -184,6 +261,25 @@ func min(i, j int) int {
 //		the structure shows more clearly that time complexity is O(n^3)
 
 //	3.	inspired from https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/discuss/478708/RZ-Summary-of-all-the-solutions-I-have-learned-from-Discuss-in-Python
+
+//		for dfs/dp, when every two numbers combined, it always exist left side
+//		and right side
+
+//		e.g. [6, 2, 4]
+// 			     8
+//			   /  \
+//			  12   4
+//			 /  \
+//			6    2
+
+//		left side | right side
+//		leaf numbers are divided by final root value, which is 8
+//		left [6, 2], right [8]
+//		dfs keeps separate array into left & right, from left side boundary
+//		ranges from
+
+//		if I didn't observe the way to separate array, I might not think of a
+//		way to solve this
 
 //		greedy comes from observation, that minimum sum is to put large
 //		number close to root, and smaller number away from root. the
@@ -220,4 +316,29 @@ func min(i, j int) int {
 //		this reminds of listening podcasts, learning. I though if I can
 //		think more question, my thinking skill can be improved somehow.
 
+//	5.	after 8 months later, don't know how to solve thi sproblem
 //
+//		inspired from https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/discuss/951938/Don't-overthink-about-trees.-It's-a-DPGreedy-problem.
+
+//		with this hint, I kind of know the rule, but still not clear how
+//		to solve this problem
+
+//	6.	inspired form https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/discuss/349098/From-O(N2)-to-O(n).-Greedy
+
+//		I kind of know the start of thinking, in-order tree leaf is an
+//		illusion, the truth is smaller number removed during grouping
+
+//		however, with this, I still not able to solve this
+
+//		this version is easier for me to understand greedy version
+
+//	7.	inspired from https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/discuss/474188/I-think-I-able-to-explain-it-to-myself-and-to-you...(Java-DP)-.-Complexity-is-in-the-question/494578
+
+//		for array of size n, separated into n sub-problems, each sub problem
+//		scan for it length to find max values, total sequence is
+//		1 + 2^2 + 3^2 + 4^2 + ... + N^2 = O(N^3)
+
+//	8.	inspired from https://leetcode.com/problems/minimum-cost-tree-from-leaf-values/discuss/349098/From-O(N2)-to-O(n).-Greedy
+
+//		author explains why using mono-decreasing stack guarantees optimal
+//		result, very brilliant
