@@ -51,6 +51,61 @@ package main
 // Could you do better than O(n2) per move() operation?
 
 type TicTacToe struct {
+	Row, Col, Diagonal []int
+}
+
+/** Initialize your data structure here. */
+func Constructor(n int) TicTacToe {
+	return TicTacToe{
+		Row:      make([]int, n),
+		Col:      make([]int, n),
+		Diagonal: make([]int, 2),
+	}
+}
+
+/** Player {player} makes a move at ({row}, {col}).
+  @param row The row of the board.
+  @param col The column of the board.
+  @param player The player, can be either 1 or 2.
+  @return The current winning condition, can be either:
+          0: No one wins.
+          1: Player 1 wins.
+          2: Player 2 wins. */
+func (this *TicTacToe) Move(row int, col int, player int) int {
+	n := len(this.Row)
+
+	var step int
+	if player == 1 {
+		step = 1
+	} else {
+		step = -1
+	}
+
+	this.Row[row] += step
+	this.Col[col] += step
+
+	if row == col {
+		this.Diagonal[0] += step
+	}
+
+	if col+row == n-1 {
+		this.Diagonal[1] += step
+	}
+
+	if this.Row[row] == n || this.Row[row] == -n || this.Col[col] == n || this.Col[col] == -n || this.Diagonal[0] == n || this.Diagonal[0] == -n || this.Diagonal[1] == n || this.Diagonal[1] == -n {
+		return player
+	}
+
+	return 0
+}
+
+/**
+ * Your TicTacToe object will be instantiated and called as such:
+ * obj := Constructor(n);
+ * param_1 := obj.Move(row,col,player);
+ */
+
+type TicTacToe1 struct {
 	row      []int
 	column   []int
 	diagonal []int
@@ -58,8 +113,8 @@ type TicTacToe struct {
 }
 
 /** Initialize your data structure here. */
-func Constructor(n int) TicTacToe {
-	return TicTacToe{
+func Constructor1(n int) TicTacToe1 {
+	return TicTacToe1{
 		row:      make([]int, n),
 		column:   make([]int, n),
 		diagonal: make([]int, 2),
@@ -75,7 +130,7 @@ func Constructor(n int) TicTacToe {
           0: No one wins.
           1: Player 1 wins.
           2: Player 2 wins. */
-func (this *TicTacToe) Move(row int, col int, player int) int {
+func (this *TicTacToe1) Move(row int, col int, player int) int {
 	r := this.row[row]
 	c := this.column[col]
 
@@ -133,7 +188,7 @@ func (this *TicTacToe) Move(row int, col int, player int) int {
 // 0 - no one win
 // 1 - player 1 wins
 // 2 -player 2 wins
-func (this *TicTacToe) check() int {
+func (this *TicTacToe1) check() int {
 	for _, i := range this.row {
 		if abs(i) == this.fail-1 {
 			return winner(i)
