@@ -1,5 +1,7 @@
 package main
 
+import "container/heap"
+
 // We have a list of points on the plane.  Find the K closest points to the origin (0, 0).
 //
 // (Here, the distance between two points on a plane is the Euclidean distance.)
@@ -30,48 +32,94 @@ package main
 // -10000 < points[i][0] < 10000
 // -10000 < points[i][1] < 10000
 
-func kClosest(points [][]int, K int) [][]int {
-	if K >= len(points) {
-		return points
+// tc: average O(n)
+func kClosest(points [][]int, k int) [][]int {
+	n := len(points)
+	arr := make([][]int, n)
+	for i, p := range points {
+		arr[i] = []int{p[0]*p[0] + p[1]*p[1], p[0], p[1]}
 	}
 
-	quickSelect(points, 0, len(points)-1, K)
+	quickSelect(arr, 0, n-1, k)
 
-	return points[:K]
+	ans := make([][]int, k)
+	for i := 0; i < k; i++ {
+		ans[i] = []int{arr[i][1], arr[i][2]}
+	}
+
+	return ans
 }
 
-func quickSelect(points [][]int, start, end, target int) {
-	p := points[start][0]*points[start][0] + points[start][1]*points[start][1]
-
-	var i, j int
-	for i, j = start, end; i <= j; {
-		if points[i][0]*points[i][0]+points[i][1]*points[i][1] <= p {
-			i++
-			continue
-		}
-
-		if points[j][0]*points[j][0]+points[j][1]*points[j][1] > p {
-			j--
-			continue
-		}
-
-		points[i], points[j] = points[j], points[i]
-		i++
-		j--
-	}
-
-	points[start], points[j] = points[j], points[start]
-
-	if j == target {
+func quickSelect(arr [][]int, start, end, k int) {
+	if start >= end {
 		return
-	} else if j < target {
-		quickSelect(points, j+1, end, target)
+	}
+
+	store := start
+	idx := start + rand.Intn(end-start)
+	pivot := arr[idx][0]
+	arr[end], arr[idx] = arr[idx], arr[end]
+
+	for i := start; i < end; i++ {
+		if arr[i][0] < pivot {
+			arr[i], arr[store] = arr[store], arr[i]
+			store++
+		}
+	}
+
+	arr[store], arr[end] = arr[end], arr[store]
+
+	if store > k {
+		quickSelect(arr, start, store-1, k)
 	} else {
-		quickSelect(points, start, j-1, target)
+		quickSelect(arr, store+1, end, k)
 	}
 }
 
-//	problems
+type MaxHeap [][]int
+
+func (h MaxHeap) Len() int           { return len(h) }
+func (h MaxHeap) Less(i, j int) bool { return h[i][2] > h[j][2] }
+func (h MaxHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h MaxHeap) Peek() []int        { return h[0] }
+
+func (h *MaxHeap) Push(x interface{}) {
+	*h = append(*h, x.([]int))
+}
+
+func (h *MaxHeap) Pop() interface{} {
+	p := (*h)[len(*h)-1]
+	*h = (*h)[:len(*h)-1]
+	return p
+}
+
+// tc: O(n log(k))
+func kClosest1(points [][]int, k int) [][]int {
+	h := &MaxHeap{}
+	heap.Init(h)
+
+	for _, p := range points {
+		tmp := p[0]*p[0] + p[1]*p[1]
+
+		if h.Len() == k && h.Peek()[2] > tmp {
+			heap.Pop(h)
+		}
+
+		if h.Len() < k {
+			heap.Push(h, []int{p[0], p[1], tmp})
+		}
+	}
+
+	ans := make([][]int, k)
+	for i := 0; i < k; i++ {
+		popped := heap.Pop(h).([]int)
+		ans[i] = []int{popped[0], popped[1]}
+	}
+
+	return ans
+}
+
+//	Notes
 //	1.	there could exists equal distance points, since it's to find closest,
 //		so put equal or larger to right
 
@@ -80,3 +128,7 @@ func quickSelect(points [][]int, start, end, target int) {
 //	3.	add reference https://leetcode.com/problems/k-closest-points-to-origin/discuss/220235/Java-Three-solutions-to-this-classical-K-th-problem.
 
 //		author adds some conclusion
+
+//	4.	inspired from sample code
+
+//		every time get a random pivot node
