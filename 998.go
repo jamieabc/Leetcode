@@ -50,7 +50,57 @@ package main
  *     Right *TreeNode
  * }
  */
+
 func insertIntoMaxTree(root *TreeNode, val int) *TreeNode {
+	node := &TreeNode{
+		Val: val,
+	}
+
+	// new root
+	if root == nil {
+		return node
+	}
+
+	// new root with children
+	if val > root.Val {
+		node.Left = root
+		return node
+	}
+
+	cur := root
+	for ; cur.Right != nil; cur = cur.Right {
+		if cur.Val > val && cur.Right.Val < val {
+			node.Left = cur.Right
+			break
+		}
+	}
+
+	cur.Right = node
+
+	return root
+}
+
+func insertIntoMaxTree2(root *TreeNode, val int) *TreeNode {
+	if root == nil {
+		return &TreeNode{
+			Val: val,
+		}
+	}
+
+	if val > root.Val {
+		return &TreeNode{
+			Val:  val,
+			Left: root,
+		}
+	}
+
+	// new number append to original array, so any number larger on its left,
+	// or it self is smallest on right
+	root.Right = insertIntoMaxTree(root.Right, val)
+	return root
+}
+
+func insertIntoMaxTree1(root *TreeNode, val int) *TreeNode {
 	// if new value is larger than root, root becomes left of new node
 	if val > root.Val {
 		return &TreeNode{
@@ -78,7 +128,7 @@ func insertIntoMaxTree(root *TreeNode, val int) *TreeNode {
 	return root
 }
 
-//	problems
+//	Notes
 //	1.	add reference https://leetcode.com/problems/maximum-binary-tree-ii/discuss/242936/JavaC%2B%2BPython-Recursion-and-Iteration
 
 //		lee's solution is much beautiful
