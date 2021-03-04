@@ -25,12 +25,40 @@ package main
  * }
  */
 
+func countUnivalSubtrees(root *TreeNode) int {
+	_, count := dfs(root)
+
+	return count
+}
+
+func dfs(node *TreeNode) (bool, int) {
+	if node == nil {
+		return false, 0
+	}
+
+	if node.Left == nil && node.Right == nil {
+		return true, 1
+	}
+
+	uniLeft, l := dfs(node.Left)
+	uniRight, r := dfs(node.Right)
+
+	// form a new subtree
+	if (uniLeft && uniRight && node.Val == node.Left.Val && node.Val == node.Right.Val) ||
+		(node.Left == nil && uniRight && node.Val == node.Right.Val) ||
+		(node.Right == nil && uniLeft && node.Val == node.Left.Val) {
+		return true, l + r + 1
+	}
+
+	return false, l + r
+}
+
 type info struct {
 	count int
 	same  bool
 }
 
-func countUnivalSubtrees(root *TreeNode) int {
+func countUnivalSubtrees2(root *TreeNode) int {
 	stack := make([]*TreeNode, 0)
 	mapping := make(map[*TreeNode]info)
 	node := root
@@ -166,3 +194,11 @@ func postOrder(node *TreeNode) (bool, int) {
 
 //		using additional map to store info, write a pretty ugly iterative
 //		version
+
+//	4.	takes me so many times to pass, 2 because wrong left & right node
+//		pass to dfs, partly because I didn't think clear enough for this problem
+
+//		need a way to know if sub-tree is uni or not, and one important thing
+//		to aware is that if one child is nil, then compare the other one
+
+//		problem is not hard, just takes some time to figure out what it is...
