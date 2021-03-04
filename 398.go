@@ -47,7 +47,7 @@ func (this *Solution) Pick(target int) int {
  * param_1 := obj.Pick(target);
  */
 
-//	problems
+//	Notes
 //	1.	wrong return, it's index value
 
 //	2.	too slow
@@ -74,3 +74,9 @@ func (this *Solution) Pick(target int) int {
 //		if third item comes, 1/3 possibility to replace to third, 2/3
 //		  possibility to keep existing, and since 1 & 2 has 50%, all items
 //		  are equally chosen
+
+//	5.	key point is that each time has 1/k to pick new value
+
+//	6.	inspired from https://leetcode.com/problems/random-pick-index/discuss/88071/C%2B%2B_Time%3A-O(n)-Space%3A-O(n)_116ms_96.41_with-clear-explanation-by-probability
+
+//		nice mapping of the problem
