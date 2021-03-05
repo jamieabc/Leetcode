@@ -30,13 +30,43 @@ package main
  * }
  */
 
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
 func oddEvenList(head *ListNode) *ListNode {
+	dummy1 := &ListNode{}
+	dummy0 := &ListNode{}
+
+	ptr0, ptr1 := dummy0, dummy1
+
+	for cur, i := head, 2; cur != nil; cur, i = cur.Next, i+1 {
+		if i&1 == 0 {
+			ptr0.Next = cur
+			ptr0 = cur
+		} else {
+			ptr1.Next = cur
+			ptr1 = cur
+		}
+	}
+
+	ptr0.Next = dummy1.Next
+	ptr1.Next = nil
+
+	return dummy0.Next
+}
+
+func oddEvenList2(head *ListNode) *ListNode {
 	if head == nil || head.Next == nil {
 		return head
 	}
 
 	even, odd, oddHead := head, head.Next, head.Next
 
+	// beautiful, switch odd/even to avoid having a number to track node number
 	for even.Next != nil && odd.Next != nil {
 		even.Next = odd.Next
 		even = even.Next
@@ -84,5 +114,12 @@ func oddEvenList1(head *ListNode) *ListNode {
 	return head
 }
 
-//	problems
+//	Notes
 //	1.	from solution, there's more elegant solution
+
+//	2.	linked list problem usually can use technique of dummy head to solve
+
+//	3.	need to be careful about infinite loop, especially for loop not fully
+//		executed
+
+//	4.	inspired form https://leetcode.com/problems/odd-even-linked-list/discuss/133345/With-detailed-explanation-or-Python
