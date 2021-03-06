@@ -13,6 +13,34 @@ package main
 // Note: The length of given array won't exceed 10000.
 
 func nextGreaterElements(nums []int) []int {
+	n := len(nums)
+
+	ans := make([]int, n)
+	for i := range ans {
+		ans[i] = -1
+	}
+	stack := make([]int, 0)
+
+	for i := range nums {
+		for len(stack) > 0 && nums[stack[len(stack)-1]] < nums[i] {
+			ans[stack[len(stack)-1]] = nums[i]
+			stack = stack[:len(stack)-1]
+		}
+
+		stack = append(stack, i)
+	}
+
+	for i := range nums {
+		for len(stack) > 0 && nums[stack[len(stack)-1]] < nums[i] {
+			ans[stack[len(stack)-1]] = nums[i]
+			stack = stack[:len(stack)-1]
+		}
+	}
+
+	return ans
+}
+
+func nextGreaterElements2(nums []int) []int {
 	length := len(nums)
 	result := make([]int, length)
 	stack := make([]int, length)
@@ -74,7 +102,7 @@ func nextGreaterElements1(nums []int) []int {
 	return result
 }
 
-//	problems
+//	Notes
 //	1.	add reference https://leetcode.com/problems/next-greater-element-ii/discuss/98270/JavaC%2B%2BPython-Loop-Twice
 
 //		there's guarantee to have a maximum number in array (could be
