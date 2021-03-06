@@ -14,7 +14,7 @@ import "math"
 // Nuts : [[3,0], [2,5]]
 // Output: 12
 // Explanation:
-// ​​​​​
+//
 //
 // Note:
 //
@@ -41,18 +41,19 @@ func hamming(src, dst []int) int {
 	return abs(src[0]-dst[0]) + abs(src[1]-dst[1])
 }
 
-func abs(i int) int {
-	if i >= 0 {
-		return i
-	}
-	return -i
-}
+func minDistance1(height int, width int, tree []int, squirrel []int, nuts [][]int) int {
+	ans := math.MaxInt32
 
-func max(i, j int) int {
-	if i >= j {
-		return i
+	var distances int
+	for _, nut := range nuts {
+		distances += 2 * (abs(tree[0]-nut[0]) + abs(tree[1]-nut[1]))
 	}
-	return j
+
+	for _, nut := range nuts {
+		ans = min(ans, distances-abs(tree[0]-nut[0])-abs(tree[1]-nut[1])+abs(squirrel[0]-nut[0])+abs(squirrel[1]-nut[1]))
+	}
+
+	return ans
 }
 
 //	Notes
