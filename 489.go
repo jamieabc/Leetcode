@@ -72,26 +72,47 @@ import "fmt"
  * func (robot *Robot) Clean() {}
  */
 
-/**
- * // This is the robot's control interface.
- * // You should not implement it, or speculate about its implementation
- * type Robot struct {
- * }
- *
- * // Returns true if the cell in front is open and robot moves into the cell.
- * // Returns false if the cell in front is blocked and robot stays in the current cell.
- * func (robot *Robot) Move() bool {}
- *
- * // Robot will stay in the same cell after calling TurnLeft/TurnRight.
- * // Each turn will be 90 degrees.
- * func (robot *Robot) TurnLeft() {}
- * func (robot *Robot) TurnRight() {}
- *
- * // Clean the current cell.
- * func (robot *Robot) Clean() {}
- */
+var dirs = [][]int{
+	{-1, 0},
+	{0, 1},
+	{1, 0},
+	{0, -1},
+}
 
 func cleanRoom(robot *Robot) {
+	visited := make(map[[2]int]struct{})
+	dfs(robot, visited, 0, 0, 0)
+}
+
+func dfs(robot *Robot, visited map[[2]int]struct{}, x, y, dir int) {
+	robot.Clean()
+	visited[[2]int{y, x}] = struct{}{}
+
+	for i, d := 0, dir; i < 4; i, d = i+1, (d+1)%4 {
+		newY, newX := y+dirs[d][0], x+dirs[d][1]
+
+		if _, ok := visited[[2]int{newY, newX}]; !ok && robot.Move() {
+			dfs(robot, visited, newX, newY, d)
+		}
+
+		robot.TurnRight()
+	}
+
+	// finish trying all directions, back to previous state
+	stepBack(robot)
+}
+
+func stepBack(robot *Robot) {
+	robot.TurnRight()
+	robot.TurnRight()
+
+	robot.Move()
+
+	robot.TurnRight()
+	robot.TurnRight()
+}
+
+func cleanRoom2(robot *Robot) {
 	visited := make(map[Point]bool)
 	moves := [][]int{
 		{0, -1}, // up
@@ -176,7 +197,7 @@ func (r *Robot) Back() {
 	r.TurnLeft()
 }
 
-//	problems
+//	Notes
 //	1.	don't know how to solve this, at first I want to use a stack to store
 //		all choices not done, e.g. store into stack of right, down, and left
 //		because it defaults to go up. and when moving up, push a down into
@@ -195,3 +216,19 @@ func (r *Robot) Back() {
 
 //	3.	from sample code, it adds more simpler way to write, and author uses
 //		additional data structure in map to avoid string operation
+
+//	4.	if processed correctly, robot won't try to go to where come from,
+//		because that position should be already marked visited
+
+//	5.	becareful, going north means y-1
+
+//	6.	inspired form sample code, can use map[]struct{} for checking visited
+
+//		also, author puts everything in the function, interesting
+
+//	7.	inspired from another sample code, author uses map[[2]int]bool to check,
+//		which is comparable by default
+
+//	8.	inspired from https://leetcode.com/problems/robot-room-cleaner/discuss/153530/DFS-Logical-Thinking
+
+//		need to track visited position, string of "x y" should also be fine
