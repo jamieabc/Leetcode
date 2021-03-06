@@ -39,7 +39,74 @@ package main
 //     Could you solve it in-place? Remember that the board needs to be updated simultaneously: You cannot update some cells first and then use their updated values to update other cells.
 //     In this question, we represent the board using a 2D array. In principle, the board is infinite, which would cause problems when the active area encroaches upon the border of the array (i.e., live cells reach the border). How would you address these problems?
 
+var dirs = [][]int{
+	{0, 1},
+	{0, -1},
+	{1, 0},
+	{-1, 0},
+	{1, 1},
+	{1, -1},
+	{-1, 1},
+	{-1, -1},
+}
+
 func gameOfLife(board [][]int) {
+	w, h := len(board[0]), len(board)
+
+	for i := range board {
+		for j := range board[0] {
+			var dead, live int
+
+			for _, dir := range dirs {
+				newY, newX := i+dir[0], j+dir[1]
+
+				if newX >= 0 && newY >= 0 && newX < w && newY < h {
+					if isDead(board[newY][newX]) {
+						dead++
+					} else {
+						live++
+					}
+				}
+			}
+
+			board[i][j] = nextState(board[i][j], live, dead)
+		}
+	}
+
+	// reset to original state
+	for i := range board {
+		for j := range board[0] {
+			if board[i][j] > 1 {
+				board[i][j] = (board[i][j] - 1) & 1
+			}
+		}
+	}
+}
+
+// 0: dead -> dead
+// 1: live -> live
+// 2: dead -> live
+// 3: live -> dead
+func isDead(val int) bool {
+	return val&1 == 0
+}
+
+func nextState(current, live, dead int) int {
+	if current == 0 {
+		if live == 3 {
+			return 2
+		}
+		return 0
+	}
+
+	if live == 2 || live == 3 {
+		return 1
+	}
+
+	return 3
+}
+
+func gameOfLife2(board [][]int) {
 	w, h := len(board[0]), len(board)
 	row := make([]int, w)
 
@@ -177,3 +244,8 @@ func gameOfLife1(board [][]int) {
 
 //	2.	inspired by solution, encode state by other values, demonstrate
 //		live -> live/dead, dead -> live/dead, thus, it takes O(1) space
+
+//	3.	becareful about checking, use previous state to check
+
+//	4.	inspired from solution, it has a great model that if a it's infinite
+//		board, assume each row stores in a file in each line
