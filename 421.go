@@ -88,6 +88,64 @@ func add(node *Trie, num int) int {
 	return msb
 }
 
+type trie struct {
+	children [2]*trie
+}
+
+func (t *trie) build(n int) {
+	node := t
+	var bit int
+
+	for i := 31; i >= 0; i-- {
+		// use !=, in case overflow
+		if n&(1<<i) != 0 {
+			bit = 1
+		} else {
+			bit = 0
+		}
+
+		if node.children[bit] == nil {
+			node.children[bit] = &trie{}
+		}
+
+		node = node.children[bit]
+	}
+}
+
+func findMaximumXOR2(nums []int) int {
+	root := &trie{}
+
+	// build trie
+	for _, n := range nums {
+		root.build(n)
+	}
+
+	var maxVal, bit int
+	for _, n := range nums {
+		node := root
+		var cur int
+
+		for i := 31; i >= 0; i-- {
+			if n&(1<<i) != 0 {
+				bit = 1
+			} else {
+				bit = 0
+			}
+
+			if node.children[bit^1] != nil {
+				cur |= 1 << i
+				node = node.children[bit^1]
+			} else {
+				node = node.children[bit]
+			}
+		}
+
+		maxVal = max(maxVal, cur)
+	}
+
+	return maxVal
+}
+
 func findMaximumXOR1(nums []int) int {
 	// build prefix tree
 	root := &Trie{}
@@ -169,3 +227,23 @@ func max(i, j int) int {
 
 //		assumes this bit is set, and check if numbers pass this check, if passes
 //		than this bit is set for maximum result; otherwise, this bit is not set
+
+//	4.	didn't think of trie, key point to solve this problem is to realize
+//		maximum XOR keeps by comparing prefixes
+
+//		0 0 0 0 x x x
+//  	0 0 0 1 x x x
+
+//		maximum difference comes from highest bit to be 1, which means
+//		0 & 1 from different numbers, and this is just comparing prefixes,
+//		which can use prefix tree (trie) to solve
+
+//		instead of memorize trie, prefix tree maybe a more accurate noun
+
+//	5.	inspired from solution, when trie is build, can have maximum xor values
+//		from building process: check for opposite point exist or not
+
+//		i was stuck at the point of how to choose numbers with highest bits, and
+//		xor those numbers without highest bit, which is a dead end
+
+//		after trie is built, for every number with highest bit, xor others
