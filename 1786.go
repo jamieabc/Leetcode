@@ -138,3 +138,8 @@ func dfs(graph, memo [][]int, dist []int, cur, target int) int {
 
 //		dijkstra takes O(E * log(V)), E: edges, V: vertex
 //		dfs, every edge visited once, takes O(E)
+
+//	4.	inspired from https://leetcode.com/problems/number-of-restricted-paths-from-first-to-last-node/discuss/1097478/C%2B%2B-Dijkstra-%2B-DP
+
+//		restricted path can be built when running dijkstra, since the condition
+//		is dijkstra
