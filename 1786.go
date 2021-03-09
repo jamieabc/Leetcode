@@ -120,7 +120,7 @@ func countRestrictedPaths(n int, edges [][]int) int {
 	mod := int(1e9 + 7)
 	for ; idx < n; idx++ {
 		for j := 1; j <= n; j++ {
-			if j != sorted[idx] && graph[sorted[idx]][j] != 0 {
+			if j > sorted[idx] && graph[sorted[idx]][j] != 0 {
 				dp[j] = (dp[j] + dp[sorted[idx]]) % mod
 			}
 		}
@@ -136,3 +136,8 @@ func countRestrictedPaths(n int, edges [][]int) int {
 //		is always decreasing, and if a -> b, then # to b += # to a, very clever
 
 //		topological sort, some kind of
+
+//	3.	inspired from https://leetcode.com/problems/number-of-restricted-paths-from-first-to-last-node/discuss/1097204/PythonJava-Dijkstra-and-Cached-DFS-Clean-and-Concise
+
+//		dijkstra takes O(E * log(V)), E: edges, V: vertex
+//		dfs, every edge visited once, takes O(E)
