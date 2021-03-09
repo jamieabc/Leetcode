@@ -44,7 +44,7 @@ import (
 // There is at most one edge between any two nodes.
 // There is at least one path between any two nodes.
 
-type MinHeap [][]int // distance, node
+type MinHeap [][]int // dist, node
 
 func (h MinHeap) Len() int           { return len(h) }
 func (h MinHeap) Less(i, j int) bool { return h[i][0] < h[j][0] }
@@ -98,35 +98,32 @@ func countRestrictedPaths(n int, edges [][]int) int {
 		}
 	}
 
-	// sort vertex desc by distance to n
-	sorted := make([]int, n+1)
-	for i := range sorted {
-		sorted[i] = i
+	memo := make([][]int, n+1)
+	for i := range memo {
+		memo[i] = make([]int, n+1)
 	}
 
-	sort.Slice(sorted, func(i, j int) bool {
-		return dist[sorted[i]] > dist[sorted[j]]
-	})
+	return dfs(graph, memo, dist, 1, n)
+}
 
-	// dp[i]: # of restricted paths, restricted means every next node
-	// has smaller dist, sort dist first
-	dp := make([]int, n+1)
-	dp[1] = 1
-
-	var idx int
-	for ; dp[idx] != 1; idx++ {
-	}
-
+func dfs(graph, memo [][]int, dist []int, cur, target int) int {
 	mod := int(1e9 + 7)
-	for ; idx <= n; idx++ {
-		for j := idx + 1; j <= n; j++ {
-			if graph[sorted[idx]][sorted[j]] != 0 {
-				dp[sorted[j]] = (dp[sorted[j]] + dp[sorted[idx]]) % mod
+	if cur == target {
+		return 1
+	}
+
+	if memo[cur][target] == 0 {
+		var paths int
+		for to, weight := range graph[cur] {
+			if weight > 0 && dist[cur] > dist[to] {
+				paths = (paths + dfs(graph, memo, dist, to, target)) % mod
 			}
 		}
+
+		memo[cur][target] = paths
 	}
 
-	return dp[n]
+	return memo[cur][target]
 }
 
 //	Notes
