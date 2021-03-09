@@ -118,10 +118,10 @@ func countRestrictedPaths(n int, edges [][]int) int {
 	}
 
 	mod := int(1e9 + 7)
-	for ; idx < n; idx++ {
-		for j := 1; j <= n; j++ {
-			if j > sorted[idx] && graph[sorted[idx]][j] != 0 {
-				dp[j] = (dp[j] + dp[sorted[idx]]) % mod
+	for ; idx <= n; idx++ {
+		for j := idx + 1; j <= n; j++ {
+			if graph[sorted[idx]][sorted[j]] != 0 {
+				dp[sorted[j]] = (dp[sorted[j]] + dp[sorted[idx]]) % mod
 			}
 		}
 	}
