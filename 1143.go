@@ -37,29 +37,35 @@ package main
 //     The input strings consist of lowercase English characters only.
 
 func longestCommonSubsequence(text1 string, text2 string) int {
-	// dp[i][j] means longest common subsequence for text1 from 0~i & text2 form
-	// 0~j
+	l1, l2 := len(text1), len(text2)
+
+	// dp[i][j] means longest common subsequence for text1[:i] & text2[:j], not
+	// including i & j
 	// dp[0] or dp[][0] are empty set
-	dp := make([][]int, len(text1)+1)
+	dp := make([][]int, l1+1)
 	for i := range dp {
-		dp[i] = make([]int, len(text2)+1)
+		dp[i] = make([]int, l2+1)
 	}
 
-	for i := range text1 {
-		for j := range text2 {
+	for i := 1; i <= l1; i++ {
+		for j := 1; j <= l2; j++ {
 			if text1[i] == text2[j] {
 				// if same character, add 1 from previous
 				dp[i+1][j+1] = 1 + dp[i][j]
 			} else {
-				// main same from previous
+				// different char, lcs either come from text1 or text2
 				dp[i+1][j+1] = max(dp[i][j+1], dp[i+1][j])
 			}
 		}
 	}
 
-	return dp[len(text1)][len(text2)]
+	return dp[l1][l2]
 }
 
+// top-down, separate problem into two conditions:
+// - same char at str1[i], str2[j], LCS comes from LCS(str1[:i], str2[:j]) + 1
+// - different char at str1[i], str2[j], LCS comes from max of LCS(str1[:i-1], str2[:j]) or
+//   LCS(str1[:i], str2[:j-1])
 func longestCommonSubsequence1(text1 string, text2 string) int {
 	// memo[i][j] means longest common subsequence size for text1 from i & text2
 	// from j
@@ -99,7 +105,7 @@ func max(i, j int) int {
 	return j
 }
 
-//	problems
+//	Notes
 //	1.	cannot find solution
 
 //	2.	inspired from https://leetcode.com/problems/longest-common-subsequence/discuss/436719/Python-very-detailed-solution-with-explanation-and-walkthrough-step-by-step.
@@ -107,3 +113,13 @@ func max(i, j int) int {
 //	3.	the other video about LCS https://www.youtube.com/watch?v=V5hZoJ6uK-s
 
 //	4.	add another inspiration https://leetcode.com/problems/longest-common-subsequence/discuss/436719/Python-very-detailed-solution-with-explanation-and-walkthrough-step-by-step.
+
+//	5.	cannot use 2 pointers to search, because start from different position results to
+//		different longest position, the only way is compare all
+
+//	6.	add another reference https://www.geeksforgeeks.org/longest-common-subsequence-dp-4/
+
+//		very clear about how bottom-up process build, and also the process of finding lcs
+
+//	7.	solution with very good wording, memoization which is for top-down, and
+//		tabulation for bottom-up
