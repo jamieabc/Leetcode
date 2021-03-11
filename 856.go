@@ -35,8 +35,30 @@ package main
 //     S is a balanced parentheses string, containing only ( and ).
 //     2 <= S.length <= 50
 
-// tc: O(n), sc: O(1)
 func scoreOfParentheses(S string) int {
+	var multiplier, ans int
+
+	for i := range S {
+		if S[i] == '(' {
+			if multiplier == 0 {
+				multiplier = 1
+			} else {
+				multiplier <<= 1
+			}
+		} else {
+			// ans increased when ()
+			if S[i-1] == '(' {
+				ans += multiplier
+			}
+			multiplier >>= 1
+		}
+	}
+
+	return ans
+}
+
+// tc: O(n), sc: O(1)
+func scoreOfParentheses3(S string) int {
 	var ans, level int
 
 	for i := range S {
