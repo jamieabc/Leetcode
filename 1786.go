@@ -126,6 +126,69 @@ func dfs(graph, memo [][]int, dist []int, cur, target int) int {
 	return memo[cur][target]
 }
 
+func countRestrictedPaths1(n int, edges [][]int) int {
+	graph := make([][]int, n+1)
+	for i := range graph {
+		graph[i] = make([]int, n+1)
+	}
+
+	for _, e := range edges {
+		graph[e[0]][e[1]] = e[2]
+		graph[e[1]][e[0]] = e[2]
+	}
+
+	// dijkstra
+	mh := &MinHeap{}
+	heap.Init(mh)
+	heap.Push(mh, []int{0, n})
+
+	dist := make([]int, n+1)
+	for i := range dist {
+		dist[i] = math.MaxInt32
+	}
+	dist[n] = 0
+
+	for mh.Len() > 0 {
+		p := heap.Pop(mh).([]int)
+
+		for to, weight := range graph[p[1]] {
+			if weight > 0 {
+				if tmp := weight + dist[p[1]]; tmp < dist[to] {
+					dist[to] = tmp
+					heap.Push(mh, []int{tmp, to})
+				}
+			}
+		}
+	}
+
+	// restricted path, cost decreasing
+	memo := make([]int, n+1)
+	memo[n] = 1
+
+	dfs(graph, dist, memo, 1)
+	return memo[1]
+}
+
+func dfs(graph [][]int, dist []int, memo []int, idx int) int {
+	if memo[idx] != 0 {
+		return memo[idx]
+	}
+
+	mod := int(1e9 + 7)
+	var total int
+	for to, weight := range graph[idx] {
+		if weight > 0 && dist[idx] > dist[to] {
+			if memo[to] == 0 {
+				memo[to] = dfs(graph, dist, memo, to)
+			}
+			total = (total + memo[to]) % mod
+		}
+	}
+
+	memo[idx] = total
+	return memo[idx]
+}
+
 //	Notes
 //	1.	not able to finish during contest, TLE
 
