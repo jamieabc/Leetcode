@@ -35,13 +35,13 @@ func maximumScore(nums []int, k int) int {
 	lowest := nums[k]
 	for i, j := k, k; i > 0 || j < size-1; {
 		if i == 0 || (j < size-1 && nums[j+1] >= nums[i-1]) {
-			lowest = min(lowest, nums[j])
-			ans = max(ans, lowest*(j-i+1))
 			j++
+			lowest = min(lowest, nums[j+1])
+			ans = max(ans, lowest*(j-i+1))
 		} else {
+			i--
 			lowest = min(lowest, nums[i])
 			ans = max(ans, lowest*(j-i+1))
-			i--
 		}
 	}
 
