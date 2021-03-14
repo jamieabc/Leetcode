@@ -29,6 +29,26 @@ package main
 // 0 <= k < nums.length
 
 func maximumScore(nums []int, k int) int {
+	var ans int
+	size := len(nums)
+
+	lowest := nums[k]
+	for i, j := k, k; i > 0 || j < size-1; {
+		if i == 0 || (j < size-1 && nums[j+1] >= nums[i-1]) {
+			lowest = min(lowest, nums[j])
+			ans = max(ans, lowest*(j-i+1))
+			j++
+		} else {
+			lowest = min(lowest, nums[i])
+			ans = max(ans, lowest*(j-i+1))
+			i--
+		}
+	}
+
+	return ans
+}
+
+func maximumScore1(nums []int, k int) int {
 	size := len(nums)
 
 	// smallest from i ~ k if i <= k
@@ -82,3 +102,21 @@ func min(i, j int) int {
 
 //		e.g. nums = [1, 4, 3, 7, 4, 5], k = 3
 //			   dp = [1, 3, 3, 7, 4, 5]
+
+//		cause it still compares min each time while expanding range, got TLE for
+//		last 20 testcases
+
+//	2.	inspired from alex, with a brilliant view
+//		start from k, choose the one that's larger and count, eventually it will
+//		be the answer
+
+//		honestly speaking, i have no idea how this come up...
+
+//	3.	inspired from https://leetcode.com/problems/maximum-score-of-a-good-subarray/discuss/1108351/Python-Binary-search-O(n-log-n)-explained
+
+//		author has a great view to this problem, instead of comparing every time,
+//		use binary search to find
+
+//	4.	inspired from comment of lee's, someone mentioned that is actually maximum
+//		rectangle problem, hmm, after drawing picture, it is...why didn't I think
+//		of it?
