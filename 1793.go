@@ -29,10 +29,10 @@ package main
 // 0 <= k < nums.length
 
 func maximumScore(nums []int, k int) int {
-	var ans int
 	size := len(nums)
 
 	lowest := nums[k]
+	ans := nums[k]
 	for i, j := k, k; i > 0 || j < size-1; {
 		if i == 0 || (j < size-1 && nums[j+1] >= nums[i-1]) {
 			j++
