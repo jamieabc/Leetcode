@@ -48,6 +48,22 @@ package main
  */
 
 func swapNodes(head *ListNode, k int) *ListNode {
+	first, second := head, head
+
+	for cur, i := head, 1; cur != nil; cur, i = cur.Next, i+1 {
+		if i == k {
+			first = cur
+		} else if i > k {
+			second = second.Next
+		}
+	}
+
+	first.Val, second.Val = second.Val, first.Val
+
+	return head
+}
+
+func swapNodes3(head *ListNode, k int) *ListNode {
 	var first, second *ListNode
 
 	for node := head; node != nil; node = node.Next {
@@ -65,6 +81,46 @@ func swapNodes(head *ListNode, k int) *ListNode {
 	first.Val, second.Val = second.Val, first.Val
 
 	return head
+}
+
+func swapNodes2(head *ListNode, k int) *ListNode {
+	dummy := &ListNode{
+		Next: head,
+	}
+
+	// find linked list size
+	size := 1
+	for cur := head; cur.Next != nil; size, cur = size+1, cur.Next {
+	}
+
+	var prev1, node1, prev2, node2 *ListNode
+
+	// assume prev1 ahead of prev2, cause if cross, then prev2 is wrong
+	// e.g. [1, 2], k = 2, backward kth node is 1, thus prev of node-1 is node-2
+	// e.g. [1, 2, 3, 4], k = 2, backward kth node is 3, prev of node-3 is node-2
+	// these 2 cases, prev2 has different direction
+	if k > size>>1 {
+		k = size - k + 1
+	}
+
+	for prev, cur, i := dummy, head, 1; node2 == nil; prev, cur, i = cur, cur.Next, i+1 {
+		if i == k {
+			prev1, node1 = prev, cur
+		}
+
+		if i == size-k+1 {
+			prev2, node2 = prev, cur
+		}
+	}
+
+	if node1 == node2 {
+		return dummy.Next
+	}
+
+	prev1.Next, prev2.Next = node2, node1
+	node1.Next, node2.Next = node2.Next, node1.Next
+
+	return dummy.Next
 }
 
 func swapNodes1(head *ListNode, k int) *ListNode {
@@ -125,9 +181,13 @@ func traverse(head *ListNode, k, cur int, end *int, forward, backward **ListNode
 //		voturbac uses way similar to sliding window, find first kth node then
 //		keep moving by this determined range until end reached
 
-//		a b c d e f
-//		|     |				kth on node d
-//		  |     |			keep moving
-//			|     |			end reached, store node c
+//		a b c d e f, k = 4
+//		s     f				kth on node d (first node = current node = d)
+//		  s     c			keep moving c (current node)
+//			s     c			reach end, store node c
 
 //	3.	it's swapping *value*, not node
+
+//	4.	inspired from https://leetcode.com/problems/swapping-nodes-in-a-linked-list/discuss/1013859/Python-Solution-with-Explanation
+
+//		author provides very good explanation
