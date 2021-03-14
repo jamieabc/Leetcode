@@ -41,9 +41,9 @@ func maximumScore(nums []int, k int) int {
 	}
 
 	// smallest from k ~ j if j >= k
-	prev = nums[size-1]
-	for i := size - 1; i > k; i-- {
-		prev = max(prev, nums[i])
+	prev = nums[k+1]
+	for i := k + 1; i < size; i++ {
+		prev = min(prev, nums[i])
 		dp[i] = prev
 	}
 
@@ -73,3 +73,12 @@ func min(i, j int) int {
 	}
 	return j
 }
+
+//	Notes
+//	1.	i way trying to minimize query of finding minimum numbers from i ~ j
+//		i though it could be i ~ k ~ j
+//		dp[a], a <= k finds minimum from a ~ k
+//		dp[b], b > k finds minimum from k ~ b
+
+//		e.g. nums = [1, 4, 3, 7, 4, 5], k = 3
+//			   dp = [1, 3, 3, 7, 4, 5]
