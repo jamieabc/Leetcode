@@ -180,32 +180,42 @@ func max(i, j int) int {
 	return j
 }
 
-// problems
-// 1. when only one element, maxArea is not updated
-// 2. maxHeight can be <=
-// 3. time limit exceeds
-// 4. when finding left/right boundary, break after height is less
-// 5. use dp to reduce complexity, start from right most bar,
-//	  if heights[i-1] > heights[i], r[i-1] = i
-// 	  if heights[i-1] <= heights[i], find bar that is less height then
-//	  heights[i-1] at index p, r[i-1] = r[p]
-//    r is defaults to length
-// 6. list 5 is wrong, it still needs to calculate left part
-// 7. optimize, use divide and conquer
-//    maximum comes from 3 situations:
-//	  - lowest of all, multiply by all width
-// 	  - left part of lowest multiply by left width
-// 	  - right part of lowest multiply by right width
-// 8. bar can categorized in to 2 conditions:
-// 	  - increasing
-//	  - decreasing
-// 	  when bar is increasing, push into stack, can update max area value,
-//	  when bar is decreasing, keep popping from stack to calculate area until
-// 	  lower one is encountered.
-//	  finally, deal with stack remaining value that is in ascending order
-//	9. when dealing with last element in stack, that element height is the
-//	   minimum of all range.
-//  10. zero height is the special case, it terminates area calculation
+//	Notes
+//	1.	when only one element, maxArea is not updated
+
+//	2.	maxHeight can be <=
+
+//	3.	time limit exceeds
+
+//	4.	when finding left/right boundary, break after height is less
+
+//	5.	use dp to reduce complexity, start from right most bar,
+//		if heights[i-1] > heights[i], r[i-1] = i
+// 	 	if heights[i-1] <= heights[i], find bar that is less height then
+//	  	heights[i-1] at index p, r[i-1] = r[p]
+//    	r is defaults to length
+
+//	6.	list 5 is wrong, it still needs to calculate left part
+
+// 	7.	optimize, use divide and conquer
+//		maximum comes from 3 situations:
+//	  	- lowest of all, multiply by all width
+// 	  	- left part of lowest multiply by left width
+// 	  	- right part of lowest multiply by right width
+
+//	8.	bar can categorized in to 2 conditions:
+// 		- increasing
+//	 	- decreasing
+// 	 	when bar is increasing, push into stack, can update max area value,
+//	 	when bar is decreasing, keep popping from stack to calculate area until
+// 	 	lower one is encountered.
+//	 	finally, deal with stack remaining value that is in ascending order
+
+//	9.	when dealing with last element in stack, that element height is the
+//	  	minimum of all range.
+
+//  10.	zero height is the special case, it terminates area calculation
+
 // 	11. optimize, for the struct item, height is not necessary
 
 //	12.	use stack to keep height increasing sequence, if sequence is
@@ -215,3 +225,10 @@ func max(i, j int) int {
 
 //		author decompose problem into 2 indicators: for any height, find
 //		out its right most & left most index that's >= self
+
+//	14.	this cannot be solved by greedy, e.g. select highest bar, and expand
+//		by adjacent bar which is higher...
+
+//		i thought this is similar to 1793...but apparently i am wrong...
+
+//		it fails at this test example: [4,2,0,3,2,4,3,4]
