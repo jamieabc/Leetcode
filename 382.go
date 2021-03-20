@@ -28,22 +28,54 @@ import (
  *     Next *ListNode
  * }
  */
+
 type Solution struct {
-	Node *ListNode
-	Rand *rand.Rand
+	List *ListNode
 }
 
 /** @param head The linked list's head.
   Note that the head is guaranteed to be not null, so it contains at least one node. */
 func Constructor(head *ListNode) Solution {
 	return Solution{
+		List: head,
+	}
+}
+
+/** Returns a random node's value. */
+func (this *Solution) GetRandom() int {
+	var ans int
+
+	for i, node := 1, this.List; node != nil; i, node = i+1, node.Next {
+		if rand.Intn(i) == 0 {
+			ans = node.Val
+		}
+	}
+
+	return ans
+}
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * obj := Constructor(head);
+ * param_1 := obj.GetRandom();
+ */
+
+type Solution1 struct {
+	Node *ListNode
+	Rand *rand.Rand
+}
+
+/** @param head The linked list's head.
+  Note that the head is guaranteed to be not null, so it contains at least one node. */
+func Constructor(head *ListNode) Solution1 {
+	return Solution1{
 		Node: head,
 		Rand: rand.New(rand.NewSource(time.Now().Unix())),
 	}
 }
 
 /** Returns a random node's value. */
-func (this *Solution) GetRandom() int {
+func (this *Solution1) GetRandom() int {
 	var val int
 	count := 1
 
