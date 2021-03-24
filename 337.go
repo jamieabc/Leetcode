@@ -52,13 +52,19 @@ func dfs(node *TreeNode) (int, int) {
 	l1, l2 := dfs(node.Left)
 	r1, r2 := dfs(node.Right)
 
-	return max(node.Val+l2+r2, l1+r1), l1 + r1
+	// rob current node and next 2 levels of node
+	// not rob current node, choose max of next 1 & next 2 level of nodes
+	return node.Val + l2 + r2, max(l1, l2) + max(r1, r2)
 }
 
 func rob1(root *TreeNode) int {
 	return dfs1(root)
 }
 
+// tc: O(2^n)
+// becareful, this is not n^2, because t(n) = t(n-1) + t(n-2), this behavior
+// is similar to fibonacci seqeuence, which results in 2^n
+// inspired from https://leetcode.com/problems/house-robber-iii/discuss/79330/Step-by-step-tackling-of-the-problem/84329
 func dfs1(node *TreeNode) int {
 	if node == nil {
 		return 0
@@ -99,3 +105,12 @@ func max(i, j int) int {
 //            3
 
 //		4+1 == 2+3, but the other situation is to select 4+3
+
+//	2.	the key to solve this problem is to realize there are many ways to
+//		to select
+
+//		most common: cur && next 2 levels of nodes, next level of nodes
+//		little hard to think: cur & next 3 levels of node
+//		rare case: next 2 levels of nodes & right node, etc.
+
+//	3.	inspired from https://leetcode.com/problems/house-robber-iii/discuss/79330/Step-by-step-tackling-of-the-problem
