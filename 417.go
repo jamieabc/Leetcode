@@ -30,6 +30,82 @@ package main
 // [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]] (positions with parentheses in above matrix).
 
 func pacificAtlantic(matrix [][]int) [][]int {
+	if len(matrix) == 0 {
+		return [][]int{}
+	}
+
+	w, h := len(matrix[0]), len(matrix)
+	table := make([][]int, h)
+	for i := range table {
+		table[i] = make([]int, w)
+	}
+
+	pacific := make([][]int, 0)
+	for idx := 0; idx < w; idx++ {
+		pacific = append(pacific, []int{0, idx})
+	}
+	for idx := 1; idx < h; idx++ {
+		pacific = append(pacific, []int{idx, 0})
+	}
+	bfs(matrix, pacific, table, 1)
+
+	atlantic := make([][]int, 0)
+	for idx := 0; idx < w; idx++ {
+		atlantic = append(atlantic, []int{h - 1, idx})
+	}
+	for idx := 0; idx < h-1; idx++ {
+		atlantic = append(atlantic, []int{idx, w - 1})
+	}
+
+	bfs(matrix, atlantic, table, 2)
+
+	ans := make([][]int, 0)
+	for i := range table {
+		for j := range table[0] {
+			if table[i][j] == 3 {
+				ans = append(ans, []int{i, j})
+			}
+		}
+	}
+
+	return ans
+}
+
+var dirs = [][]int{
+	{0, 1},
+	{0, -1},
+	{1, 0},
+	{-1, 0},
+}
+
+func bfs(matrix, queue, table [][]int, factor int) {
+	w, h := len(matrix[0]), len(matrix)
+	visited := make([][]bool, h)
+	for i := range visited {
+		visited[i] = make([]bool, w)
+	}
+
+	for len(queue) > 0 {
+		p := queue[0]
+		queue = queue[1:]
+
+		if visited[p[0]][p[1]] {
+			continue
+		}
+		visited[p[0]][p[1]] = true
+		table[p[0]][p[1]] += factor
+
+		for _, dir := range dirs {
+			newY, newX := p[0]+dir[0], p[1]+dir[1]
+
+			if newX >= 0 && newY >= 0 && newX < w && newY < h && matrix[newY][newX] >= matrix[p[0]][p[1]] && !visited[newY][newX] {
+				queue = append(queue, []int{newY, newX})
+			}
+		}
+	}
+}
+
+func pacificAtlantic2(matrix [][]int) [][]int {
 	// later code assume matrix[0] exist
 	if len(matrix) == 0 {
 		return nil
@@ -74,7 +150,7 @@ func pacificAtlantic(matrix [][]int) [][]int {
 	return ans
 }
 
-func bfs(matrix [][]int, queue [][]int, visited [][]bool) {
+func bfs2(matrix [][]int, queue [][]int, visited [][]bool) {
 	for len(queue) > 0 {
 		q := queue[0]
 		queue = queue[1:]
