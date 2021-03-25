@@ -19,7 +19,7 @@ package main
 //     1 <= mat[i][j] <= 10^4
 //     mat[i] is sorted in increasing order.
 
-// tc: O(mn), every element is visited once
+// tc: O(mn log(m))
 func smallestCommonElement(mat [][]int) int {
 	current := mat[0][0]
 	pos := make([]int, len(mat))
@@ -116,3 +116,16 @@ func binarySearch(nums []int, target, start, end int) bool {
 //	1.	each row is already sorted, so binary search can help to help candidates
 
 //	2.	since array is already sorted, can compare each items one by one
+
+//	3.	strictly increasing means no duplicates => counter can be used
+
+//	4.	inspired from https://leetcode.com/problems/find-smallest-common-element-in-all-rows/discuss/387092/JavaC%2B%2BPython-Brute-Force-Count
+
+//		no duplicates, count all numbers and put into hash or array, start
+//		checking if count equals row count
+
+//		tc: O(mn), sc: O(10000)
+
+//	5.	inspired from https://leetcode.com/problems/find-smallest-common-element-in-all-rows/discuss/389313/C%2B%2B-3-approaches
+
+//		voturbac provides 3 ways to solve
