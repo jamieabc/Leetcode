@@ -39,8 +39,9 @@ import (
 // The n is in range [2, 212].
 // We ensure that the input n can be converted into the form 2k, where k is a positive integer.
 
-// tc: O(n), n + n/2 + n/4 + n/8 + ... <= 2n
-func findContestMatch1(n int) string {
+// tc: each time with half size, n + n/2 + n/4 + n/8 + ... < 2n
+// but string concat takes O(n), overall tc would be O(n log(n))
+func findContestMatch(n int) string {
 	matches := make([]string, n)
 	for i := 1; i <= n; i++ {
 		matches[i-1] = strconv.Itoa(i)
@@ -55,5 +56,9 @@ func findContestMatch1(n int) string {
 	return matches[0]
 }
 
-//	problems
-//	1.	simplify findContestMatch1
+//	Notes
+//	1.	didn't think of a good solution to this...
+
+//	2.	inspired from solution, there's a pattern that pair of adjacent number sum
+//		to specific number, I didn't notice that kind of pattern, and didn't take time
+//		to implement it
