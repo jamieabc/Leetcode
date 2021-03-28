@@ -35,6 +35,142 @@ import (
 //    Intervals like [1,2] and [2,3] have borders "touching" but they don't overlap each other.
 
 func eraseOverlapIntervals(intervals [][]int) int {
+	sort.Slice(intervals, func(i, j int) bool {
+		return intervals[i][1] < intervals[j][1]
+	})
+
+	var maxNonOverlap int
+	// very beautiful setup
+	end := math.MinInt32
+
+	for _, i := range intervals {
+		if i[0] >= end {
+			maxNonOverlap++
+			end = i[1]
+		}
+	}
+
+	return len(intervals) - maxNonOverlap
+}
+
+// tc: O(n log(n))
+func eraseOverlapIntervals4(intervals [][]int) int {
+	size := len(intervals)
+	if size <= 1 {
+		return 0
+	}
+
+	sort.Slice(intervals, func(i, j int) bool {
+		return intervals[i][1] < intervals[j][1]
+	})
+
+	longest := 1
+	end := intervals[0][1]
+
+	for i := 1; i < size; i++ {
+		if intervals[i][0] >= end {
+			longest++
+			end = intervals[i][1]
+		}
+	}
+
+	return size - longest
+}
+
+// tc: O(n log(n))
+func eraseOverlapIntervals3(intervals [][]int) int {
+	size := len(intervals)
+	if size <= 1 {
+		return 0
+	}
+
+	sort.Slice(intervals, func(i, j int) bool {
+		return intervals[i][0] < intervals[j][0]
+	})
+
+	longest := 1
+
+	for i, prev := 1, 0; i < size; i++ {
+		if overlap(intervals, prev, i) {
+			if intervals[i][1] > intervals[prev][1] {
+				// interval-i is longer
+				continue
+			} else {
+				prev = i
+			}
+		} else {
+			longest++
+			prev = i
+		}
+	}
+
+	return size - longest
+}
+
+func overlap(intervals [][]int, idx1, idx2 int) bool {
+	return intervals[idx1][1] > intervals[idx2][0]
+}
+
+// tc: O(n^2)
+func eraseOverlapIntervals2(intervals [][]int) int {
+	size := len(intervals)
+
+	if size == 0 {
+		return 0
+	}
+
+	sort.Slice(intervals, func(i, j int) bool {
+		if intervals[i][0] != intervals[j][0] {
+			return intervals[i][0] < intervals[j][0]
+		}
+		return intervals[i][1] < intervals[j][1]
+	})
+
+	// memo[i]: longest independent intereval count start from i (inclusive)
+	memo := make([]int, size)
+	for i := range memo {
+		memo[i] = -1
+	}
+
+	dfs(intervals, 0, 1, memo)
+
+	return size - memo[0]
+}
+
+func dfs(intervals [][]int, cur, next int, memo []int) int {
+	size := len(intervals)
+	if cur >= size-1 || next == size {
+		memo[cur] = 1
+		return 1
+	}
+
+	var tmp int
+	if memo[cur] == -1 {
+		if !overlap(intervals, cur, next) {
+			tmp = 1 + dfs(intervals, next, next+1, memo)
+		} else {
+			tmp = max(dfs(intervals, cur, next+1, memo), dfs(intervals, next, next+1, memo))
+		}
+
+		memo[cur] = tmp
+	}
+
+	return memo[cur]
+}
+
+func overlap(intervals [][]int, cur, next int) bool {
+	return intervals[cur][1] > intervals[next][0]
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
+}
+
+// tc: O(n^2)
+func eraseOverlapIntervals1(intervals [][]int) int {
 	if len(intervals) == 0 {
 		return 0
 	}
@@ -70,24 +206,6 @@ func eraseOverlapIntervals(intervals [][]int) int {
 	}
 
 	return len(intervals) - dp[len(dp)-1]
-}
-
-func eraseOverlapIntervals1(intervals [][]int) int {
-	sort.Slice(intervals, func(i, j int) bool {
-		return intervals[i][1] < intervals[j][1]
-	})
-
-	var maxNonOverlap int
-	end := math.MinInt32
-
-	for _, i := range intervals {
-		if i[0] >= end {
-			maxNonOverlap++
-			end = i[1]
-		}
-	}
-
-	return len(intervals) - maxNonOverlap
 }
 
 // i1 should be interval happens earlier or same than i2
@@ -185,3 +303,8 @@ func isOverlap(i1, i2 []int) bool {
 
 //	6.	each interval is choose or not-choose, which is similar to knapsack
 //		problem
+
+//	7.	inspired form https://leetcode.com/problems/non-overlapping-intervals/discuss/276056/Python-Greedy-Interval-Scheduling
+
+//		always pick earliest end time interval, it will guarantee most non-overlap
+//		intervals, classic problem
