@@ -1,5 +1,7 @@
 package main
 
+import "sort"
+
 //Given a text string and words (a list of strings), return all index pairs [i, j] so that the substring text[i]...text[j] is in the list of words.
 //
 //
@@ -27,20 +29,88 @@ package main
 
 type Trie struct {
 	IsWord   bool
-	Val      byte
-	Children []*Trie
+	Children [26]*Trie
 }
 
-func (t *Trie) Add(bytes []byte) {
-	var ptr *Trie
+func (t *Trie) Build(str string) {
+	node := t
+	size := len(str)
+
+	var i int
+	for i = 0; i < size; i++ {
+		idx := int(str[i] - 'a')
+
+		if node.Children[idx] == nil {
+			node.Children[idx] = &Trie{}
+		}
+
+		node = node.Children[idx]
+	}
+
+	node.IsWord = true
+}
+
+func (t *Trie) Search(str string, start int) [][]int {
+	ans := make([][]int, 0)
+
+	for node, i := t, start; i < len(str); i++ {
+		idx := int(str[i] - 'a')
+
+		if node.Children[idx] == nil {
+			break
+		}
+
+		node = node.Children[idx]
+
+		// becareful abour order, need to switch to next char and check,
+		// because initial root is empty
+		if node.IsWord {
+			ans = append(ans, []int{start, i})
+		}
+	}
+
+	return ans
+}
+
+func indexPairs(text string, words []string) [][]int {
+	root := &Trie{}
+
+	for _, w := range words {
+		root.Build(w)
+	}
+
+	ans := make([][]int, 0)
+
+	for i := range text {
+		ans = append(ans, root.Search(text, i)...)
+	}
+
+	sort.Slice(ans, func(i, j int) bool {
+		if ans[i][0] != ans[j][0] {
+			return ans[i][0] < ans[j][0]
+		}
+		return ans[i][1] < ans[j][1]
+	})
+
+	return ans
+}
+
+type Trie1 struct {
+	IsWord   bool
+	Val      byte
+	Children []*Trie1
+}
+
+func (t *Trie1) Add(bytes []byte) {
+	var ptr *Trie1
 	var idx int
 
 	for ptr, idx = t, 0; idx < len(bytes); idx++ {
 		pos := bytes[idx] - 'a'
 		if ptr.Children[pos] == nil {
-			ptr.Children[bytes[idx]-'a'] = &Trie{
+			ptr.Children[bytes[idx]-'a'] = &Trie1{
 				IsWord:   idx == len(bytes)-1,
-				Children: make([]*Trie, 26),
+				Children: make([]*Trie1, 26),
 			}
 		}
 		ptr = ptr.Children[pos]
@@ -49,9 +119,9 @@ func (t *Trie) Add(bytes []byte) {
 }
 
 // tc: O(mk + nk), n: length of text, m: words count, k: max length among all words
-func indexPairs(text string, words []string) [][]int {
-	root := &Trie{
-		Children: make([]*Trie, 26),
+func indexPairs1(text string, words []string) [][]int {
+	root := &Trie1{
+		Children: make([]*Trie1, 26),
 	}
 
 	// build trie
@@ -76,3 +146,11 @@ func indexPairs(text string, words []string) [][]int {
 
 	return result
 }
+
+//	Notes
+//	1.	direct compare, tc: O(nmk), n: text length, m: words length, k: average
+//		length of word length
+
+//	2.	trie build tc: O(mk), search tc: O(nk)
+
+//	3.	inspired from https://leetcode.com/problems/index-pairs-of-a-string/discuss/319173/Different-Python-solutions
