@@ -52,26 +52,27 @@ package main
 
 func maxSum(nums1 []int, nums2 []int) int {
 	var i, j int
-	var sum, s1, s2 int64
+	var sum, s1, s2 int
+	mod := int(1e9 + 7)
 
 	for i < len(nums1) || j < len(nums2) {
 		if i < len(nums1) && (j == len(nums2) || nums1[i] < nums2[j]) {
-			s1 += int64(nums1[i])
+			s1 += nums1[i]
 			i++
 		} else if j < len(nums2) && (i == len(nums1) || nums1[i] > nums2[j]) {
-			s2 += int64(nums2[j])
+			s2 += nums2[j]
 			j++
 		} else {
-			sum += max(s1, s2) + int64(nums1[i])
+			sum = (sum + max(s1, s2)) % mod
 			s1, s2 = 0, 0
 			i, j = i+1, j+1
 		}
 	}
 
-	return int((sum + max(s1, s2)) % (1e9 + 7))
+	return (sum + max(s1, s2)) % mod
 }
 
-func max(i, j int64) int64 {
+func max(i, j int) int {
 	if i >= j {
 		return i
 	}
@@ -88,3 +89,5 @@ func max(i, j int64) int64 {
 
 //		can put all adding logic into for loop, be careful about boundary
 //		conditions, what if any pointer reaches end of array
+
+//		lee uses a beautiful solution, ans + max(sum1, sum2)
