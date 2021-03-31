@@ -62,6 +62,27 @@ func longestCommonSubsequence(text1 string, text2 string) int {
 	return dp[l1][l2]
 }
 
+// bottom-up dp
+func longestCommonSubsequence2(text1 string, text2 string) int {
+	size1, size2 := len(text1), len(text2)
+	dp := make([][]int, size1+1)
+	for i := range dp {
+		dp[i] = make([]int, size2+1)
+	}
+
+	for j := size2 - 1; j >= 0; j-- {
+		for i := size1 - 1; i >= 0; i-- {
+			if text1[i] == text2[j] {
+				dp[i][j] = dp[i+1][j+1] + 1
+			} else {
+				dp[i][j] = max(dp[i+1][j], dp[i][j+1])
+			}
+		}
+	}
+
+	return dp[0][0]
+}
+
 // top-down, separate problem into two conditions:
 // - same char at str1[i], str2[j], LCS comes from LCS(str1[:i], str2[:j]) + 1
 // - different char at str1[i], str2[j], LCS comes from max of LCS(str1[:i-1], str2[:j]) or
@@ -123,3 +144,5 @@ func max(i, j int) int {
 
 //	7.	solution with very good wording, memoization which is for top-down, and
 //		tabulation for bottom-up
+
+//	8.	inspired from solution, there's a bottom-up solution
