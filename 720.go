@@ -25,8 +25,56 @@ import "sort"
 // The length of words will be in the range [1, 1000].
 // The length of words[i] will be in the range [1, 30].
 
-// tc: O(n log n)
+type Trie struct {
+	IsWord   bool
+	Children [26]*Trie
+}
+
+func (t *Trie) Build(str string) int {
+	node := t
+
+	var idx int
+	for ; idx < len(str)-1; idx++ {
+		if !node.IsWord || node.Children[str[idx]-'a'] == nil {
+			return idx
+		}
+
+		node = node.Children[str[idx]-'a']
+	}
+
+	if node.Children[str[idx]-'a'] == nil {
+		node.Children[str[idx]-'a'] = &Trie{
+			IsWord: true,
+		}
+	}
+
+	return len(str)
+}
+
+// tc: O(n log(n))
 func longestWord(words []string) string {
+	sort.Slice(words, func(i, j int) bool {
+		return words[i] < words[j]
+	})
+
+	root := &Trie{IsWord: true}
+
+	var longest int
+	var str string
+
+	for _, word := range words {
+		cur := root.Build(word)
+		if cur > longest {
+			longest = cur
+			str = word
+		}
+	}
+
+	return str
+}
+
+// tc: O(n log n)
+func longestWord3(words []string) string {
 	sort.Strings(words)
 
 	table := make(map[string]bool)
@@ -47,19 +95,19 @@ func longestWord(words []string) string {
 	return result
 }
 
-type Trie struct {
+type Trie1 struct {
 	Val      byte
-	Children map[byte]*Trie
+	Children map[byte]*Trie1
 	IsWord   bool
 }
 
-func (t *Trie) Insert(str string) {
+func (t *Trie1) Insert(str string) {
 	node := t
 	for i := range str {
 		if _, ok := node.Children[str[i]]; !ok {
-			node.Children[str[i]] = &Trie{
+			node.Children[str[i]] = &Trie1{
 				Val:      str[i],
-				Children: make(map[byte]*Trie),
+				Children: make(map[byte]*Trie1),
 			}
 		}
 		node = node.Children[str[i]]
@@ -67,7 +115,7 @@ func (t *Trie) Insert(str string) {
 	node.IsWord = true
 }
 
-func (t *Trie) Dfs(prev string) string {
+func (t *Trie1) Dfs(prev string) string {
 	var current string
 	if t.Val != 0 {
 		current = prev + string(t.Val)
@@ -90,8 +138,8 @@ func (t *Trie) Dfs(prev string) string {
 }
 
 func longestWord2(words []string) string {
-	t := &Trie{
-		Children: make(map[byte]*Trie),
+	t := &Trie1{
+		Children: make(map[byte]*Trie1),
 	}
 
 	// create trie
@@ -155,7 +203,7 @@ func longestWord1(words []string) string {
 	return ""
 }
 
-//	problems
+//	Notes
 //	1.	wrong logic about choosing smaller lexical, because it should top when
 //		char is larger than original, or update when char is smaller
 
@@ -171,3 +219,5 @@ func longestWord1(words []string) string {
 
 //	3.	when building trie, this problem is different from previous one, it
 //		needs to check if all previous words exist
+
+//	4.	for trie to build word, check all previous conditions
