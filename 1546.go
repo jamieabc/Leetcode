@@ -1,5 +1,7 @@
 package main
 
+import "sort"
+
 //Given an array nums and an integer target.
 //
 //Return the maximum number of non-empty non-overlapping subarrays such that the sum of values in each subarray is equal to target.
@@ -58,6 +60,91 @@ func maxNonOverlapping(nums []int, target int) int {
 	return count
 }
 
-//	problems
+func maxNonOverlapping2(nums []int, target int) int {
+	table := make(map[int]int)
+
+	var sum, ans int
+	prev := -1
+	for i := range nums {
+		if idx, ok := table[sum-target]; ok {
+			if idx > prev {
+				prev = i - 1
+				ans++
+			}
+		}
+		table[sum] = i
+		sum += nums[i]
+	}
+
+	if idx, ok := table[sum-target]; ok {
+		if idx > prev {
+			ans++
+		}
+	}
+
+	return ans
+}
+
+// TLE
+func maxNonOverlapping1(nums []int, target int) int {
+	intervals := make([][]int, 0)
+	table := make(map[int][]int)
+
+	var sum int
+	for i := range nums {
+		if arr, ok := table[sum-target]; ok {
+			for j := range arr {
+				intervals = append(intervals, []int{arr[j], i - 1})
+			}
+		}
+		table[sum] = append(table[sum], i)
+		sum += nums[i]
+	}
+
+	if arr, ok := table[sum-target]; ok {
+		for i := range arr {
+			intervals = append(intervals, []int{arr[i], len(nums) - 1})
+		}
+	}
+
+	if len(intervals) == 0 {
+		return 0
+	}
+
+	sort.Slice(intervals, func(i, j int) bool {
+		if intervals[i][1] != intervals[j][1] {
+			return intervals[i][1] < intervals[j][1]
+		}
+
+		return intervals[i][0] < intervals[j][0]
+	})
+
+	prev := 0
+	ans := 1
+
+	for i := 1; i < len(intervals); i++ {
+		if intervals[i][0] > intervals[prev][1] {
+			prev = i
+			ans++
+		}
+	}
+
+	return ans
+}
+
+//	Notes
 //	1.	since traversing is always increasing, no need to append all
 //		index, just update latest one
+
+//	2.	rewrite it, I thought it was about intervals, using prefix sum to
+//		list all intervals that sums up to target.
+
+//		with those intervals, it's about finding maximum non-overlapping
+//		intervals, can be solved by sort by end time and greedy search
+
+//		but listing all intervals is not necessary, because only care about
+//		previous env time
+
+//	3.	inspired from https://leetcode.com/problems/maximum-number-of-non-overlapping-subarrays-with-sum-equals-target/discuss/780882/Java-14-lines-Greedy-PrefixSum-with-line-by-line-explanation-easy-to-understand
+
+//		my second attempt can be further improved by adding 1 to right-most index
