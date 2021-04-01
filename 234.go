@@ -30,7 +30,47 @@ package main
  *     Next *ListNode
  * }
  */
+
 func isPalindrome(head *ListNode) bool {
+	if head.Next == nil {
+		return true
+	}
+	slow, fast := head, head
+
+	// find mid node
+	for fast != nil && fast.Next != nil && fast.Next.Next != nil {
+		slow, fast = slow.Next, fast.Next.Next
+	}
+
+	var odd bool
+	mid := slow
+	if fast != nil && fast.Next == nil {
+		odd = true
+	}
+
+	// reverse nodes after mid
+	var cur, prev *ListNode
+	if !odd {
+		cur = mid.Next
+		mid.Next = nil
+	} else {
+		prev, cur = mid, mid.Next
+	}
+
+	for cur != nil {
+		next := cur.Next
+		cur.Next = prev
+		cur, prev = next, cur
+	}
+
+	var i, j *ListNode
+	for i, j = head, prev; i != nil && j != nil && i.Val == j.Val && i != j && i.Next != j; i, j = i.Next, j.Next {
+	}
+
+	return i == j
+}
+
+func isPalindrome3(head *ListNode) bool {
 	if head == nil || head.Next == nil {
 		return true
 	}
