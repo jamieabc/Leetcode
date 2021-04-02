@@ -61,6 +61,54 @@ func canPartition(nums []int) bool {
 	return dp[len(dp)-1][sum/2]
 }
 
+func canPartition4(nums []int) bool {
+	var total int
+	for _, n := range nums {
+		total += n
+	}
+
+	if total&1 > 0 {
+		return false
+	}
+	target := total >> 1
+
+	size := len(nums)
+	// memo[i][j]: start from index i, possible sum to target
+	memo := make([][]int, size)
+	for i := range memo {
+		memo[i] = make([]int, target+1)
+		for j := range memo[i] {
+			memo[i][j] = 0
+		}
+	}
+
+	return dfs(nums, memo, 0, target)
+}
+
+func dfs(nums []int, memo [][]int, idx, target int) bool {
+	if target == 0 {
+		return true
+	}
+
+	if target < 0 || idx == len(nums) {
+		return false
+	}
+
+	if memo[idx][target] != 0 {
+		return memo[idx][target] == 1
+	}
+
+	possible := dfs(nums, memo, idx+1, target) || dfs(nums, memo, idx+1, target-nums[idx])
+
+	if possible {
+		memo[idx][target] = 1
+	} else {
+		memo[idx][target] = -1
+	}
+
+	return memo[idx][target] == 1
+}
+
 func canPartition3(nums []int) bool {
 	var sum int
 	for _, n := range nums {
@@ -72,12 +120,13 @@ func canPartition3(nums []int) bool {
 	}
 
 	// memo[i][j]: does start from index i possible sum to j
+	// use array is more efficient, make([]int, target+1)
 	memo := make(map[int]map[int]bool)
 
-	return dfs(nums, sum/2, 0, memo)
+	return dfs3(nums, sum/2, 0, memo)
 }
 
-func dfs(nums []int, sum, idx int, memo map[int]map[int]bool) bool {
+func dfs3(nums []int, sum, idx int, memo map[int]map[int]bool) bool {
 	if sum == 0 {
 		return true
 	}
@@ -92,9 +141,9 @@ func dfs(nums []int, sum, idx int, memo map[int]map[int]bool) bool {
 
 	var include, exclude bool
 	if nums[idx] <= sum {
-		include = dfs(nums, sum-nums[idx], idx+1, memo)
+		include = dfs3(nums, sum-nums[idx], idx+1, memo)
 	}
-	exclude = dfs(nums, sum, idx+1, memo)
+	exclude = dfs3(nums, sum, idx+1, memo)
 
 	if _, ok := memo[idx]; !ok {
 		memo[idx] = make(map[int]bool)
@@ -104,6 +153,8 @@ func dfs(nums []int, sum, idx int, memo map[int]map[int]bool) bool {
 	return memo[idx][sum]
 }
 
+// this is same as using hashmap, find all existing possible sums, add next val
+// and check if able to reach target
 func canPartition2(nums []int) bool {
 	var sum int
 	for _, n := range nums {
@@ -163,6 +214,7 @@ func canPartition1(nums []int) bool {
 	return memo[len(memo)-1][target]
 }
 
+// this is like bottom-up dp, start from every number, build relationship
 func bfs(nums []int, target, idx int, memo [][]bool) {
 	if idx == len(nums) {
 		return
@@ -205,3 +257,19 @@ func bfs(nums []int, target, idx int, memo [][]bool) {
 //		(not) selecting a number, which forms a binary tree
 
 //		by that, it can be solved by bfs/dfs/dp
+
+//	7.	to use dp/dfs, most important thing is to find recurring sub-problem
+
+//		e.g. [1, 1, 2, 4, 6], sum goal = 14/2 = 7
+
+//		-> not take index 0: [1, 2, 4, 6] sum to 7
+
+//			-> not take index 1: [2, 4, 6] sum to 7
+//			-> take index 1    : [2, 4, 6] sum to 6
+
+//		-> take index 0	   : [1, 2, 4, 6] sum to 6
+
+//			-> not take index 1: [2, 4, 6] sum to 7
+//			-> take index 1    : [2, 4, 6] sum to 6
+
+//		[2, 4, 6] sum to 7/6 both occurs twice, recurring sub-problem
