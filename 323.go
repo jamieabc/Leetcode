@@ -63,6 +63,50 @@ func find(parents []int, idx int) int {
 	return parents[idx]
 }
 
+func countComponents3(n int, edges [][]int) int {
+	visited := make([]bool, n)
+
+	graph := make([][]int, n)
+	for _, e := range edges {
+		graph[e[0]] = append(graph[e[0]], e[1])
+		graph[e[1]] = append(graph[e[1]], e[0])
+	}
+
+	var ans int
+
+	for i := 0; i < n; i++ {
+		if visited[i] {
+			continue
+		}
+
+		ans++
+
+		bfs(visited, graph, i)
+	}
+
+	return ans
+}
+
+func bfs(visited []bool, graph [][]int, point int) {
+	queue := []int{point}
+
+	for len(queue) > 0 {
+		p := queue[0]
+		queue = queue[1:]
+
+		if visited[p] {
+			continue
+		}
+		visited[p] = true
+
+		for _, to := range graph[p] {
+			if !visited[to] {
+				queue = append(queue, to)
+			}
+		}
+	}
+}
+
 func countComponents2(n int, edges [][]int) int {
 	if n == 0 {
 		return 0
@@ -198,3 +242,6 @@ func countComponents1(n int, edges [][]int) int {
 //	8.	reference https://www.cs.princeton.edu/~rs/AlgsDS07/01UnionFind.pdf
 
 //		explains find & union
+
+//	9.	inspired from solution, can use bfs/dfs to traverse, for every vertex not visited,
+//		mark all connected nodes as visited
