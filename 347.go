@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"container/heap"
+	"fmt"
+)
 
 //Given a non-empty array of integers, return the k most frequent elements.
 //
@@ -83,6 +86,30 @@ func partition(nums []num, target, start, end int) int {
 	return store
 }
 
+// bucket sort, frequency is up to len(nums)
+func topKFrequent(nums []int, k int) []int {
+	counter := make(map[int]int)
+	for _, n := range nums {
+		counter[n]++
+	}
+
+	freq := make([][]int, len(nums)+1)
+	for num, occurrence := range counter {
+		freq[occurrence] = append(freq[occurrence], num)
+	}
+
+	ans := make([]int, 0)
+
+	for i := len(nums); i >= 0 && k > 0; i-- {
+		if len(freq[i]) > 0 {
+			ans = append(ans, freq[i]...)
+			k -= len(freq[i])
+		}
+	}
+
+	return ans
+}
+
 type nums []num
 
 func (this nums) Len() int           { return len(this) }
@@ -155,9 +182,17 @@ func topKFrequent1(nums []int, k int) []int {
 	return result
 }
 
-//	problems
+//	Notes
 //	1.	should use k to search backward, it's more straight forward
 
 //	2.	reference from https://leetcode.com/problems/top-k-frequent-elements/discuss/81635/3-Java-Solution-using-Array-MaxHeap-TreeMap
 
 //		there are 3 ways to solve this, bucket, heap, treemap
+
+//	3.	for quick select, remember to mention partition
+
+//		also, partition terminates when start >= end
+
+//	4.	inspired from https://leetcode.com/problems/top-k-frequent-elements/discuss/740374/Python-5-lines-O(n)-buckets-solution-explained.
+
+//		since frequency is max to k, so it's possible to use bucket sort
