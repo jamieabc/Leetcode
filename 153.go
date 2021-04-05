@@ -21,6 +21,34 @@ package main
 func findMin(nums []int) int {
 	size := len(nums)
 
+	smallest := nums[0]
+
+	// becareful about size == 1, because in the binary search condition,
+	// if only one element, it won't fit into any condition, thus cause infinite loop
+	// or change nums[mid] < nums[0] to nums[mid] <= nums[0]
+	if nums[size-1] > nums[0] || size == 1 {
+		return smallest
+	}
+
+	for low, high := 0, size-1; low <= high; {
+		mid := low + (high-low)/2
+
+		if nums[mid] > nums[size-1] {
+			// 3,4,5,1,2
+			low = mid + 1
+		} else if nums[mid] < nums[0] {
+			// 5,1,2,3,4
+			smallest = nums[mid]
+			high = mid - 1
+		}
+	}
+
+	return smallest
+}
+
+func findMin1(nums []int) int {
+	size := len(nums)
+
 	// no rotation
 	if nums[size-1] > nums[0] {
 		return nums[0]
@@ -45,7 +73,7 @@ func findMin(nums []int) int {
 	return nums[low]
 }
 
-//	problems
+//	Notes
 //	1.	return number instead of index
 
 //	2.	inspired from https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/discuss/48484/A-concise-solution-with-proof-in-the-comment
@@ -63,3 +91,5 @@ func findMin(nums []int) int {
 //	3.	another explanation https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/discuss/158940/Beat-100%3A-Very-Simple-(Python)-Very-Detailed-Explanation
 
 //		very brilliant solution
+
+//	4.	inspired from solution, there's more elegant way to solve it
