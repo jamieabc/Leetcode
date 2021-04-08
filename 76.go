@@ -13,6 +13,45 @@ package main
 //     If there is such window, you are guaranteed that there will always be only one unique minimum window in S.
 
 func minWindow(s string, t string) string {
+	target := make([]int, 256)
+	for i := range t {
+		target[t[i]]++
+	}
+
+	counter := make([]int, 256)
+	remain := len(t)
+	size := len(s)
+	shortest := size + 1
+	var str string
+
+	for i, j := 0, 0; i < size; {
+		if i == j || (j < size && remain > 0) {
+			counter[s[j]]++
+			if counter[s[j]] <= target[s[j]] {
+				remain--
+			}
+			j++
+		} else {
+			counter[s[i]]--
+			if counter[s[i]] < target[s[i]] {
+				remain++
+			}
+			i++
+		}
+
+		if remain == 0 && j-i < shortest {
+			shortest = j - i
+			str = s[i:j]
+		}
+	}
+
+	if shortest == size+1 {
+		return ""
+	}
+	return str
+}
+
+func minWindow3(s string, t string) string {
 	if len(s) == 0 || len(t) == 0 {
 		return ""
 	}
@@ -195,7 +234,7 @@ func minWindow1(s string, t string) string {
 	return s[start : end+1]
 }
 
-//	problems
+//	Notes
 //	1.	too slow...
 
 //	2.	inspired from solution, sliding can be simplified by following
@@ -219,3 +258,12 @@ func minWindow1(s string, t string) string {
 
 //		in this way, I can remove an variable that tracks count of occurred
 //		char in range
+
+//	6.	becareful about terminate condition, it's on left pointer, because
+//		there might be a condition that necessary char appears at last, then
+//		moving left pointer is kind of shrink (remove duplicates)
+
+//	7.	inspired from solution, if len(s) >>>> len(t), could remove characters
+//		not in t
+
+//		use array to store index of s that appears character in t
