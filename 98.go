@@ -39,13 +39,93 @@ import (
  * }
  */
 
+func isValidBST(root *TreeNode) bool {
+	node := root
+	stack := make([]*TreeNode, 0)
+	var prev *int
+
+	for node != nil || len(stack) > 0 {
+		for ; node != nil; node = node.Left {
+			stack = append(stack, node)
+		}
+
+		node = stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+
+		if prev != nil && *prev >= node.Val {
+			return false
+		}
+		prev = &node.Val
+
+		node = node.Right
+	}
+
+	return true
+}
+
+func isValidBST3(root *TreeNode) bool {
+	ok, _ := inOrder3(root, nil)
+	return ok
+}
+
+func inOrder3(node *TreeNode, prev *int) (bool, *int) {
+	if node == nil {
+		return true, prev
+	}
+
+	if prev != nil && node.Val <= *prev {
+		return false, prev
+	}
+
+	ok, l := inOrder3(node.Left, prev)
+
+	if !ok || (l != nil && node.Val <= *l) {
+		return false, prev
+	}
+
+	return inOrder3(node.Right, &node.Val)
+}
+
+// can be further optimized, prev is used on right subtree, return value is
+// used for left subtree
+func isValidBST2(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+
+	ok, _ := inOrder2(root, nil)
+	return ok
+}
+
+func inOrder2(node *TreeNode, prev *int) (bool, int) {
+	if node.Left == nil && node.Right == nil {
+		if prev == nil {
+			return true, node.Val
+		}
+		return node.Val > *prev, node.Val
+	}
+
+	if node.Left != nil {
+		ok, l := inOrder2(node.Left, prev)
+
+		if !ok || node.Val <= l {
+			return false, node.Val
+		}
+	}
+
+	if node.Right != nil {
+		return inOrder2(node.Right, &node.Val)
+	}
+	return true, node.Val
+}
+
 type TreeNode struct {
 	Val   int
 	Left  *TreeNode
 	Right *TreeNode
 }
 
-func isValidBST(root *TreeNode) bool {
+func isValidBST1(root *TreeNode) bool {
 	if root == nil {
 		return true
 	}
@@ -159,3 +239,20 @@ func main() {
 	}
 	fmt.Printf("w0 is BST: %t\n", isValidBST(w0))
 }
+
+//	Notes
+//	1.	this problem is hard for me, even today
+//		because not just in-order traversal, but also boundary conditions
+
+//		need to check largest from left subtree, which means return children
+//		value to parent
+
+//		need to check smallest from right subtree, which means passing parent
+//		value to right subtree
+
+//		initially, put math.MinInt32 for dfs, but it encounters a problem:
+//		the node value could be math.MinInt32, which makes it hard to detect
+//		is smallest node is valid or not. To prevent this, use pointer to check
+
+//	2.	inspired from solution, instead of returning and passing values, it
+//		uses min~max range to check
