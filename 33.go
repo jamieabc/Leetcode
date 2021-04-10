@@ -66,6 +66,69 @@ func search(nums []int, target int) int {
 	return -1
 }
 
+func search3(nums []int, target int) int {
+	for low, high := 0, len(nums)-1; low <= high; {
+		mid := low + (high-low)/2
+
+		if nums[mid] == target {
+			return mid
+		} else if nums[high] < nums[mid] {
+			// smallest at right side, largest also at right side
+			if nums[low] > target || nums[mid] < target {
+				low = mid + 1
+			} else {
+				high = mid - 1
+			}
+		} else {
+			// smallest at left side, largest also at left side
+			if nums[mid] < target && nums[high] >= target {
+				low = mid + 1
+			} else {
+				high = mid - 1
+			}
+		}
+	}
+
+	return -1
+}
+
+// tc: O(n log(n))
+func search2(nums []int, target int) int {
+	return binarySearch(nums, target, 0, len(nums)-1)
+}
+
+func binarySearch(nums []int, target, low, high int) int {
+	for low <= high {
+		mid := low + (high-low)/2
+
+		if nums[mid] == target {
+			return mid
+		} else if nums[mid] > target {
+			if nums[low] < nums[high] {
+				high = mid - 1
+			} else {
+				if tmp := binarySearch(nums, target, low, mid-1); tmp == -1 {
+					return binarySearch(nums, target, mid+1, high)
+				} else {
+					return tmp
+				}
+			}
+		} else {
+			if nums[low] < nums[high] {
+				low = mid + 1
+			} else {
+				if tmp := binarySearch(nums, target, low, mid-1); tmp == -1 {
+					return binarySearch(nums, target, mid+1, high)
+				} else {
+					return tmp
+				}
+			}
+		}
+	}
+
+	return -1
+}
+
 func search1(nums []int, target int) int {
 	size := len(nums)
 	if size == 0 {
@@ -126,7 +189,7 @@ func binarySearch(nums []int, start, end, target int) int {
 	return -1
 }
 
-//	problems
+//	Notes
 //	1.	in later check, always array is not empty, so need to check it in
 //		advance
 
@@ -141,3 +204,12 @@ func binarySearch(nums []int, start, end, target int) int {
 //		comparing nums[mid] to nums[start], if nums[mid] is larger, then search
 //		right side of mid, if nums[mid] is smaller, than search left side of
 //		mid
+
+//	4.	the point is about pivot number (smallest number), the largest & smallest
+//		number might be in the same side, so it needs two conditions to check
+
+//		for smallest & largest at same side, check need to confirm these two
+//		conditions at least one meet, so that binary search can go to the side
+
+//		3 4 5 6 1 2
+//		l   m     r, smallest at right side, largest at right side
