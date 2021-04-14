@@ -58,6 +58,43 @@ package main
 
 // tc: O(n^2)
 func unhappyFriends(n int, preferences [][]int, pairs [][]int) int {
+	graph := make([][]int, n)
+	for i := range graph {
+		graph[i] = make([]int, n)
+	}
+
+	for i, pref := range preferences {
+		for j := range pref {
+			graph[i][pref[j]] = j
+		}
+	}
+
+	paired := make([]int, n)
+	for _, pair := range pairs {
+		paired[pair[0]] = pair[1]
+		paired[pair[1]] = pair[0]
+	}
+
+	var unhappy int
+
+	for i := 0; i < n; i++ {
+		order := graph[i][paired[i]]
+
+		for j := 0; j < order; j++ {
+			preferred := preferences[i][j]
+
+			if graph[preferred][i] < graph[preferred][paired[preferred]] {
+				unhappy++
+				break
+			}
+		}
+	}
+
+	return unhappy
+}
+
+// tc: O(n^2)
+func unhappyFriends1(n int, preferences [][]int, pairs [][]int) int {
 	table := make(map[int]int)
 	for _, p := range pairs {
 		table[p[0]] = p[1]
