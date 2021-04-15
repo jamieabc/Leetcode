@@ -107,6 +107,148 @@ func freqChoose(score, possible []int) int {
 	return idx
 }
 
+func findSecretWord4(wordlist []string, master *Master) {
+	size := len(wordlist)
+	visited := make([]bool, size)
+
+	for i := 0; i < 10; i++ {
+		idx := pick4(wordlist, visited)
+
+		result := master.Guess(wordlist[idx])
+		visited[idx] = true
+
+		if result == 6 {
+			return
+		} else {
+			filterWords4(idx, wordlist, visited, result)
+		}
+	}
+}
+
+func pick4(wordlist []string, visited []bool) int {
+	freq := make([]int, 26)
+
+	for i, word := range wordlist {
+		if visited[i] {
+			continue
+		}
+
+		for j := range word {
+			freq[word[j]-'a']++
+		}
+	}
+
+	var maxScore, score, idx int
+	for i, word := range wordlist {
+		if visited[i] {
+			continue
+		}
+
+		score = 0
+
+		for j := range word {
+			score += freq[word[j]-'a']
+		}
+
+		if score > maxScore {
+			maxScore = score
+			idx = i
+		}
+	}
+
+	return idx
+}
+
+func filterWords4(idx int, wordlist []string, visited []bool, result int) {
+	for i, str := range wordlist {
+		if visited[i] || i == idx {
+			continue
+		}
+
+		var same int
+		for j := range str {
+			if str[j] == wordlist[idx][j] {
+				same++
+			}
+		}
+
+		if same != result {
+			visited[i] = true
+		}
+	}
+}
+
+func findSecretWord3(wordlist []string, master *Master) {
+	size := len(wordlist)
+	filtered := make([]bool, size)
+
+	for i := 0; i < 10; i++ {
+		idx := pick3(wordlist, filtered)
+		filtered[idx] = true
+
+		result := master.Guess(wordlist[idx])
+
+		if result == 6 {
+			return
+		} else {
+			filterWords3(wordlist[idx], wordlist, filtered, result)
+		}
+	}
+}
+
+func pick3(wordlist []string, filtered []bool) int {
+	var idx, difference int
+	minDifference := math.MaxInt32
+
+	for i := range wordlist {
+		if filtered[i] {
+			continue
+		}
+		difference = 0
+
+		for j := range wordlist {
+			if filtered[j] || j == i {
+				continue
+			}
+
+			if similarity3(wordlist[i], wordlist[j]) == 0 {
+				difference++
+			}
+
+		}
+
+		if difference < minDifference {
+			minDifference = difference
+			idx = i
+		}
+	}
+
+	return idx
+}
+
+func similarity3(s1, s2 string) int {
+	var same int
+	for i := range s1 {
+		if s1[i] == s2[i] {
+			same++
+		}
+	}
+
+	return same
+}
+
+func filterWords3(word string, wordlist []string, filtered []bool, dist int) {
+	for i := range wordlist {
+		if word == wordlist[i] || filtered[i] {
+			continue
+		}
+
+		if similarity(word, wordlist[i]) != dist {
+			filtered[i] = true
+		}
+	}
+}
+
 func findSecretWord2(wordlist []string, master *Master) {
 	size := len(wordlist)
 	zMatch := make([][]int, size)
@@ -214,7 +356,7 @@ func matches(src, dst string) int {
 
 //	3.	inspired by https://leetcode.com/problems/guess-the-word/discuss/133862/Random-Guess-and-Minimax-Guess-with-Comparison
 
-//		lee oberves the problem and mentions a good point, if a word list
+//		lee observes the problem and mentions a good point, if a word list
 //		is made up of aaaa, bbbb, cccc, etc., then at least 26 tries to
 //		get correct answer. 10 tries is to check for reasonable solution
 
@@ -248,3 +390,16 @@ func matches(src, dst string) int {
 //		optimum
 
 //		due to time limit, I didn't implement this solution
+
+//		the key point is that, elimination not only happens at result = 0,
+//		but also for other values (1~5), because different "distance" will not
+//		be the answer
+
+//		e.g. secret = "abcde"
+//		guess "awxyz" => distance = 1
+//		if there's another "kuytr" can be eliminated, because distance of
+//		"awxyz" & "kuytr" is 5
+
+//	5.	inspired form https://leetcode.com/problems/guess-the-word/discuss/134087/C%2B%2B-elimination-histogram-beats-Minimax
+
+//		histogram can also be used as a way to find
