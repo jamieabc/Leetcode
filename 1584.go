@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/heap"
 	"math"
 	"sort"
 )
@@ -107,11 +108,177 @@ func cost(p1, p2 []int) int {
 	return dist(p1[0], p2[0]) + dist(p1[1], p2[1])
 }
 
-func min(i, j int) int {
-	if i <= j {
+type MinHeap [][]int // distance, point
+
+func (h MinHeap) Len() int           { return len(h) }
+func (h MinHeap) Less(i, j int) bool { return h[i][0] < h[j][0] }
+func (h MinHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h MinHeap) Peek() []int        { return h[0] }
+
+func (h *MinHeap) Push(x interface{}) {
+	*h = append(*h, x.([]int))
+}
+
+func (h *MinHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+// tc: O(n^2)
+func minCostConnectPoints3(points [][]int) int {
+	size := len(points)
+	visited := make([]bool, size)
+
+	var cost int
+	minHeap := &MinHeap{}
+
+	// start from points[0], find all reachable point weights
+	for i := 1; i < size; i++ {
+		heap.Push(minHeap, []int{dist(points[0], points[i]), i})
+	}
+	visited[0] = true
+	var popped []int
+
+	for remain := size - 1; remain > 0; remain-- {
+		for minHeap.Len() > 0 {
+			popped = heap.Pop(minHeap).([]int)
+			if !visited[popped[1]] {
+				break
+			}
+		}
+		visited[popped[1]] = true
+		cost += popped[0]
+
+		// add neighbors reachable from that point
+		for i := range points {
+			if visited[i] {
+				continue
+			}
+
+			heap.Push(minHeap, []int{dist(points[popped[1]], points[i]), i})
+		}
+	}
+
+	return cost
+}
+
+// still slow, 832ms
+func minCostConnectPoints2(points [][]int) int {
+	size := len(points)
+	edges := make([][]int, 0)
+
+	for i := range points {
+		for j := i + 1; j < size; j++ {
+			edges = append(edges, []int{dist(points[i], points[j]), i, j})
+		}
+	}
+	sort.Slice(edges, func(i, j int) bool {
+		return edges[i][0] < edges[j][0]
+	})
+
+	var cost int
+	group := make([]int, size)
+	rank := make([]int, size)
+	for i := range group {
+		group[i] = i
+		rank[i] = 1
+	}
+
+	for _, edge := range edges {
+		p1, p2 := find(group, edge[1]), find(group, edge[2])
+
+		// already belongs to same group (connected)
+		if p1 == p2 {
+			continue
+		}
+
+		if rank[p1] >= rank[p2] {
+			group[p2] = p1
+			rank[p1] += rank[p2]
+		} else {
+			group[p1] = p2
+			rank[p2] += rank[p1]
+		}
+		cost += edge[0]
+	}
+
+	return cost
+}
+
+type MinHeap [][]int
+
+func (h MinHeap) Len() int           { return len(h) }
+func (h MinHeap) Less(i, j int) bool { return h[i][0] < h[j][0] }
+func (h MinHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h MinHeap) Peek() []int        { return h[0] }
+
+func (h *MinHeap) Push(x interface{}) {
+	*h = append(*h, x.([]int))
+}
+
+func (h *MinHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+// really slow 1560ms
+func minCostConnectPoints1(points [][]int) int {
+	minHeap := &MinHeap{}
+	heap.Init(minHeap)
+	size := len(points)
+
+	for i := range points {
+		for j := i + 1; j < size; j++ {
+			heap.Push(minHeap, []int{dist(points[i], points[j]), i, j})
+		}
+	}
+
+	var cost int
+	group := make([]int, size)
+	for i := range group {
+		group[i] = i
+	}
+
+	for minHeap.Len() > 0 {
+		p := heap.Pop(minHeap).([]int)
+
+		// already visited
+		p1, p2 := find(group, p[1]), find(group, p[2])
+
+		// already connected
+		if p1 == p2 {
+			continue
+		}
+		group[p2] = p1
+		cost += p[0]
+	}
+
+	return cost
+}
+
+func dist(p1, p2 []int) int {
+	return abs(p1[0]-p2[0]) + abs(p1[1]-p2[1])
+}
+
+func abs(i int) int {
+	if i >= 0 {
 		return i
 	}
-	return j
+	return -i
+}
+
+func find(group []int, idx int) int {
+	if group[idx] != idx {
+		group[idx] = find(group, group[idx])
+	}
+
+	return group[idx]
 }
 
 //	Notes
@@ -138,8 +305,14 @@ func min(i, j int) int {
 //	3.	another greedy algorithm from https://www.youtube.com/watch?v=K_1urzWrzLs
 
 //		prim's algorithm:
-//		- random pick one vertex
-//		- select next vertex with minimum cost edge
+//		- random pick one vertex a
+//		- put weight of a to other unvisited vertex into priority queue
+//		- select next unvisited vertex with minimum cost edge
 //		- record new vertex
 //		- pick next vertex w/ minimum cost among all reachable vertexes
 //		  (including all former visited vertex, they are all reachable)
+
+//	4.	inspired from https://leetcode.com/problems/min-cost-to-connect-all-points/discuss/843940/C%2B%2B-MST%3A-Kruskal-%2B-Prim's-%2B-Complete-Graph
+
+//		since this problem edges forms a complete graph, can use array to
+//		store minimum distance
