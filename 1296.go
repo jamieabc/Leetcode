@@ -92,6 +92,87 @@ func isPossibleDivide(nums []int, k int) bool {
 	return len(events) == 0
 }
 
+// TLE
+func isPossibleDivide3(nums []int, k int) bool {
+	counter := make(map[int]int)
+	for _, n := range nums {
+		counter[n]++
+	}
+
+	for _, n := range nums {
+		// skip already deducted number
+		if _, ok := counter[n]; !ok {
+			continue
+		}
+		val := n - 1
+
+		// loop until no start
+		for true {
+			if _, ok := counter[val]; !ok {
+				break
+			} else {
+				val--
+			}
+		}
+
+		count := counter[val+1]
+		for i := 0; i < k; i++ {
+			// not enough to form a group
+			if counter[val+1+i] < count {
+				return false
+			} else {
+				counter[val+1+i] -= count
+			}
+
+			if counter[val+1+i] == 0 {
+				delete(counter, val+1+i)
+			}
+		}
+	}
+
+	return true
+}
+
+func isPossibleDivide2(nums []int, k int) bool {
+	sort.Ints(nums)
+
+	toRemove := make([]int, 0)
+	var existing, j int
+	size := len(nums)
+
+	for i := 0; j < size; i = j {
+		for j = i + 1; j < size && nums[j] == nums[i]; j++ {
+		}
+
+		cur := j - i
+
+		// not enought to separate into a group
+		if cur < existing {
+			return false
+		}
+
+		// add when to deduct
+		for m := 0; m < cur-existing; m++ {
+			toRemove = append(toRemove, nums[i]+k-1)
+		}
+
+		existing = cur
+
+		// check consecutive
+		if len(toRemove) > 0 && toRemove[0] != nums[i]+k-1 && nums[i] != nums[i-1]+1 {
+			return false
+		}
+
+		// remove already separated into a group
+		for len(toRemove) > 0 && toRemove[0] == nums[i] {
+			existing--
+			toRemove = toRemove[1:]
+		}
+	}
+
+	return len(toRemove) == 0
+}
+
 func isPossibleDivide1(nums []int, k int) bool {
 	size := len(nums)
 	if size < k || size%k != 0 {
