@@ -18,6 +18,43 @@ package main
 // NOTE: input types have been changed on April 15, 2019. Please reset to default code definition to get new method signature.
 
 func insert(intervals [][]int, newInterval []int) [][]int {
+	size := len(intervals)
+
+	if size == 0 {
+		return [][]int{newInterval}
+	}
+
+	arr := make([][]int, 0)
+	var inserted bool
+	start, end := newInterval[0], newInterval[1]
+
+	for i := 0; i < size; i++ {
+		intr := intervals[i]
+
+		if intr[0] > end {
+			if !inserted {
+				arr = append(arr, []int{start, end})
+				inserted = true
+			}
+
+			arr = append(arr, intr)
+		} else if intr[1] < start {
+			arr = append(arr, intr)
+		} else {
+			// overlap
+			start = min(start, intr[0])
+			end = max(end, intr[1])
+		}
+	}
+
+	if !inserted {
+		arr = append(arr, []int{start, end})
+	}
+
+	return arr
+}
+
+func insert2(intervals [][]int, newInterval []int) [][]int {
 	start, end := newInterval[0], newInterval[1]
 	result := make([][]int, 0)
 	var i int
