@@ -41,6 +41,46 @@ func recursive(n, k, start int, cur []int, ans *[][]int) {
 	}
 }
 
+// tc: O(k* combination n pick k), k for string operation
+func combine4(n int, k int) [][]int {
+	used := make([]bool, n)
+	ans := make([][]int, 0)
+
+	dfs(used, []int{}, 0, k, &ans)
+
+	return ans
+}
+
+func dfs(used []bool, cur []int, idx, k int, ans *[][]int) {
+	size := len(cur)
+
+	if size == k {
+		*ans = append(*ans, cur)
+		return
+	}
+
+	// since dfs is pretty high tc,
+	// prune path that is uncessary to accomplish task
+	if idx > len(used)-(k-len(cur)) {
+		return
+	}
+
+	for i := idx; i < len(used); i++ {
+		if used[i] {
+			continue
+		}
+
+		used[i] = true
+
+		tmp := make([]int, len(cur)+1)
+		copy(tmp, cur)
+		tmp[len(tmp)-1] = i + 1
+		dfs(used, tmp, i+1, k, ans)
+
+		used[i] = false
+	}
+}
+
 func combine3(n int, k int) [][]int {
 	result := make([][]int, 0)
 	stack := make([]int, k)
