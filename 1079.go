@@ -26,34 +26,6 @@ import (
 //     1 <= tiles.length <= 7
 //     tiles consists of uppercase English letters.
 
-//	thinking process
-//	this problem relates to both combination & permutation
-//	combination:  5 = 1 + 1 + 1 + 1 + 1
-//					= 2 + 1 + 1 + 1
-//					= 2 + 2 + 1
-//					= 3 + 1 + 1
-//					= 4 + 1
-//					= 3 + 2
-//					= 5
-//	I think it as putting ball into boxes, first is 5 box each with 1 ball.
-//	4 boxes, one box with 2 balls and other with 1 ball.
-//	3 boxes has 2 conditions, one box with 3 and other 2 boxes with 1,
-//	two boxes with 2 and one box with 1.
-
-// 	When add numbers are decided, next problem is to find possible chars, so I
-// 	need a table that stores occurrence count for every char, and starts
-//	to permute chars.
-//	permutation: find all possible for AAAAB (4+1), AAABB(3+2)
-
-// 	The way of generating combination is so complicated, I have to generate numbers
-//	that sum to specific number (4+1), and by those numbers, find potential chars
-//	that meets count. Then designate each group a char which cannot duplicate, then
-//	generate permutations. No need to do it and know it's extremely complicated.
-
-//	However, I think of another method, use subtraction to do. Start from full
-//	string, then subtract one each time, and permute. Or further more, once string
-//	is decided, use math equation to calculate
-
 func numTilePossibilities(tiles string) int {
 	length := len(tiles)
 	if length <= 1 {
@@ -94,14 +66,61 @@ func permutation(str string, flags []bool) int {
 }
 
 //	Notes
-//	1.	duplicates happens in this algorithm, e.g.
+
+//	1.	thinking process
+//		this problem relates to both combination & permutation
+//		combination:  5 = 1 + 1 + 1 + 1 + 1
+//						= 2 + 1 + 1 + 1
+//						= 2 + 2 + 1
+//						= 3 + 1 + 1
+//						= 4 + 1
+//						= 3 + 2
+//						= 5
+//		I think it as putting ball into boxes, first is 5 box each with 1 ball.
+//		4 boxes, one box with 2 balls and other with 1 ball.
+//		3 boxes has 2 conditions, one box with 3 and other 2 boxes with 1,
+//		two boxes with 2 and one box with 1.
+
+// 		When add numbers are decided, next problem is to find possible chars,
+// 		so I need a table that stores occurrence count for every char, and
+// 		starts to permute chars.
+//		permutation: find all possible for AAAAB (4+1), AAABB(3+2)
+
+// 		The way of generating combination is so complicated, I have to generate
+// 		numbers that sum to specific number (4+1), and by those numbers, find
+// 		potential chars that meets count. Then designate each group a char
+// 		which cannot duplicate, then generate permutations. No need to do it
+// 		and know it's extremely complicated.
+
+//		However, I think of another method, use subtraction to do. Start from
+//		full string, then subtract one each time, and permute. Or further more,
+//		once string is decided, use math equation to calculate
+
+//	2.	duplicates happens in this algorithm, e.g.
 //		AAABBC => AABBC ... AAABB ... => AABB ... AABB ...
 
-//	2.	wrong logic, string is calculated should be checked before calculate
+//	3.	wrong logic, string is calculated should be checked before calculate
 //		combination
 
-//	3.	permutation needs 2 variables: what are used in whole loop, what are used
+//	4.	permutation needs 2 variables: what are used in whole loop, what are used
 //		in this loop
 
-//	4.	when skipping repeated chars, make sure to consider when char is same
+//	5.	when skipping repeated chars, make sure to consider when char is same
 //		to end
+
+//	6.	spend one hour and stuck at permutation & combination, I try to first
+//		iterate find combination, then use math to calculate permutations
+
+//		but I failed spending for one hour...
+
+//	7.	inspired from https://leetcode.com/problems/letter-tile-possibilities/discuss/308284/Concise-java-solution
+
+//		use counter to store distinct characters, then start to iterate
+
+//		each time, use a character at that position, go to next recursion call
+//		and that position will never be same again because it uses distinct
+//		character, this is the combination (largest for loop)
+
+//		inside loop, it acts as permutation, because arr[i]--, arr[i]++
+
+//		that's all i can understand for now, need to further review it again
