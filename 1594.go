@@ -48,11 +48,54 @@ package main
 //    1 <= rows, cols <= 15
 //    -4 <= grid[i][j] <= 4
 
+func maxProductPath(grid [][]int) int {
+	w, h := len(grid[0]), len(grid)
+
+	dp := make([][][2]int, h)
+	for i := range dp {
+		dp[i] = make([][2]int, w)
+	}
+
+	dp[0][0][0] = grid[0][0]
+	dp[0][0][1] = grid[0][0]
+
+	// traverse right
+	for j := 1; j < w; j++ {
+		dp[0][j][0] = dp[0][j-1][0] * grid[0][j]
+		dp[0][j][1] = dp[0][j][0]
+	}
+
+	// traverse down
+	for i := 1; i < h; i++ {
+		dp[i][0][0] = dp[i-1][0][0] * grid[i][0]
+		dp[i][0][1] = dp[i][0][0]
+	}
+
+	// traverse
+	for i := 1; i < h; i++ {
+		for j := 1; j < w; j++ {
+			if grid[i][j] > 0 {
+				dp[i][j][0] = grid[i][j] * max(dp[i-1][j][0], dp[i][j-1][0])
+				dp[i][j][1] = grid[i][j] * min(dp[i-1][j][1], dp[i][j-1][1])
+			} else {
+				dp[i][j][0] = grid[i][j] * min(dp[i-1][j][1], dp[i][j-1][1])
+				dp[i][j][1] = grid[i][j] * max(dp[i-1][j][0], dp[i][j-1][0])
+			}
+		}
+	}
+
+	if dp[h-1][w-1][0] < 0 {
+		return -1
+	}
+
+	return dp[h-1][w-1][0] % int(1e9+7)
+}
+
 type Val struct {
 	Max, Min int64
 }
 
-func maxProductPath(grid [][]int) int {
+func maxProductPath1(grid [][]int) int {
 	mod := int64(1e9 + 7)
 	dp := make([][]Val, len(grid))
 
@@ -124,3 +167,6 @@ func min(i, j int64) int64 {
 	}
 	return j
 }
+
+//	Notes
+//	1.	only care about left/up max/min
