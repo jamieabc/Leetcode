@@ -70,6 +70,63 @@ func depthSumInverse(nestedList []*NestedInteger) int {
 	return weighted
 }
 
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * type NestedInteger struct {
+ * }
+ *
+ * // Return true if this NestedInteger holds a single integer, rather than a nested list.
+ * func (n NestedInteger) IsInteger() bool {}
+ *
+ * // Return the single integer that this NestedInteger holds, if it holds a single integer
+ * // The result is undefined if this NestedInteger holds a nested list
+ * // So before calling this method, you should have a check
+ * func (n NestedInteger) GetInteger() int {}
+ *
+ * // Set this NestedInteger to hold a single integer.
+ * func (n *NestedInteger) SetInteger(value int) {}
+ *
+ * // Set this NestedInteger to hold a nested list and adds a nested integer to it.
+ * func (n *NestedInteger) Add(elem NestedInteger) {}
+ *
+ * // Return the nested list that this NestedInteger holds, if it holds a nested list
+ * // The list length is zero if this NestedInteger holds a single integer
+ * // You can access NestedInteger's List element directly if you want to modify it
+ * func (n NestedInteger) GetList() []*NestedInteger {}
+ */
+func depthSumInverse(nestedList []*NestedInteger) int {
+	var flatSum, maxDepth int
+
+	total := dfs(nestedList, 1, &flatSum, &maxDepth)
+
+	return flatSum*(maxDepth+1) - total
+}
+
+func dfs(nestedList []*NestedInteger, level int, flatSum, maxDepth *int) int {
+	*maxDepth = max(*maxDepth, level)
+	var total int
+
+	for i := range nestedList {
+		if nestedList[i].IsInteger() {
+			num := nestedList[i].GetInteger()
+			*flatSum += num
+			total += num * level
+		} else {
+			total += dfs(nestedList[i].GetList(), level+1, flatSum, maxDepth)
+		}
+	}
+
+	return total
+}
+
+func max(i, j int) int {
+	if i >= j {
+		return i
+	}
+	return j
+}
+
 func depthSumInverse1(nestedList []*NestedInteger) int {
 	nums := make([]int, 0)
 	dfs(nestedList, 0, &nums)
@@ -128,7 +185,7 @@ func dfs(nl []*NestedInteger, level int, nums *[]int) {
 //		last, and for each element only know relative depth of a list.
 
 //		I don't know how this come up, but it works. Consider previous
-//		example, final result is 3w+2x+2y+z
+//		example, final result is 3w+3x+2y+z
 //		it can be composed of 5(w+x+y+z) - (2w+2x+3y+4z)
 //		be ware that coefficient of 2x+2x+3y+4z is distance from root,
 //		which is easier to calculate.
