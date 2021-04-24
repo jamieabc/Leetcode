@@ -47,7 +47,56 @@ package main
 //    requests[i].length == 2
 //    0 <= fromi, toi < n
 
+// tc: O(2^r * (n+r))
 func maximumRequests(n int, requests [][]int) int {
+	var maxRequest int
+	size := len(requests)
+	balance := make([]int, n)
+
+	// try all possibilities
+	for i := 0; i < 1<<size; i++ {
+		if check(requests, balance, i) {
+			maxRequest = max(maxRequest, oneCount(i))
+		}
+	}
+
+	return maxRequest
+}
+
+func check(requests [][]int, balance []int, counter int) bool {
+	size := len(requests)
+
+	for i := 0; i < size; i++ {
+		if counter&(1<<i) > 0 {
+			balance[requests[i][0]]--
+			balance[requests[i][1]]++
+		}
+	}
+
+	// check all zero and cleanup
+	allZero := true
+	for i := range balance {
+		if balance[i] != 0 {
+			allZero = false
+			balance[i] = 0
+		}
+	}
+
+	return allZero
+}
+
+func oneCount(i int) int {
+	var count int
+
+	for i > 0 {
+		count++
+		i = i & (i - 1)
+	}
+
+	return count
+}
+
+func maximumRequests1(n int, requests [][]int) int {
 	flags := make([]bool, len(requests))
 	return recursive(n, 0, flags, requests)
 }
@@ -102,3 +151,12 @@ func max(i, j int) int {
 
 //		tc: O((n+r) * 2^r), all combinations are 2^r, every combinations needs to
 //		update r request then check n buildings balance
+
+//	3.	inspired from https://leetcode.com/problems/maximum-number-of-achievable-transfer-requests/discuss/866456/Python-Check-All-Combinations
+
+//		this is np problem, try all combinations takes 2^r, each combination
+//		take n+r to check
+
+//	4.	inspired form https://leetcode.com/problems/maximum-number-of-achievable-transfer-requests/discuss/868403/C%2B%2BPython-knapsack-01
+
+//		voturbac also mention to identity this is search problem
