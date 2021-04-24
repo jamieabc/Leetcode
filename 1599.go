@@ -73,6 +73,37 @@ package main
 //     1 <= boardingCost, runningCost <= 100
 
 func minOperationsMaxProfit(customers []int, boardingCost int, runningCost int) int {
+	maxGuest := 4
+
+	// not enough profit
+	if boardingCost*maxGuest <= runningCost {
+		return -1
+	}
+
+	var profit, waiting, available, maxProfit int
+	turn := -1
+	size := len(customers)
+
+	for i := 0; i < size || waiting > 0; i++ {
+		if i < size {
+			waiting += customers[i]
+		}
+
+		available = min(maxGuest, waiting)
+		waiting -= available
+
+		profit += boardingCost*available - runningCost
+
+		if maxProfit < profit {
+			maxProfit = profit
+			turn = i + 1
+		}
+	}
+
+	return turn
+}
+
+func minOperationsMaxProfit1(customers []int, boardingCost int, runningCost int) int {
 	// never profitable
 	if runningCost >= boardingCost*4 {
 		return -1
