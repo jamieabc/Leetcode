@@ -43,6 +43,36 @@ func numSubarrayProductLessThanK(nums []int, k int) int {
 	return count
 }
 
+func numSubarrayProductLessThanK3(nums []int, k int) int {
+	if k == 0 {
+		return 0
+	}
+
+	var count int
+	product := 1
+	size := len(nums)
+
+	for i, j := 0, 0; i < size; {
+		// expand
+		for ; i == j || (j < size && product < k); j++ {
+			product *= nums[j]
+		}
+
+		if product < k {
+			count += j - i
+		} else if j > i+1 {
+			count += j - i - 1
+		} else if nums[i] < k {
+			count++
+		}
+
+		product /= nums[i]
+		i++
+	}
+
+	return count
+}
+
 func numSubarrayProductLessThanK2(nums []int, k int) int {
 	if len(nums) == 0 {
 		return 0
@@ -106,7 +136,7 @@ func numSubarrayProductLessThanK1(nums []int, k int) int {
 	return count
 }
 
-//	problems
+//	Notes
 //	1.	be careful about conditions to shrink and expand region
 
 //		even single number should be counted, when low == high, that number
@@ -132,3 +162,13 @@ func numSubarrayProductLessThanK1(nums []int, k int) int {
 //		fix start position at 10, maximum region meets criteria is [10, 5], so
 //		there are 2 conditions: [10] & [10, 5] both meets criteria, thus 2 is
 //		added to total count
+
+//	5.	inspired from solution,
+//		log (x1*x2*x3...) = sigma(log(x1)+log(x2)+log(x3)+...)
+
+//		product can be reduced into sum problem
+//		binary search could do the work since prefix product is a
+//		non-decreasing sequence, it's possible to use binary search to solve
+
+//	6.	after half year, my first solution is not beautiful, mainly because
+//		i didn't see through nature of the problem
