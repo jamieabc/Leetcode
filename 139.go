@@ -25,6 +25,28 @@ package main
 // Input: s = "catsandog", wordDict = ["cats", "dog", "sand", "and", "cat"]
 // Output: false
 
+// tc: O(mnk), m: string length, n: dictionary length, k: average dictionary
+// string length
+func wordBreak(s string, wordDict []string) bool {
+	size := len(s)
+
+	// dp[i]: ok to be composed start from i
+	dp := make([]bool, size+1)
+	dp[0] = true
+
+	for i := range dp {
+		if dp[i] {
+			for _, word := range wordDict {
+				if i+len(word) <= size && s[i:i+len(word)] == word {
+					dp[i+len(word)] = true
+				}
+			}
+		}
+	}
+
+	return dp[size]
+}
+
 type Trie struct {
 	IsWord   bool
 	Children map[byte]*Trie
@@ -47,7 +69,7 @@ func (this *Trie) Add(str string, idx int) {
 	this.Children[str[idx]].Add(str, idx+1)
 }
 
-func wordBreak(s string, wordDict []string) bool {
+func wordBreak1(s string, wordDict []string) bool {
 	trie := &Trie{
 		Children: make(map[byte]*Trie),
 	}
@@ -81,3 +103,8 @@ func traverse(root, node *Trie, str string, idx int) bool {
 //	Notes
 //	1.	when reaches end of target string, need to check current position is a
 //		word end
+
+//	2.	recurring problem: from range 0~i, can it be composed by dictionary?
+
+//		use dp to solve, but becareful about time complexity, string compare
+//		takes linear time
