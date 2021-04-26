@@ -49,6 +49,22 @@ package main
 //     0 <= n <= 109
 
 func minimumOneBitOperations(n int) int {
+	if n <= 1 {
+		return n
+	}
+
+	var bit int
+	for i := 31; i >= 0; i-- {
+		if n&(1<<i) > 0 {
+			bit = i
+			break
+		}
+	}
+
+	return (1 << (bit + 1)) - 1 - minimumOneBitOperations(n^(1<<bit))
+}
+
+func minimumOneBitOperations2(n int) int {
 	var count, turn int
 
 	for i := 31; i >= 0; i-- {
@@ -147,3 +163,15 @@ func minimumOneBitOperations1(n int) int {
 //	4.	inspired from https://leetcode.com/problems/minimum-one-bit-operations-to-make-integers-zero/discuss/877708/PythonC%2B%2B-O(log-n)-with-Prove
 
 //		author has similar technique but with detailed explanation
+
+//	5.	inspired form https://leetcode.com/problems/minimum-one-bit-operations-to-make-integers-zero/discuss/877741/C%2B%2B-solution-with-explanation
+
+//		- 1000...0 takes most steps
+//		- more 1 means more reduction
+
+//		(111) = (100) - (011) = (100) - ( (010) - (001) )
+//			  = (100) - (010) + (001)
+
+//		the sign changes each bit
+
+//		author comes with recursion solution, which is really brilliant
