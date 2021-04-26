@@ -27,6 +27,27 @@ package main
 //     1 <= K <= 10^4
 
 func numKLenSubstrNoRepeats(S string, K int) int {
+	var uniq int
+	counter := make([]int, 26)
+
+	for i, j := 0, 0; j < len(S); j++ {
+		// expand
+		counter[S[j]-'a']++
+
+		// shrink
+		for ; i <= j && (counter[S[j]-'a'] > 1 || j-i+1 > K); i++ {
+			counter[S[i]-'a']--
+		}
+
+		if j-i+1-K == 0 {
+			uniq++
+		}
+	}
+
+	return uniq
+}
+
+func numKLenSubstrNoRepeats2(S string, K int) int {
 	if len(S) < K {
 		return 0
 	}
@@ -135,3 +156,6 @@ func numKLenSubstrNoRepeats1(S string, K int) int {
 //		I think this one is better because it's more reasonable to check only once w/o looping.
 
 //		The point for this method is to make sure every high-low range with unique chars.
+
+//	2.	use template to write two-pointer problem, use j, shrink i until no
+//		repeated of length k
