@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/heap"
 	"fmt"
 	"math"
 	"sort"
@@ -24,11 +25,44 @@ import (
 // 0 <= nums[i] < 1000000.
 // 1 <= k <= len(nums) * (len(nums) - 1) / 2.
 
+// tc: O(n log(m)), n: largest distance of pairs, m: array length
+func smallestDistancePair(nums []int, k int) int {
+	sort.Ints(nums)
+	size := len(nums)
+
+	var kth int
+	for low, high := 0, nums[size-1]-nums[0]; low <= high; {
+		mid := low + (high-low)/2
+
+		if countSmaller(nums, mid) >= k {
+			kth = mid
+			high = mid - 1
+		} else {
+			low = mid + 1
+		}
+	}
+
+	return kth
+}
+
+func countSmaller(nums []int, target int) int {
+	var count int
+	size := len(nums)
+
+	for i, j := 0, 0; j < size; j++ {
+		for ; i <= j && nums[j]-nums[i] > target; i++ {
+		}
+		count += j - i
+	}
+
+	return count
+}
+
 // tc: O(n * logn + n * logn)
 // for kth distance, distance sequence may look like: 0, 0, 1, 1, 2, ..., x, x, x+1, ...
 // kth smallest distance means there are at most k-1 smaller numbers ahead, and
 // smaller_number_count + same_number_count >= k
-func smallestDistancePair(nums []int, k int) int {
+func smallestDistancePair3(nums []int, k int) int {
 	sort.Ints(nums)
 	size := len(nums)
 
@@ -41,8 +75,8 @@ func smallestDistancePair(nums []int, k int) int {
 	for low < high {
 		mid := low + (high-low)/2
 
-		smaller := countSmaller(nums, mid)
-		same := countSmaller(nums, mid+1) - smaller
+		smaller := countSmaller3(nums, mid)
+		same := countSmaller3(nums, mid+1) - smaller
 
 		// dist: 0, 0, 0, ..., mid-1, mid-1, mid, mid, ...
 		// if mid is the kth smallest distance
@@ -70,8 +104,9 @@ func min(i, j int) int {
 }
 
 // since numbers are sorted, next number will >= current, so previous right boundary
-// will either same or extendr, it means previous boundary can be reused
-func countSmaller(nums []int, dist int) int {
+// will either same or extend, it means previous boundary can be reused
+// this is 2-pointer solution
+func countSmaller3(nums []int, dist int) int {
 	var smaller int
 
 	for i, right := 0, 1; i < len(nums); i++ {
@@ -211,3 +246,19 @@ func nthElement(dist []int, start, end, k int) int {
 //		smaller than y, which is O(logn)
 
 //	8.	minimum distance can be first calculated
+
+//	9.	inspired from https://leetcode.com/problems/find-k-th-smallest-pair-distance/discuss/714768/Explanation-with-concrete-example-(Binary-Search-%2B-Sliding-Window)
+
+//		finally, for a given distance, find out # of pairs with distance <= k,
+//		it's sliding window (2-pointer) problem
+
+//		e.g. [1, 1, 2, 3],	distance = 1
+//			  i  j			count += 1
+//			  i     j		count += 2
+//				    i  j	count += 1
+
+//		next state can be derived from previous state, and count only relates
+//		to state itself
+
+//		very beautiful, the key point here is to convert pair distance into
+//		sorted array consecutive difference
