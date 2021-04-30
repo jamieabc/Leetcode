@@ -1,6 +1,10 @@
 package main
 
-import "math"
+import (
+	"container/heap"
+	"math"
+	"sort"
+)
 
 // Given an array nums, you are allowed to choose one element of nums and change it by any value in one move.
 //
@@ -39,6 +43,30 @@ import "math"
 //     1 <= nums.length <= 10^5
 //     -10^9 <= nums[i] <= 10^9
 
+func minDifference(nums []int) int {
+	size := len(nums)
+	if size <= 4 {
+		return 0
+	}
+
+	sort.Ints(nums)
+
+	minimum := nums[size-1] - nums[3]
+
+	for i := 1; i <= 3; i++ {
+		minimum = min(minimum, nums[size-1-i]-nums[3-i])
+	}
+
+	return minimum
+}
+
+func min(i, j int) int {
+	if i <= j {
+		return i
+	}
+	return j
+}
+
 type MaxHeap []int
 
 func (h MaxHeap) Len() int           { return len(h) }
@@ -75,7 +103,7 @@ func (h *MinHeap) Pop() interface{} {
 	return x
 }
 
-func minDifference(nums []int) int {
+func minDifference1(nums []int) int {
 	if len(nums) <= 4 {
 		return 0
 	}
@@ -132,8 +160,11 @@ func abs(i int) int {
 	return -i
 }
 
-//	problems
+//	Notes
 //	1.	after finding max4 & min4, the problem becomes dp, not greedy
 
 //		even choose min difference among top4 & min4, still not guarantee global
 //		minimum difference
+
+//	2.	only remove either largest or smallest to reduce difference, so it's all about
+//		removing consecutive numbers from boundary
