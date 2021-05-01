@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/heap"
 	"math"
 	"sort"
 )
@@ -379,8 +380,12 @@ func abs(i int) int {
 //		are 3 ways to go (discard where comes from)
 
 //	2.	every edge >= 0, find min cost from one point to another, Dijkstra
-//		can be used, tc: O(mn log(mn)), m: row count, n: column count.
-//		it's actually O(v log(v)), v: vertex count
+//		can be used, tc for Dijkstra is O(E log(V)), E: # of edges, V: # of
+//		vertex. Because at most v vertexes in heap, and for each edges need to
+//		do heap operation once
+
+//		for this problem, E is roughly 4mn, because vertex at boundary has
+//		only 2~3 edges, tc: O(mn log(mn)), m: row count, n: column count.
 
 //	3.	union by rank: while doing union, put shorter paths into longer paths to
 //		reduce computation
