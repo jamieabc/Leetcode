@@ -117,3 +117,26 @@ func removeDuplicateLetters1(s string) string {
 
 //		order of string matters, removal of character depends on last selected
 //		character with duplicates, this acts as a stack
+
+//	3.	inspired from https://leetcode.com/problems/remove-duplicate-letters/discuss/76769/Java-solution-using-Stack-with-comments
+
+//		for any character, if it occurs later on, then it's better to select
+//		left most character => mark as used
+
+//		but, if there's smaller character occurs, then all previous characters
+//		occurs later should be marked as unused and remove from stack
+
+//		this operation is based on lexicographical order, smallest character
+//		on left
+
+//	4.	inspired from https://leetcode.com/problems/remove-duplicate-letters/discuss/76766/Easy-to-understand-iterative-Java-solution
+
+//		interesting solution, find out best choices each iteration, best choices
+//		comes from two conditions:
+
+//		- smallest character
+//		- character occur only once
+
+//	5.	inspired from https://leetcode.com/problems/remove-duplicate-letters/discuss/76762/Java-O(n)-solution-using-stack-with-detail-explanation
+
+//		author provides good explanation
