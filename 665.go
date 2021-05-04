@@ -32,6 +32,35 @@ func checkPossibility(nums []int) bool {
 	return idx == -1 || idx == 1 || idx == size-1 || nums[idx-2] <= nums[idx] || nums[idx-1] <= nums[idx+1]
 }
 
+func checkPossibility3(nums []int) bool {
+	size := len(nums)
+	var decrease int
+
+	for i := 1; i < size; i++ {
+		if nums[i] < nums[i-1] {
+			if decrease == 1 {
+				return false
+			}
+
+			decrease++
+
+			if i == 1 {
+				nums[0] = nums[i]
+			} else if i == size-1 {
+				continue
+			} else if nums[i-2] <= nums[i] {
+				nums[i-1] = nums[i]
+			} else if nums[i-1] <= nums[i+1] {
+				nums[i] = nums[i-1]
+			} else {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
 func checkPossibility2(nums []int) bool {
 	size := len(nums)
 	var change, idx, prev int
@@ -142,3 +171,24 @@ func checkPossibility1(nums []int) bool {
 
 //		if a[i-2], a[i-1], a[i], a[i+1] all exist, the only way one modification
 //		works is that a[i-2] <= a[i] or a[i-1] <= a[i+1]
+
+//	5.	find a gap between i-1 ~ i is decreasing, this gap can be filled only if
+//		i-2 & i+1 meet some condition
+
+//							x
+//				x
+//						x
+//		x
+
+//		i-2		i-1		i	i+1
+
+//		if i-2 <= i, then i-1 can be lowered and still be non-decreasing
+//		if i+1 >= i-1, then i can be raised and still be non-decreasing
+
+//		as long as either condition meet, it could still be non-decreasing
+//		after one modification
+
+//		the other observation is that at most one decreasing gap can be found
+
+//		but checkPossibility3 can be further improved, because the core
+//		is the check, no need actual update
