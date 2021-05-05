@@ -39,6 +39,7 @@ import (
 //     scores.length == ages.length
 //     1 <= scores[i] <= 106
 //     1 <= ages[i] <= 1000
+
 func bestTeamScore(scores []int, ages []int) int {
 	size := len(scores)
 
@@ -146,3 +147,20 @@ func max(i, j int) int {
 
 //		author provides a better tc in O(n log(n)) using segment tree, not
 //		studying it
+
+//	4.	inspired from https://leetcode.com/problems/best-team-with-no-conflicts/discuss/909417/I-understand-the-solution-but-HOW-do-I-think-to-GET-there-myself-Explanation-and-Solution-O(n2)
+
+//		two factors cannot sort, since target is score, sort by age of 2D array
+//		with combination of [age, score]
+
+//		the data looks like:
+//		[[1, 3], [2, 4], [3, 3], [3, 9], [4, 6]]
+
+//		ages in non-decreasing order, so scores looks picking longest increasing
+//		subsequence (but not quite the same, because if ages are same, then
+//		score can be any number)
+
+//		the other technique is to sort score ascending when ages are same, make
+//		it more similar to LIS problem
+
+//		most important of all, find out that this is LIS problem after sort
