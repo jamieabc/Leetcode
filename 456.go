@@ -61,7 +61,7 @@ func find132pattern(nums []int) bool {
 			stack = stack[:len(stack)-1]
 		}
 
-		if len(stack) > 0 && nums[i] > smallest[i] && stack[len(stack)-1] < nums[i] {
+		if len(stack) > 0 && stack[len(stack)-1] < nums[i] {
 			return true
 		}
 		stack = append(stack, nums[i])
@@ -211,3 +211,37 @@ func find132pattern1(nums []int) bool {
 //		than smallest to left, than keep it, because this number might be a possible
 //		one. if this number smaller than smallest to left, means it won't be a
 //		possible anymore, remove it
+
+//	3.	index i < j < k
+//		value: n[i] < n[k] < n[j]
+
+//		n[i] ~ n[j] defines the interval range, try to find k satisfies this
+//		range
+//
+//		to find k, it's best to increase the search range (smallest n[i] to
+//		left), this can be done by one pass iteration
+
+//		after range is found, the point is to find k
+
+//		honestly i am not sure why, but stack can be used to solve the problem
+
+//		start backward, keep array in descending order, for any stack value
+//		< n[i] (smallest to left), it's never being used (because this is
+//		smallest to left, all other numbers will be larger, and n[k] should be in
+//		range of n[i] ~ n[j], so smaller thant current n[i] will never be used
+//		again)
+
+//		the goal is to preserve higher number as possible, and stack can be
+//		applied
+
+//		for n[k] there are 2 conditions, either n[k] >= n[j] or n[k] < n[j]
+//		if n[k] > n[j] => this causes stack to be descending
+//		if n[k] > n[j] => goal found
+
+//		so, in general, this operation will maintain stack in descending order
+
+//	4. 	inspired from https://leetcode.com/problems/132-pattern/discuss/94089/Java-solutions-from-O(n3)-to-O(n)-for-%22132%22-pattern-(updated-with-one-pass-slution)
+
+//		author provides a very good explanation of why stack is being used
+
+//		there's also an one-pass solution, but i didn't take time to read it
