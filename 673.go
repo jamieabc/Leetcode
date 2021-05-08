@@ -26,6 +26,38 @@ package main
 // tc: O(n^2)
 func findNumberOfLIS(nums []int) int {
 	size := len(nums)
+
+	lis, count := make([]int, size), make([]int, size)
+	var largest, total int
+
+	for i := range nums {
+		lis[i], count[i] = 1, 1
+
+		for j := 0; j < i; j++ {
+			if nums[j] < nums[i] {
+				if lis[i] < lis[j]+1 {
+					count[i] = count[j]
+					lis[i] = lis[j] + 1
+				} else if lis[i] == lis[j]+1 {
+					count[i] += count[j]
+				}
+			}
+		}
+
+		if lis[i] > largest {
+			largest = lis[i]
+			total = count[i]
+		} else if lis[i] == largest {
+			total += count[i]
+		}
+	}
+
+	return total
+}
+
+// tc: O(n^2)
+func findNumberOfLIS2(nums []int) int {
+	size := len(nums)
 	if size <= 1 {
 		return size
 	}
@@ -112,3 +144,82 @@ func findNumberOfLIS1(nums []int) int {
 
 //		basic idea evolves from LIS dp, dp[i][j] = [x, y], means LIS length i,
 //		jth LIS ends at x with count y
+
+//	3.	inspired from https://leetcode.com/problems/number-of-longest-increasing-subsequence/discuss/107318/C%2B%2B-DP-with-explanation-O(n2)
+
+//		count[i] means # of LIS ending at index i
+//		to calculate this value, consider following situation:
+
+//		index j		i
+//		if nums[j] < nums[i], LIS could be increased
+
+//		under this condition,
+//			if lis[j]+1 == lis[i], count[i] = count[i] + count[j]
+
+//			if lis[j] <<< lis[j], count[i] = count[j]
+
+//		finally, sum all count[i] where lis[i] is the longest
+
+//	4.	inspired from https://leetcode.com/problems/number-of-longest-increasing-subsequence/discuss/107295/9ms-C%2B%2B-Explanation%3A-DP-%2B-Binary-search-%2B-prefix-sums-O(NlogN)-time-O(N)-space
+
+//		inspired from comment https://leetcode.com/problems/number-of-longest-increasing-subsequence/discuss/107295/9ms-C++-Explanation:-DP-+-Binary-search-+-prefix-sums-O(NlogN)-time-O(N)-space/257188
+
+//		binary search uses additional hash to store LIS ends at index i
+
+//	 	the goal is that if a sequence can be enlarge to k, it must come from
+//		all previous sequence with length k-1, the goal is to store that
+//		information
+
+//		by patience sort, the index found is the integer that can be replaced,
+//		but for length, need to know which index is concat
+
+//		e.g. 1, 5, 4, 6, 3, 5, 7
+
+//		stack: 1
+//		length	seq
+//		1 		[0: 1] (sequence ends at index 0, w/ count 1)
+
+//		stack: 1, 5
+//		length	seq
+//		1		[0: 1]
+//		2		[5: 1]
+
+//		stack: 1, 4 (5 is replaced)
+//		length	seq
+//		1		[0: 1]
+//		2		[5: 1], [4: 1] (4 comes from 5)
+
+//		stack: 1, 4, 6
+//		length	seq
+//		1		[0: 1]
+//		2		[5: 1], [4: 1]
+//		3		[6: 2] (6 > 5 & 6 > 4)
+
+//		stack: 1, 3, 6	(4 is replaced by 3)
+//		length	seq
+//		1		[0: 1]
+//		2		[5: 1], [4: 1], [3: 1]
+//		3		[6: 2]
+
+//		stack: 1, 3, 5	(6 is replaced by 5)
+//		length	seq
+//		1		[0: 1]
+//		2		[5: 1], [4: 1], [3: 1]
+//		3		[6: 2], [5: 2] (5 > 4 & 5 > 3, count = 2)
+
+//		stack: 1, 3, 5, 7
+//		length	seq
+//		1		[0: 1]
+//		2		[5: 1], [4: 1], [3: 1]
+//		3		[6: 2], [5: 2]
+//		4		[7: 4] (7 > 6 & 7 > 5)
+
+//		from observation, subarray of seq forms a decreasing array of number,
+//		thus binary search ban be used
+
+//		length 4: 1, 3, 5, 7
+//				  1, 4, 5, 7
+//				  1, 4, 6, 7
+//				  1, 5, 6, 7
+
+//		this is too complicated, not implemented
