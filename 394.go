@@ -35,7 +35,80 @@ import (
 // Input: s = "abc3[cd]xyz"
 // Output: "abccdcdcdxyz"
 
+// tc: O(nk), n: string size, k: max value of encoded value,
+// e.g. worst case 100[abc]
 func decodeString(s string) string {
+	var idx int
+
+	return recursive(s, &idx)
+}
+
+func recursive(s string, idx *int) string {
+	str := make([]byte, 0)
+	size := len(s)
+	var num int
+
+	for ; *idx < size; *idx++ {
+		if s[*idx] == ']' {
+			// back to parent
+			break
+		} else if s[*idx] == '[' {
+			// make sure recursive call has a valid start
+			*idx++
+			next := recursive(s, idx)
+
+			for i := 0; i < num; i++ {
+				str = append(str, []byte(next)...)
+			}
+			num = 0
+		} else if isNum(s[*idx]) {
+			num *= 10
+			num += int(s[*idx] - '0')
+		} else {
+			str = append(str, s[*idx])
+		}
+	}
+
+	return string(str)
+}
+
+// tc: O(sum(k^m * n)), k: max encoded integer, m: number of encoded integer
+// n: string size
+func decodeString3(s string) string {
+	stack := make([]byte, 0)
+
+	for i := range s {
+		if s[i] == '[' {
+			stack = append(stack, byte(0))
+		} else if s[i] == ']' {
+			var j int
+			for j = len(stack) - 1; j >= 0 && stack[j] != byte(0); j-- {
+			}
+			tmp := append([]byte{}, stack[j+1:]...)
+
+			stack = stack[:j] // remove until the position of [
+			var count int
+
+			for j = len(stack) - 1; j >= 0 && stack[j] >= '0' && stack[j] <= '9'; j-- {
+			}
+			for k := j + 1; k < len(stack); k++ {
+				count *= 10
+				count += int(stack[k] - '0')
+			}
+			stack = stack[:j+1]
+
+			for i := 0; i < count; i++ {
+				stack = append(stack, tmp...)
+			}
+		} else {
+			stack = append(stack, s[i])
+		}
+	}
+
+	return string(stack)
+}
+
+func decodeString2(s string) string {
 	chars := []byte{byte(0)}
 	nums := make([]int, 0)
 	var num int
