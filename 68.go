@@ -5,8 +5,150 @@ import (
 	"strings"
 )
 
-// dp: O(n^2)
+// Given an array of words and a width maxWidth, format the text such that each line has exactly maxWidth characters and is fully (left and right) justified.
+//
+// You should pack your words in a greedy approach; that is, pack as many words as you can in each line. Pad extra spaces ' ' when necessary so that each line has exactly maxWidth characters.
+//
+// Extra spaces between words should be distributed as evenly as possible. If the number of spaces on a line do not divide evenly between words, the empty slots on the left will be assigned more spaces than the slots on the right.
+//
+// For the last line of text, it should be left justified and no extra space is inserted between words.
+//
+// Note:
+//
+// A word is defined as a character sequence consisting of non-space characters only.
+// Each word's length is guaranteed to be greater than 0 and not exceed maxWidth.
+// The input array words contains at least one word.
+//
+//
+//
+// Example 1:
+//
+// Input: words = ["This", "is", "an", "example", "of", "text", "justification."], maxWidth = 16
+// Output:
+// [
+// "This    is    an",
+// "example  of text",
+// "justification.  "
+// ]
+//
+// Example 2:
+//
+// Input: words = ["What","must","be","acknowledgment","shall","be"], maxWidth = 16
+// Output:
+// [
+// "What   must   be",
+// "acknowledgment  ",
+// "shall be        "
+// ]
+// Explanation: Note that the last line is "shall be    " instead of "shall     be", because the last line must be left-justified instead of fully-justified.
+// Note that the second line is also left-justified becase it contains only one word.
+//
+// Example 3:
+//
+// Input: words = ["Science","is","what","we","understand","well","enough","to","explain","to","a","computer.","Art","is","everything","else","we","do"], maxWidth = 20
+// Output:
+// [
+// "Science  is  what we",
+// "understand      well",
+// "enough to explain to",
+// "a  computer.  Art is",
+// "everything  else  we",
+// "do                  "
+// ]
+//
+//
+//
+// Constraints:
+//
+// 1 <= words.length <= 300
+// 1 <= words[i].length <= 20
+// words[i] consists of only English letters and symbols.
+// 1 <= maxWidth <= 100
+// words[i].length <= maxWidth
+
 func fullJustify(words []string, maxWidth int) []string {
+	ans := make([]string, 0)
+	size := len(words)
+
+	for i := 0; i < size; {
+		to := selectWords(words, i, maxWidth)
+
+		ans = append(ans, justify(words[i:to], maxWidth, to == size))
+
+		i = to
+	}
+
+	return ans
+}
+
+func selectWords(words []string, idx, maxWidth int) int {
+	var to, length int
+
+	for to = idx; to < len(words); to++ {
+		length += len(words[to])
+
+		if length+to-idx > maxWidth {
+			break
+		}
+	}
+
+	return to
+}
+
+func justify(words []string, maxWidth int, lastLine bool) string {
+	line := make([]byte, 0)
+	var total int
+
+	for _, word := range words {
+		total += len(word)
+	}
+
+	size := len(words)
+	spaces := getEachGap(maxWidth-total, size-1, lastLine)
+
+	for i := 0; i < size; i++ {
+		line = append(line, []byte(words[i])...)
+
+		padSpace(&line, spaces[i])
+	}
+
+	return string(line)
+}
+
+func getEachGap(spaces int, count int, lastLine bool) []int {
+	var gaps []int
+
+	if count == 0 {
+		gaps = []int{spaces}
+	} else {
+		gaps = make([]int, count)
+
+		if lastLine {
+			for i := 0; i < count; i++ {
+				gaps[i] = 1
+				spaces--
+			}
+			gaps = append(gaps, spaces)
+		} else {
+			for i := 0; spaces > 0; i++ {
+				gaps[i%count]++
+				spaces--
+			}
+			gaps = append(gaps, 0)
+		}
+	}
+
+	return gaps
+}
+
+func padSpace(line *[]byte, space int) {
+	for i := 0; i < space; i++ {
+		*line = append(*line, ' ')
+	}
+}
+
+// dp: O(n^2)
+func fullJustify3(words []string, maxWidth int) []string {
 	size := len(words)
 	costs := buildCosts(words, maxWidth)
 
@@ -81,7 +223,7 @@ func fullJustify2(words []string, maxWidth int) []string {
 
 	for i := 0; i < size; i++ {
 		lastIdx := lastWordIndexInLine(words, i, maxWidth)
-		result = append(result, justify(words, i, lastIdx, builder, maxWidth))
+		result = append(result, justify2(words, i, lastIdx, builder, maxWidth))
 		i = lastIdx
 	}
 
@@ -101,7 +243,7 @@ func lastWordIndexInLine(words []string, start int, maxWidth int) int {
 	return start + idx - 1
 }
 
-func justify(words []string, start, end int, builder strings.Builder, maxWidth int) string {
+func justify2(words []string, start, end int, builder strings.Builder, maxWidth int) string {
 	builder.Reset()
 
 	spaces := spacesBetweenWords(words, start, end, maxWidth)
@@ -222,12 +364,16 @@ func fullJustify1(words []string, maxWidth int) []string {
 	return result
 }
 
-//	problems
+//	Notes
 //	1.	inspired from https://leetcode.com/problems/text-justification/discuss/24902/Java-easy-to-understand-broken-into-several-functions
 
-//		autor provides a cleaner way to read
+//		author provides a cleaner way to read
 
 //	2.	inspired from https://www.youtube.com/watch?v=RORuwHiblPc
 
 //		the way of judging is to build a 2D matrix, and iterate through
 //		each to decide min cost
+
+//	3.	inspired from https://leetcode.com/problems/text-justification/discuss/24891/Concise-python-solution-10-lines.
+
+//		very clean code
