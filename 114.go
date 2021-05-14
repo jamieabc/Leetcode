@@ -39,11 +39,32 @@ func flatten(root *TreeNode) {
 			nodeWithoutRight := node.Left
 
 			// find first node on left subtree without right child, so that this node
-			// will be flattened in the furture
+			// will be flattened in the future
 			for ; nodeWithoutRight.Right != nil; nodeWithoutRight = nodeWithoutRight.Right {
 			}
 
 			nodeWithoutRight.Right = node.Right
+			node.Right = node.Left
+			node.Left = nil
+		}
+
+		node = node.Right
+	}
+}
+
+func flatten5(root *TreeNode) {
+	node := root
+
+	for node != nil {
+		if node.Left != nil {
+			if node.Right != nil {
+				for next := node.Left; true; next = next.Right {
+					if next.Right == nil {
+						next.Right = node.Right
+						break
+					}
+				}
+			}
 			node.Right = node.Left
 			node.Left = nil
 		}
