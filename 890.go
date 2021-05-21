@@ -28,6 +28,44 @@ package main
 //    1 <= pattern.length = words[i].length <= 20
 
 func findAndReplacePattern(words []string, pattern string) []string {
+	ans := make([]string, 0)
+	size := len(pattern)
+	var wordToPattern, PatternToWord [26]int
+
+	var i int
+	for _, word := range words {
+		for i = range wordToPattern {
+			wordToPattern[i] = -1
+			PatternToWord[i] = -1
+		}
+
+		for i = 0; i < size; i++ {
+			if wordToPattern[word[i]-'a'] != -1 {
+				if wordToPattern[word[i]-'a'] != int(pattern[i]-'a') {
+					break
+				}
+			} else {
+				wordToPattern[word[i]-'a'] = int(pattern[i] - 'a')
+			}
+
+			if PatternToWord[pattern[i]-'a'] != -1 {
+				if PatternToWord[pattern[i]-'a'] != int(word[i]-'a') {
+					break
+				}
+			} else {
+				PatternToWord[pattern[i]-'a'] = int(word[i] - 'a')
+			}
+		}
+
+		if i == size {
+			ans = append(ans, word)
+		}
+	}
+
+	return ans
+}
+
+func findAndReplacePattern1(words []string, pattern string) []string {
 	result := make([]string, 0)
 	for i := range words {
 		if isSamePattern(words[i], pattern) {
@@ -56,3 +94,27 @@ func isSamePattern(w1, w2 string) bool {
 
 	return true
 }
+
+//	Notes
+//	1.	inspired from https://leetcode.com/problems/find-and-replace-pattern/discuss/161288/C%2B%2BJavaPython-Normalise-Word
+
+//		lee normalize word in following way:
+
+//		use a map to store character occur order,
+//		e.g. abb => 1, 2, 2
+
+//		convert abb = word by its order
+//		a => 'a'+1 = 'b'
+//		b => 'a'+2 = 'c'
+//		b => 'a'+2 = 'c'
+//		abb => bcc
+
+//		e.g. mee => 1, 2, 2
+//		m => 'a'+1 = 'b'
+//		e => 'a'+2 = 'c'
+//		e => 'a'+2 = 'c'
+//		mee => bcc
+
+//		very brilliant, the key to this solution is to know that for
+//		words can be transformed, need to have same order & count of
+//		character set
