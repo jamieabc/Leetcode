@@ -62,7 +62,7 @@ func stoneGame(piles []int) bool {
 }
 
 // from https://leetcode.com/problems/stone-game/discuss/154610/DP-or-Just-return-true
-func stoneGame7(piles []int) bool {
+func stoneGame6(piles []int) bool {
 	length := len(piles)
 
 	// dp[i][j]: number of stones alex can get more than bob
@@ -80,7 +80,7 @@ func stoneGame7(piles []int) bool {
 	return dp[length-1] > 0
 }
 
-func stoneGame6(piles []int) bool {
+func stoneGame5(piles []int) bool {
 	size := len(piles)
 
 	// dp[i][j] means number of stones alex gets more
@@ -100,44 +100,6 @@ func stoneGame6(piles []int) bool {
 	return dp[0][size-1] > 0
 }
 
-func stoneGame5(piles []int) bool {
-	size := len(piles)
-
-	// memo[i][j]: max piles can get from i ~ j
-	memo := make([][]int, size)
-	for i := range memo {
-		memo[i] = make([]int, size)
-		memo[i][i] = piles[i]
-	}
-
-	dfs(piles, memo, 0, size-1)
-
-	return memo[0][size-1] > max(memo[1][size-1], memo[0][size-2])
-}
-
-func dfs(piles []int, memo [][]int, start, end int) int {
-	if start > end {
-		return 0
-	}
-
-	if memo[start][end] > 0 {
-		return memo[start][end]
-	}
-
-	memo[start][end] = max(
-		piles[start]+max(
-			dfs(piles, memo, start+2, end),
-			dfs(piles, memo, start+1, end-1),
-		),
-		piles[end]+max(
-			dfs(piles, memo, start+1, end-1),
-			dfs(piles, memo, start, end-2),
-		),
-	)
-
-	return memo[start][end]
-}
-
 func stoneGame4(piles []int) bool {
 	size := len(piles)
 
@@ -154,8 +116,12 @@ func stoneGame4(piles []int) bool {
 }
 
 func dfs(piles []int, memo [][]int, start, end int) int {
-	if start > end {
+	if start > end || start < 0 {
 		return 0
+	}
+
+	if start == end {
+		memo[start][start] = piles[start]
 	}
 
 	if memo[start][end] > 0 {
@@ -164,23 +130,25 @@ func dfs(piles []int, memo [][]int, start, end int) int {
 
 	// achievable piles are next next round, so there are 4 cases:
 
-	//           b: start+1
+	//           B: start+1
 	//         /
 	// A: start
 	//         \
-	//           b: end
+	//           B: end
 
-	//           b: start
+	//           B: start
 	//         /
 	// A: end
 	//         \
-	//           b: end-1
+	//           B: end-1
+
+	// assumes B plays optimal, A can get is the minimum of 2 possibilities
 	memo[start][end] = max(
-		piles[start]+max(
+		piles[start]+min(
 			dfs(piles, memo, start+2, end),
 			dfs(piles, memo, start+1, end-1),
 		),
-		piles[end]+max(
+		piles[end]+min(
 			dfs(piles, memo, start+1, end-1),
 			dfs(piles, memo, start, end-2),
 		),
