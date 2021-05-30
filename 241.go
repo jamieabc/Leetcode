@@ -1,5 +1,7 @@
 package main
 
+import "strconv"
+
 // Given a string of numbers and operators, return all possible results from computing all the different possible ways to group numbers and operators. The valid operators are +, - and *.
 //
 // Example 1:
@@ -76,3 +78,12 @@ func operate(num1, num2 int, op byte) int {
 		return num1 * num2
 	}
 }
+
+//	Notes
+//	1.	inspired from https://leetcode.com/problems/different-ways-to-add-parentheses/discuss/66331/C%2B%2B-4ms-Recursive-and-DP-solution-with-brief-explanation
+
+//		use hash to avoid repeated calculation
+
+//	2.	inspired form https://leetcode.com/problems/different-ways-to-add-parentheses/discuss/151979/Java-Python-Recursion-with-Explanation
+
+//		clear explanation
