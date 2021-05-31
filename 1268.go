@@ -85,6 +85,8 @@ func (t *Trie) Dfs(prefix []byte, ans *[]string, count *int) {
 	}
 }
 
+// tc: O(m + n), m: # of characters in products, n: length of search word
+// sc: O(n)
 func suggestedProducts(products []string, searchWord string) [][]string {
 	root := &Trie{}
 
