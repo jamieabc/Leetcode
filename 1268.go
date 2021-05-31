@@ -76,10 +76,11 @@ func (t *Trie) Dfs(prefix []byte, ans *[]string, count *int) {
 
 	for i := 0; i < len(t.Children) && *count > 0; i++ {
 		if t.Children[i] != nil {
-			tmp := append([]byte{}, prefix...)
-			tmp = append(tmp, byte('a'+i))
+			prefix = append(prefix, byte('a'+i))
 
-			t.Children[i].Dfs(tmp, ans, count)
+			t.Children[i].Dfs(prefix, ans, count)
+
+			prefix = prefix[:len(prefix)-1]
 		}
 	}
 }
@@ -92,6 +93,7 @@ func suggestedProducts(products []string, searchWord string) [][]string {
 	}
 
 	ans := make([][]string, 0)
+	prefix := make([]byte, 0)
 	size := len(searchWord)
 	var count int
 
@@ -101,8 +103,9 @@ func suggestedProducts(products []string, searchWord string) [][]string {
 		if node != nil {
 			node = node.Children[searchWord[i]-'a']
 			count = 3
+			prefix = append(prefix, searchWord[i])
 
-			node.Dfs([]byte(searchWord[:i+1]), &candidates, &count)
+			node.Dfs(prefix, &candidates, &count)
 		}
 
 		ans = append(ans, candidates)
@@ -110,3 +113,14 @@ func suggestedProducts(products []string, searchWord string) [][]string {
 
 	return ans
 }
+
+//	Notes
+//	1.	inspired form solution, after words are sorted in lexicographical order,
+//		pick next 3 words if prefix matches
+
+//		tc: O(n log(n) + m log(n)), n: products length, m: search length
+
+//	2.	inspired from solution, use word +=c & word.pop_back() to reduce memory
+//		allocation
+
+//		also, use []byte{} as prefix in main function
