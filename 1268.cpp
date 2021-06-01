@@ -1,3 +1,8 @@
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
 class Solution {
 public:
     vector<vector<string>> suggestedProducts(vector<string> &products, string searchWord) {
