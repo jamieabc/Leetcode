@@ -48,6 +48,83 @@ import (
 //     Every string in deadends and the string target will be a string of 4 digits from the 10,000 possibilities '0000' to '9999'.
 
 func openLock(deadends []string, target string) int {
+    invalid := make(map[string]bool)
+    for _, dead := range deadends {
+        invalid[dead] = true
+    }
+
+    if invalid["0000"] || invalid[target] {
+        return -1
+    }
+
+    if target == "0000" {
+        return 0
+    }
+
+    visited1, visited2 := make(map[string]bool), make(map[string]bool)
+    queue1, queue2 := []string{"0000"}, []string{target}
+
+	// in case first step reaches target, because loop assumes
+	// destination already in hash map (visited), so need to firt
+	// make sure start/end strings are valid
+    visited1["0000"] = true
+    visited2[target] = true
+
+    var steps int
+
+    // bfs
+    for len(queue1) > 0 && len(queue2) > 0 {
+        // select bfs w/ less items
+        if len(queue1) > len(queue2) {
+            queue1, queue2 = queue2, queue1
+            visited1, visited2 = visited2, visited1
+        }
+
+        size := len(queue1)
+        steps++
+
+        for i := 0; i < size; i++ {
+            str := queue1[0]
+            queue1 = queue1[1:]
+
+            for _, lock := range rotate([]byte(str)) {
+                if !visited1[lock] && !invalid[lock] {
+                    queue1 = append(queue1, lock)
+                    visited1[lock] = true
+
+                    if visited2[lock] {
+                        return steps
+                    }
+                }
+            }
+        }
+    }
+
+    return -1
+}
+
+var nextStep = []byte{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
+var prevStep = []byte{'9', '0', '1', '2', '3', '4', '5', '6', '7', '8'}
+
+func rotate(bytes []byte) []string {
+    ans := make([]string, 0)
+
+    for i := range bytes {
+        orig := bytes[i]
+
+        bytes[i] = nextStep[orig-'0']
+        ans = append(ans, string(bytes))
+
+        bytes[i] = prevStep[orig-'0']
+        ans = append(ans, string(bytes))
+
+        bytes[i] = orig
+    }
+
+    return ans
+}
+
+func openLock2(deadends []string, target string) int {
 	invalid := make(map[string]bool)
 	for _, deadend := range deadends {
 		invalid[deadend] = true
@@ -188,7 +265,7 @@ func min(i, j int) int {
 	return j
 }
 
-// 	problems
+// 	Notes
 //	1.	why can't I write DFS solution? I don't know how to stop recursion.
 //		because there are 2 ways of iterating: increase number or decrease
 //		number.
@@ -218,3 +295,13 @@ func min(i, j int) int {
 //		invalid words
 
 //		tc: O(n^2 * a^n + d), n: 4 digits, a: 10 digits, d: size of deadends
+
+//	6.	inspired from https://leetcode.com/problems/open-the-lock/discuss/1250580/C%2B%2BJavaPython-BFS-Level-Order-Traverse-Clean-and-Concise
+//
+//		there are 10^4 numbers, each number needs to scan whole string and
+//		did the string replacement (n*n)
+//
+//		overall tc would be (10^4 * n^2 + d)
+
+//	7.	inspired from solution, use two sided BFS to run faster, the point is to
+//		choose BFS with less items
