@@ -26,23 +26,49 @@ package main
 // preorder is guaranteed to be the preorder traversal of the tree.
 // inorder is guaranteed to be the inorder traversal of the tree.
 
-/**
- * Definition for a binary tree node.
- * type TreeNode struct {
- *     Val int
- *     Left *TreeNode
- *     Right *TreeNode
- * }
- */
+
+type TreeNode struct {
+	Val int
+	Left *TreeNode
+	Right *TreeNode
+}
+
 func buildTree(preorder []int, inorder []int) *TreeNode {
+    size := len(preorder)
+
+    if size == 0 {
+        return nil
+    }
+
+    // build node
+    node := &TreeNode{
+        Val: preorder[0],
+    }
+
+    // find location at inorder for first item of preoder
+    var idx int
+    for ; idx < size; idx++ {
+        if inorder[idx] == preorder[0] {
+            break
+        }
+    }
+
+    // recursively generate left & right
+    node.Left = buildTree(preorder[1:idx+1], inorder[:idx])
+    node.Right = buildTree(preorder[idx+1:], inorder[idx+1:])
+
+    return node
+}
+
+func buildTree1(preorder []int, inorder []int) *TreeNode {
 	if len(inorder) == 0 {
 		return nil
 	}
 
-	return dfs(preorder, inorder)
+	return dfs1(preorder, inorder)
 }
 
-func dfs(preorder, inorder []int) *TreeNode {
+func dfs1(preorder, inorder []int) *TreeNode {
 	if len(preorder) == 0 {
 		return nil
 	}
