@@ -34,6 +34,37 @@ type TreeNode struct {
 }
 
 func buildTree(preorder []int, inorder []int) *TreeNode {
+	table := make(map[int]int)
+	for i, num := range inorder {
+		table[num] = i
+	}
+
+	return dfs(preorder, table, 0, 0)
+}
+
+func dfs(preorder []int, table map[int]int, from1, from2 int) *TreeNode {
+	size := len(preorder)
+
+	if from1 == size {
+		return nil
+	}
+
+	node := &TreeNode{
+		Val: preorder[from1],
+	}
+
+	length := table[preorder[from1]] - from2
+
+	if length > 0 {
+		node.Left = dfs(preorder, table, from1+1, from2)
+		node.Right = dfs(preorder, table, from2+1+length, length+from2+1)
+	}
+
+	return node
+}
+
+// tc: average should be O(n log(n)), worst O(n^2)
+func buildTree2(preorder []int, inorder []int) *TreeNode {
     size := len(preorder)
 
     if size == 0 {
@@ -54,8 +85,8 @@ func buildTree(preorder []int, inorder []int) *TreeNode {
     }
 
     // recursively generate left & right
-    node.Left = buildTree(preorder[1:idx+1], inorder[:idx])
-    node.Right = buildTree(preorder[idx+1:], inorder[idx+1:])
+    node.Left = buildTree2(preorder[1:idx+1], inorder[:idx])
+    node.Right = buildTree2(preorder[idx+1:], inorder[idx+1:])
 
     return node
 }
