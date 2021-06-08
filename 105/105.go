@@ -57,7 +57,7 @@ func dfs(preorder []int, table map[int]int, from1, from2, to int) *TreeNode {
 	leftLength := table[preorder[from1]] - from2
 
     node.Left = dfs(preorder, table, from1+1, from2, table[preorder[from1]]-1)
-    node.Right = dfs(preorder, table, from2+1+leftLength, table[preorder[from1]]+1, to)
+    node.Right = dfs(preorder, table, from1+1+leftLength, table[preorder[from1]]+1, to)
 
 	return node
 }
