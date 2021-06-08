@@ -33,7 +33,7 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
-// tc: O(n)
+// tc: O(n), sc: O(n)
 func buildTree(preorder []int, inorder []int) *TreeNode {
 	table := make(map[int]int)
 	for i, num := range inorder {
@@ -60,7 +60,7 @@ func dfs(preorder []int, table map[int]int, preStart, inStart, inEnd int) *TreeN
 	return node
 }
 
-// tc: average should be O(n log(n)), worst O(n^2)
+// average tc: O(n), worst O(n^2)
 func buildTree2(preorder []int, inorder []int) *TreeNode {
     size := len(preorder)
 
@@ -117,8 +117,8 @@ func dfs1(preorder, inorder []int) *TreeNode {
 		}
 	}
 
-	cur.Left = dfs(preorder[1:1+in], inorder[:in])
-	cur.Right = dfs(preorder[1+in:], inorder[in+1:])
+	cur.Left = dfs1(preorder[1:1+in], inorder[:in])
+	cur.Right = dfs1(preorder[1+in:], inorder[in+1:])
 
 	return cur
 }
@@ -130,3 +130,43 @@ func dfs1(preorder, inorder []int) *TreeNode {
 //		but to use hashmap, every value should be unique
 
 //	2.	inspired from sample code, use preStart, preEnd is more meaningful
+
+//	3.	inspired from https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/discuss/34607/deep-understanding-on-the-iterative-solution
+//
+//		by pre-order & in-order, first number of in-order is the left most
+//		exist node, before pre-order[i] encounters in-order[0], all numbers
+//		belong to left-subtree of in-order[0]
+//
+//		after in-order[0] is encounter, next of pre-order is the right node and
+//		start the loop again
+//
+//		e.g.
+//			1		pre: 1, 2, 3
+//		   /		in:  3, 2, 1
+//		  2
+//		 /			before 3 is encountered, 2 and 3 all belongs to left-subtree
+//	    3			of 1
+//
+//			1		pre: 1, 2, 3
+//		   /		in:  2, 3, 1
+//		  2
+//		   \		before 2 is encounter, 2 belongs ot left-subtree of 1
+//			3		after 2 is encounter, next of pre is 3, which is the right
+//					sub-tree of 2
+//
+//			1		pre: 1, 2, 3
+//			 \		in:  1, 2, 3
+//			  2
+//			   \	before 1 is encounter, empty belongs to left-subtree of 1
+//				3	after 1 is encounter, next of pre is 2, which is the right
+//					sub-tree of 1
+//
+//			1		pre: 1, 2, 3
+//			 \		in:  1, 3, 2
+//			  2
+//			 /		before 1 is encounter, empty belongs to left-subtree of 1
+//			3		after 1 is encounter, next of pre is 2, which is the right
+//					sub-tree of 1
+
+//		because of this property, this problem can be solved by tc: O(n) &
+//		sc: O(1)
