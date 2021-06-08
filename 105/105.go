@@ -43,21 +43,19 @@ func buildTree(preorder []int, inorder []int) *TreeNode {
     return dfs(preorder, table, 0, 0, len(inorder)-1)
 }
 
-func dfs(preorder []int, table map[int]int, from1, from2, to int) *TreeNode {
-	size := len(preorder)
-
-	if from1 == size || from2 > to {
+func dfs(preorder []int, table map[int]int, preStart, inStart, inEnd int) *TreeNode {
+	if inStart > inEnd {
 		return nil
 	}
 
 	node := &TreeNode{
-		Val: preorder[from1],
+		Val: preorder[preStart],
 	}
 
-	leftLength := table[preorder[from1]] - from2
+	leftLength := table[preorder[preStart]] - inStart
 
-    node.Left = dfs(preorder, table, from1+1, from2, table[preorder[from1]]-1)
-    node.Right = dfs(preorder, table, from1+1+leftLength, table[preorder[from1]]+1, to)
+    node.Left = dfs(preorder, table, preStart+1, inStart, table[preorder[preStart]]-1)
+    node.Right = dfs(preorder, table, preStart+1+leftLength, table[preorder[preStart]]+1, inEnd)
 
 	return node
 }
@@ -130,3 +128,5 @@ func dfs1(preorder, inorder []int) *TreeNode {
 //		O(n^2) to O(n)
 
 //		but to use hashmap, every value should be unique
+
+//	2.	inspired from sample code, use preStart, preEnd is more meaningful
