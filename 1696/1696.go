@@ -1,6 +1,6 @@
 package main
 
-import "math"
+import "container/heap"
 
 // You are given a 0-indexed integer array nums and an integer k.
 //
@@ -36,7 +36,30 @@ import "math"
 //      1 <= nums.length, k <= 105
 //     -104 <= nums[i] <= 104
 
+// tc: O(n), sc: O(n)
 func maxResult(nums []int, k int) int {
+    size := len(nums)
+    deque := [][2]int{{nums[0], 0}}
+
+    for i := 1; i < size; i++ {
+        if deque[0][1] < i - k {
+            deque = deque[1:]
+        }
+
+        next := [2]int{deque[0][0]+nums[i], i}
+
+        for len(deque) > 0 && deque[len(deque)-1][0] < next[0] {
+            deque = deque[:len(deque)-1]
+        }
+
+        deque = append(deque, next)
+    }
+
+    return deque[len(deque)-1][0]
+}
+
+// tc: O(n), sp: O(n)
+func maxResult2(nums []int, k int) int {
 	size := len(nums)
 	queue := make([][]int, 0)
 
