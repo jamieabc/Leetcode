@@ -49,7 +49,7 @@ func shortestDistance(maze [][]int, start []int, destination []int) int {
     visited := make([][]int, n)
     for i := range visited {
         visited[i] = make([]int, m)
-        for j := range visited {
+        for j := range visited[i] {
             visited[i][j] = -1
         }
     }
