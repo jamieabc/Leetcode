@@ -55,8 +55,7 @@ func shortestDistance(maze [][]int, start []int, destination []int) int {
     }
     visited[start[0]][start[1]] = 0
 
-    queue := [][]int{start}
-    dfs(maze, visited, destination, &queue)
+    dfs(maze, visited, start, destination)
 
     return visited[destination[0]][destination[1]]
 }
@@ -68,24 +67,17 @@ var dirs = [][]int{
     {-1, 0},
 }
 
-func dfs(maze, visited [][]int, dst []int, queue *[][]int) {
+func dfs(maze, visited [][]int, start, dst []int) {
     m, n := len(maze[0]), len(maze)
 
-    if len(*queue) == 0 {
-        return
-    }
-
-    point := (*queue)[0]
-    *queue = (*queue)[1:]
-
-    // nothing to go
-    if point[0] == dst[0] && point[1] == dst[1] {
+    // reaches destination
+    if start[0] == dst[0] && start[1] == dst[1] {
         return
     }
 
     var dist int
     for _, dir := range dirs {
-        newY, newX := point[0], point[1]
+        newY, newX := start[0], start[1]
         dist = 0
 
         for newX >= 0 && newY >= 0 && newX < m && newY < n && maze[newY][newX] == 0 {
@@ -100,14 +92,12 @@ func dfs(maze, visited [][]int, dst []int, queue *[][]int) {
 
         // ball can go forward
         if dist != 0 {
-            total := dist+visited[point[0]][point[1]]
+            total := dist + visited[start[0]][start[1]]
             if visited[newY][newX] == -1 || total < visited[newY][newX] {
                 visited[newY][newX] = total
 
-                *queue = append(*queue, []int{newY, newX})
+				dfs(maze, visited, []int{newY, newX}, dst)
             }
         }
     }
-
-    dfs(maze, visited, dst, queue)
 }
