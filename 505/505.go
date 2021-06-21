@@ -101,3 +101,7 @@ func dfs(maze, visited [][]int, start, dst []int) {
         }
     }
 }
+
+//	Notes
+//	1.	first glance would try to use BFS, but normal BFS get shortest "round", and this problem
+//		wants shortest travel distance, so BFS may not fit, try DFS instead
