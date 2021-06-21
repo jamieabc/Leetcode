@@ -43,30 +43,22 @@ package main
 //     Both the ball and the destination exist in an empty space, and they will not be in the same position initially.
 //     The maze contains at least 2 empty spaces.
 
-
 func shortestDistance(maze [][]int, start []int, destination []int) int {
-    m := len(maze)
-    if m == 0 {
-        return -1
-    }
+    m, n := len(maze[0]), len(maze)
 
-    n := len(maze[0])
-    if n == 0 {
-        return -1
-    }
-
-    // 0: not visited
-    visited := make([][]int, m)
+    visited := make([][]int, n)
     for i := range visited {
-        visited[i] = make([]int, n)
+        visited[i] = make([]int, m)
+        for j := range visited {
+            visited[i][j] = -1
+        }
     }
+    visited[start[0]][start[1]] = 0
 
-    dfs(maze, visited, start, destination)
+    queue := [][]int{start}
+    dfs(maze, visited, destination, &queue)
 
-    if visited[start[0]][start[1]] == int(1e9+7) {
-        return -1
-    }
-    return visited[start[0]][start[1]]
+    return visited[destination[0]][destination[1]]
 }
 
 var dirs = [][]int{
@@ -76,52 +68,46 @@ var dirs = [][]int{
     {-1, 0},
 }
 
-func dfs(maze, visited [][]int, cur, dest []int) int {
-    if cur[0] == dest[0] && cur[1] == dest[1] {
-        return 0
+func dfs(maze, visited [][]int, dst []int, queue *[][]int) {
+    m, n := len(maze[0]), len(maze)
+
+    if len(*queue) == 0 {
+        return
     }
 
-    m, n := len(maze), len(maze[0])
-    result := int(1e9+7)
-    visited[cur[0]][cur[1]] = result
+    point := (*queue)[0]
+    *queue = (*queue)[1:]
 
+    // nothing to go
+    if point[0] == dst[0] && point[1] == dst[1] {
+        return
+    }
+
+    var dist int
     for _, dir := range dirs {
-        newY, newX := cur[0], cur[1]
-        var dist int
+        newY, newX := point[0], point[1]
+        dist = 0
 
-        for newY >= 0 && newX >= 0 && newY < m && newX < n && maze[newY][newX] == 0 {
+        for newX >= 0 && newY >= 0 && newX < m && newY < n && maze[newY][newX] == 0 {
             newY += dir[0]
             newX += dir[1]
             dist++
         }
 
-        // loop terminates when point is invalid, need to revert back
         newY -= dir[0]
         newX -= dir[1]
         dist--
 
-        // forward any step
-        if newY != cur[0] || newX != cur[1] {
-            if visited[newY][newX] == 0 {
-                // not visited
-                result = min(result, dist+dfs(maze, visited, []int{newY, newX}, dest))
-            } else {
-                // find shortest distance
-                result = min(result, dist+visited[newY][newX])
+        // ball can go forward
+        if dist != 0 {
+            total := dist+visited[point[0]][point[1]]
+            if visited[newY][newX] == -1 || total < visited[newY][newX] {
+                visited[newY][newX] = total
+
+                *queue = append(*queue, []int{newY, newX})
             }
         }
     }
 
-    if result != int(1e9+7) {
-        visited[cur[0]][cur[1]] = result
-    }
-
-    return visited[cur[0]][cur[1]]
-}
-
-func min(i, j int) int {
-    if i <= j {
-        return i
-    }
-    return j
+    dfs(maze, visited, dst, queue)
 }
